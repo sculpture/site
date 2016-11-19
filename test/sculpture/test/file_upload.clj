@@ -6,4 +6,7 @@
 (deftest hello-world
   (taxi/set-driver! {:browser :phantomjs})
   (taxi/to "http://localhost:3449")
-  (is (taxi/find-element {:text "Hello World!"})))
+  (let [file-input (taxi/find-element {:tag :input
+                                       :type "file"
+                                       :multiple ""})]
+    (is file-input)))

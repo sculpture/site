@@ -5,7 +5,7 @@
 (enable-console-print!)
 
 (defn appview []
-  [:div "Hello World!"])
+  [:input {:type "file" :multiple true}])
 
 (defn render []
   (r/render-component [appview] (.. js/document (getElementById "app"))))
