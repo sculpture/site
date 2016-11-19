@@ -1,5 +1,6 @@
 (ns sculpture.core
-  (:require [reagent.core :as r]))
+  (:require
+    [reagent.core :as r]))
 
 (enable-console-print!)
 
