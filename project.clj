@@ -6,6 +6,10 @@
 
   :plugins [[lein-figwheel "0.5.8"]]
 
+  :figwheel {:server-port 3939
+             :reload-clj-files {:clj false
+                                :cljc true}}
+
   :cljsbuild {:builds [{:id           "dev"
                         :source-paths ["src"]
                         :figwheel     {:on-jsload "sculpture.core/reload"}

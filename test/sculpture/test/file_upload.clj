@@ -1,17 +1,14 @@
 (ns sculpture.test.file-upload
   (:require
-    [clojure.test :refer [deftest testing is]]
-    [clj-webdriver.taxi :as taxi])
-  (:import
-    [org.openqa.selenium.phantomjs.PhantomJSDriver]))
+    [clojure.test :refer :all]
+    [clj-webdriver.taxi :as taxi]
+    [sculpture.test.helpers :as helpers]))
 
-
-(def driver
-  (taxi/set-driver! {:browser :phantomjs}))
+(use-fixtures :once helpers/phantomjs-driver-fixture)
 
 (deftest uploading-photos
   (testing "when page loads"
-    (taxi/to "http://localhost:3449")
+    (taxi/to "http://localhost:3939")
     (testing "then input exists"
       (let [file-input (taxi/find-element {:tag :input
                                            :type "file"
@@ -20,13 +17,11 @@
 
         (testing "when uploading file"
           (spit "/tmp/photo.png" "...")
-          (taxi/execute-script "document.getElementsByTagName('input')[0].removeAttribute('multiple')")
-          (taxi/send-keys file-input "/tmp/photo.png")
-          ;(println "Driver" (.executePhantomJS (:webdriver driver) "console.log('hello')"))
-          (println "Driver" (type (:webdriver driver)))
+          (helpers/upload-file "/tmp/photo.png")
+          (taxi/take-screenshot :file "./shoy.png")
          (testing "then show file name on page"
             (is (taxi/find-element {:tag :div
-                                    :text "C:\\fakepath\\photo.png"}))))
+                                    :text "photo.png"}))))
         (testing "when uploading multiple files"
           (spit "/tmp/photo1.png" "...")
           (spit "/tmp/photo2.png" "..."))))))
