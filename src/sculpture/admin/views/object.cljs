@@ -12,7 +12,8 @@
           :link)
         (when (and
                 (string? entity)
-                (= 36 (count entity)))
+                (= 36 (count entity))
+                (re-matches #"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}" entity))
           :id)
         (when (string? entity) :string))))
 
