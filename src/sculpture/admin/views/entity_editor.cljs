@@ -23,6 +23,7 @@
     :title {:type :string}
     :email {:type :email}
     :slug {:type :string}
+    :bounds {:type :bounds}
     :link-website {:type :url}
     :link-wikipedia {:type :url}
     :gender {:type :enum

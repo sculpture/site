@@ -139,3 +139,24 @@
                             (assoc value
                               :precision
                               (.. e -target -value)))}]]]))
+
+(defmethod field :bounds
+  [{:keys [value on-change]}]
+  (let [bounds (or value {:north nil
+                          :east nil
+                          :south nil
+                          :west nil})]
+    [:div
+     [:div {:style {:width "200px"
+                    :height "200px"
+                    :background "gray"}}
+      "MAP"]
+     (for [[k v] bounds]
+       ^{:id k}
+       [:div
+        k
+        [:input {:value v
+                 :on-change (fn [e]
+                              (on-change
+                                (assoc value k
+                                  (.. e -target -value))))}]])]))
