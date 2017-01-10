@@ -4,7 +4,8 @@
                  [org.clojure/clojurescript "1.9.293"]
                  [re-frame "0.8.0"]
                  [cljs-ajax "0.5.8"]
-                 [garden "1.3.2"]]
+                 [garden "1.3.2"]
+                 [cljsjs/fuse "2.5.0-0"]]
 
   :plugins [[lein-figwheel "0.5.8"]]
 

@@ -1,6 +1,7 @@
 (ns sculpture.admin.subs
   (:require
-    [re-frame.core :refer [reg-sub]]))
+    [re-frame.core :refer [reg-sub]]
+    [sculpture.admin.search :as search]))
 
 (reg-sub
   :query
@@ -48,21 +49,8 @@
 (reg-sub
   :related-entity-search
   (fn [db [_ type query]]
-    (let [re-query (re-pattern query)]
-      (if (= 0 (count query))
-        []
-        (->> db
-             :data
-             vals
-             (filter (fn [entity]
-                       (and
-                         (= (entity :type) type)
-                         (cond
-                           (entity :name)
-                           (re-find re-query (entity :name))
-
-                           (entity :title)
-                           (re-find re-query (entity :title))
-
-                           :else
-                           false)))))))))
+    (->> (search/search (db :fuse) query 20)
+         (map (fn [id]
+                (get-in db [:data id])))
+         (filter (fn [entity]
+                   (= (entity :type) type))))))

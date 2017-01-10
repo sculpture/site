@@ -1,6 +1,7 @@
 (ns sculpture.admin.events
   (:require
-    [re-frame.core :refer [reg-event-fx dispatch]]))
+    [re-frame.core :refer [reg-event-fx dispatch]]
+    [sculpture.admin.search :as search]))
 
 (defn key-by-id [arr]
   (reduce (fn [memo a]
@@ -15,7 +16,8 @@
           :active-entity-id nil
           :edit? false
           :results nil
-          :data {}}
+          :data {}
+          :fuse nil}
      :ajax {:method :get
             :uri "http://localhost:2468/all"
             :on-success
@@ -25,7 +27,9 @@
 (reg-event-fx
   :init-data
   (fn [{db :db} [_ data]]
-    {:db (assoc db :data (key-by-id data))}))
+    {:db (assoc db
+           :data (key-by-id data)
+           :fuse (search/init data))}))
 
 (reg-event-fx
   :set-query
@@ -38,24 +42,11 @@
 (reg-event-fx
   :set-results
   (fn [{db :db} [_ query]]
-    (let [results (if (= 0 (count (db :query)))
-                    []
-                    (let [re-query (re-pattern (db :query))]
-                      (->> db
-                           :data
-                           vals
-                           (filter (fn [entity]
-                                     (cond
-                                       (entity :name)
-                                       (re-find re-query (entity :name))
-
-                                       (entity :title)
-                                       (re-find re-query (entity :title))
-
-                                       :else
-                                       nil)))
-                           (take 10))))]
-      {:db (assoc db :results results)})))
+    {:db (assoc db :results
+           (map
+             (fn [id]
+               (get-in db [:data id]))
+             (search/search (db :fuse) query 20)))}))
 
 (reg-event-fx
   :set-active-entity-id
