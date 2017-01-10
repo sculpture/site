@@ -24,6 +24,7 @@
     :email {:type :email}
     :slug {:type :string}
     :bounds {:type :bounds}
+    :geojson {:type :geojson}
     :link-website {:type :url}
     :link-wikipedia {:type :url}
     :gender {:type :enum

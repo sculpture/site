@@ -160,3 +160,11 @@
                               (on-change
                                 (assoc value k
                                   (.. e -target -value))))}]])]))
+
+(defmethod field :geojson
+  [{:keys [value on-change]}]
+  [:div
+   [:div {:style {:width "200px"
+                  :height "200px"
+                  :background "gray"}}
+    "MAP"]])
