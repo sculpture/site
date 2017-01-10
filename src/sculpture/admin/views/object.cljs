@@ -58,6 +58,4 @@
              (dispatch [:set-active-entity-id (@entity :id)]))}
        (or (@entity :name)
            (@entity :title)
-           (@entity :id))]))
-
-  )
+           (@entity :id))])))
