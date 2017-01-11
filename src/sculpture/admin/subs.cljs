@@ -54,3 +54,14 @@
                 (get-in db [:data id])))
          (filter (fn [entity]
                    (= (entity :type) type))))))
+
+(reg-sub
+  :sculptures-for-artist
+  (fn [db [_ artist-id]]
+    (->> db
+         :data
+         vals
+         (filter (fn [entity]
+                   (and
+                     (= "sculpture" (entity :type))
+                     (contains? (set (entity :artist-ids)) artist-id)))))))

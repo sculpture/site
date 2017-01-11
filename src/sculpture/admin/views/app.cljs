@@ -5,6 +5,7 @@
     [sculpture.admin.views.styles :refer [styles-view]]
     [sculpture.admin.views.entity :refer [entity-view]]
     [sculpture.admin.views.entity.sculpture]
+    [sculpture.admin.views.entity.artist]
     [sculpture.admin.views.entity-editor :refer [entity-editor-view]]))
 
 (defn active-entity-view []
