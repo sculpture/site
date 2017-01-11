@@ -13,12 +13,11 @@
                    (aset "onload" (fn [e]
                                     (reset! data-url (.. e -target -result))))
                    (.readAsDataURL file)))]
-    (fn []
-      [:div
-        (.-name file)
-        (when @data-url
-          [:img {:src @data-url
-                 :height "100px"}])])))
+    [:div
+     (.-name file)
+     (when @data-url
+       [:img {:src @data-url
+              :height "100px"}])]))
 
 (defn app-view []
   [:div

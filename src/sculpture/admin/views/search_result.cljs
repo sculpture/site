@@ -10,13 +10,12 @@
   [sculpture]
   (let [photos (subscribe [:photos-for-sculpture (sculpture :id)])
         artists (subscribe [:get-entities (sculpture :artist-ids)])]
-    (fn []
-      [:div.sculpture
-       (when-let [photo (first @photos)]
-         [photo-view photo :thumb false])
-       [:div.title (sculpture :title)]
-       [:div.artist
-        (string/join ", " (map :name @artists))]])))
+    [:div.sculpture
+     (when-let [photo (first @photos)]
+       [photo-view photo :thumb false])
+     [:div.title (sculpture :title)]
+     [:div.artist
+      (string/join ", " (map :name @artists))]]))
 
 (defmethod search-result-view :default
   [entity]

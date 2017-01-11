@@ -50,12 +50,11 @@
 (defmethod object-view :id
   [entity-id]
   (let [entity (subscribe [:get-entity entity-id])]
-    (fn []
-      [:a {:href ""
-           :on-click
-           (fn [e]
-             (.preventDefault e)
-             (dispatch [:set-active-entity-id (@entity :id)]))}
-       (or (@entity :name)
-           (@entity :title)
-           (@entity :id))])))
+    [:a {:href ""
+         :on-click
+         (fn [e]
+           (.preventDefault e)
+           (dispatch [:set-active-entity-id (@entity :id)]))}
+     (or (@entity :name)
+         (@entity :title)
+         (@entity :id))]))
