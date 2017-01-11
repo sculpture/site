@@ -2,7 +2,7 @@
   (:require
     [clojure.string :as string]
     [re-frame.core :refer [subscribe dispatch]]
-    [sculpture.admin.views.photos :refer [photo-view]]))
+    [sculpture.admin.views.entity.partials.photos :refer [photo-view]]))
 
 (defmulti search-result-view :type)
 

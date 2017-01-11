@@ -1,6 +1,4 @@
-(ns sculpture.admin.views.photos
-  (:require
-    [re-frame.core :refer [subscribe]]))
+(ns sculpture.admin.views.entity.partials.photos)
 
 (def photo-host "http://sculpture.s3-website-us-east-1.amazonaws.com/")
 
