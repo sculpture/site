@@ -14,10 +14,9 @@
     (db :results)))
 
 (reg-sub
-  :active-entity
+  :page
   (fn [db _]
-    (when (db :active-entity-id)
-      (get-in db [:data (db :active-entity-id)]))))
+    (db :page)))
 
 (reg-sub
   :get-entity
@@ -65,3 +64,4 @@
                    (and
                      (= "sculpture" (entity :type))
                      (contains? (set (entity :artist-ids)) artist-id)))))))
+

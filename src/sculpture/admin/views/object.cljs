@@ -1,6 +1,7 @@
 (ns sculpture.admin.views.object
   (:require
-    [re-frame.core :refer [subscribe dispatch]]))
+    [re-frame.core :refer [subscribe dispatch]]
+    [sculpture.admin.routes :as routes]))
 
 (defmulti object-view
   (fn [entity]
@@ -50,11 +51,7 @@
 (defmethod object-view :id
   [entity-id]
   (let [entity (subscribe [:get-entity entity-id])]
-    [:a {:href ""
-         :on-click
-         (fn [e]
-           (.preventDefault e)
-           (dispatch [:set-active-entity-id (@entity :id)]))}
+    [:a {:href (routes/entity-path {:id (entity :id)})}
      (or (@entity :name)
          (@entity :title)
          (@entity :id))]))

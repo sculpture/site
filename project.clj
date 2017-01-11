@@ -5,6 +5,8 @@
                  [re-frame "0.8.0"]
                  [cljs-ajax "0.5.8"]
                  [garden "1.3.2"]
+                 [secretary "1.2.3"]
+                 [venantius/accountant "0.1.7"]
                  [cljsjs/fuse "2.5.0-0"]]
 
   :plugins [[lein-figwheel "0.5.8"]]

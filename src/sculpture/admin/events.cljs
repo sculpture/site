@@ -16,6 +16,7 @@
           :active-entity-id nil
           :edit? false
           :results nil
+          :page nil
           :data {}
           :fuse nil}
      :ajax {:method :get
@@ -49,16 +50,9 @@
              (search/search (db :fuse) query 20)))}))
 
 (reg-event-fx
-  :set-active-entity-id
-  (fn [{db :db} [_ entity-id]]
-    {:db (assoc db
-           :active-entity-id entity-id
-           :edit? false)}))
-
-(reg-event-fx
-  :edit
-  (fn [{db :db} _]
-    {:db (assoc db :edit? true)}))
+  :set-page
+  (fn [{db :db} [_ page]]
+    {:db (assoc db :page page)}))
 
 (reg-event-fx
   :update

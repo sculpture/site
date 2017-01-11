@@ -1,6 +1,7 @@
 (ns sculpture.admin.views.entity-editor
   (:require
     [re-frame.core :refer [subscribe dispatch]]
+    [sculpture.admin.routes :as routes]
     [humandb.editor.field :refer [field]]))
 
 (defn lookup-on-search
@@ -50,9 +51,7 @@
 
 (defn entity-editor-view [entity]
   [:div
-   [:button {:on-click (fn [_]
-                         (dispatch [:set-active-entity-id (entity :id)]))}
-    "Back"]
+   [:a {:href (routes/entity-path {:id (entity :id)})} "Back"]
    [:table
     [:tbody
      (for [[k v] (into (sorted-map-by key-order-comparator) entity)]

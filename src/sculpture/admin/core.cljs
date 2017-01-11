@@ -6,6 +6,7 @@
     [sculpture.admin.fx]
     [sculpture.admin.events]
     [sculpture.admin.subs]
+    [sculpture.admin.routes :refer [init-router!]]
     [sculpture.admin.views.app :refer [app-view]]))
 
 (enable-console-print!)
@@ -15,6 +16,7 @@
 
 (defn init []
   (dispatch-sync [:init])
+  (init-router!)
   (render))
 
 (defn reload []
