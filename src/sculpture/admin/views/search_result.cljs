@@ -2,21 +2,28 @@
   (:require
     [clojure.string :as string]
     [re-frame.core :refer [subscribe dispatch]]
+    [sculpture.admin.routes :as routes]
     [sculpture.admin.views.entity.partials.photos :refer [photo-view]]))
 
-(defmulti search-result-view :type)
+(defmulti search-result-data :type)
 
-(defmethod search-result-view "sculpture"
+(defmethod search-result-data "sculpture"
   [sculpture]
   (let [photos (subscribe [:photos-for-sculpture (sculpture :id)])
         artists (subscribe [:get-entities (sculpture :artist-ids)])]
-    [:div.sculpture
-     (when-let [photo (first @photos)]
-       [photo-view photo :thumb false])
-     [:div.title (sculpture :title)]
-     [:div.artist
-      (string/join ", " (map :name @artists))]]))
+    {:h1 (sculpture :title)
+     :h2 (string/join ", " (map :name @artists))
+     :image (first @photos)}))
 
-(defmethod search-result-view :default
+(defmethod search-result-data :default
   [entity]
-  [:div (entity :name)])
+  {:h1 (entity :name)
+   :h2 "..."
+   :image nil})
+
+(defn search-result-view [entity]
+  (let [data (search-result-data entity)]
+    [:a.result {:href (routes/entity-path {:id (entity :id)})}
+     [photo-view (data :image) :thumb false]
+     [:div.h1 (data :h1)]
+     [:div.h2 (data :h2)]]))

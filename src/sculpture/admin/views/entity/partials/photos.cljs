@@ -3,10 +3,12 @@
 (def photo-host "http://sculpture.s3-website-us-east-1.amazonaws.com/")
 
 (defn image-url [photo size]
-  (case size
-    :thumb (str photo-host "thumb/" (photo :url))
-    :large (str photo-host "large/" (photo :url))
-    :original (str photo-host "original/" (photo :url))))
+  (if photo
+    (case size
+      :thumb (str photo-host "thumb/" (photo :url))
+      :large (str photo-host "large/" (photo :url))
+      :original (str photo-host "original/" (photo :url)))
+    "http://placehold.it/50x50"))
 
 (defn photo-view [photo size attribution?]
   [:div.photo
