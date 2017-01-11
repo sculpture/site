@@ -8,7 +8,6 @@
 (defn photos-view [sculpture-id]
   (let [photos (subscribe [:photos-for-sculpture sculpture-id])]
     [:div.photos
-     (map :id @photos)
      (for [photo @photos]
        ^{:key (photo :id)}
        [photo-view photo :thumb false])]))
