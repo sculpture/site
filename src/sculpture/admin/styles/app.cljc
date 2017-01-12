@@ -47,7 +47,49 @@
      :top "1em"
      :right "1em"}]
 
-   [:&.view]
+   [:&.view
+
+    [:.sculptures
+     {:display "flex"
+      :flex-wrap "wrap"}
+
+     (let [size "100px"]
+
+       [:.sculpture
+        {:display "inline-block"
+         :border "1px solid #ededed"
+         :width size
+         :padding "0.5em"
+         :margin "0.5em"
+         :text-align "center"
+         :text-decoration "none"}
+
+        [:.photo
+         {:width size
+          :height size
+          :display "flex"
+          :align-items "center"
+          :justify-content "center"
+          :margin-bottom "0.5em"}
+
+         [:img
+          {:max-width size
+           :max-height size
+           :vertical-align "center"
+           :text-align "center"}]]
+
+        [:.title
+         {:font-weight "bold"
+          :color "#000"}]
+
+        [:.year
+         {:color "#AAA"}]
+
+        [:&:hover
+         {:border-color "#ccc"}]
+
+        [:&:active
+         {:border-color "#aaa"}]])]]
 
    [:&.edit]])
 

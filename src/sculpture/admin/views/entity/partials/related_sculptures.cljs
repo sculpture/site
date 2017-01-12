@@ -6,13 +6,14 @@
 
 (defn related-sculpture-view [sculpture]
   (let [photos (subscribe [:photos-for-sculpture (sculpture :id)])]
-    [:a {:href (routes/entity-path {:id (sculpture :id)})}
+    [:a.sculpture
+     {:href (routes/entity-path {:id (sculpture :id)})}
      [photo-view (first @photos) :thumb false]
-     (sculpture :title)
-     (sculpture :year)]))
+     [:div.title (sculpture :title)]
+     [:div.year (sculpture :year)]]))
 
 (defn related-sculptures-view [sculptures]
-  [:div
+  [:div.sculptures
    (for [sculpture sculptures]
      ^{:key (sculpture :id)}
      [related-sculpture-view sculpture])])
