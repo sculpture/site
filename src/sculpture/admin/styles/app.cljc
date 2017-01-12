@@ -4,19 +4,65 @@
     [garden.units :refer [px em rem]]
     [garden.arithmetic :as m]))
 
+(defn floating-box []
+  {:background "#fff"
+   :box-shadow "0 0 2px 0 #ccc"})
+
+(defn button []
+  [:&
+   {:display "inline-block"
+    :border "1px solid #ccc"
+    :border-radius "3px"
+    :padding [[0 "0.25em"]]
+    :text-transform "uppercase"
+    :font-size "0.7em"
+    :line-height "1.7em"
+    :height "1.5em"
+    :text-decoration "none"
+    :color "#aaa"}
+
+   [:&:hover
+    {:color "#888"
+     :border-color "#aaa"}]
+
+   [:&:active
+    {:color "#666"
+     :border-color "#888"}]])
+
+(def entity-styles
+  [:>.entity
+   {:padding "2em"
+    :flex-grow 2
+    :max-height "100vh"
+    :overflow-y "scroll"
+    :box-sizing "border-box"
+    :margin [[0 "1.5em" 0 0]]
+    :position "relative"}
+   (floating-box)
+
+   [:a.edit
+    :a.view
+    (button)
+    {:position "absolute"
+     :top "1em"
+     :right "1em"}]
+
+   [:&.view]
+
+   [:&.edit]])
+
 (def search-styles
   (let [border-width (px 0)
         pad (rem 0.75)]
 
-    [:.search
+    [:>.search
      {:width "30%"
       :max-height "100vh"
       :min-width "15em"
-      :background-color "#fff"
-      :box-shadow "0 0 2px 0 #ccc"
-      :margin [[0 "1em"]]
+      :margin [[0 "1.5em"]]
       :display "flex"
       :flex-direction "column"}
+     (floating-box)
 
      [:.query
       {:padding pad
@@ -94,9 +140,7 @@
    {:display "flex"}
 
    search-styles
-
-   [:.entity
-    {:width "70%"}]])
+   entity-styles ])
 
 (def reset-styles
   [:body

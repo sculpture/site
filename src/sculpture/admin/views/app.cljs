@@ -16,8 +16,8 @@
         [:div.entity.edit
          ^{:key (@entity :id)}
          [entity-editor-view @entity]]
-        [:div.entity
-         [:a {:href (routes/entity-edit-path {:id (@entity :id)})}
+        [:div.entity.view
+         [:a.edit.button {:href (routes/entity-edit-path {:id (@entity :id)})}
           "Edit"]
          [entity-view @entity]]))))
 

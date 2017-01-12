@@ -51,7 +51,7 @@
 
 (defn entity-editor-view [entity]
   [:div
-   [:a {:href (routes/entity-path {:id (entity :id)})} "Back"]
+   [:a.button.view {:href (routes/entity-path {:id (entity :id)})} "Back"]
    [:table
     [:tbody
      (for [[k v] (into (sorted-map-by key-order-comparator) entity)]
