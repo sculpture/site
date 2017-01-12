@@ -1,6 +1,7 @@
 (ns sculpture.admin.state.events
   (:require
-    [re-frame.core :refer [reg-event-fx dispatch]]
+    [re-frame.core :refer [dispatch] :as reframe]
+    [sculpture.admin.state.spec :refer [check-state!]]
     [sculpture.admin.state.search :as search]))
 
 (defn key-by-id [arr]
@@ -9,15 +10,34 @@
           {}
           arr))
 
+(def validate-schema-interceptor
+  (reframe/after
+    (fn [db [event-id]]
+      (when-let [error-msg (check-state! db)]
+        (js/console.error
+          (str
+            "Event " event-id
+            " caused the state to be invalid:\n\n")
+          error-msg)))))
+
+(defn reg-event-fx
+  ([id handler-fn]
+   (reg-event-fx id nil handler-fn))
+  ([id interceptors handler-fn]
+    (reframe/reg-event-fx
+        id
+        [validate-schema-interceptor
+         interceptors]
+        handler-fn)))
+
 (reg-event-fx
   :init
   (fn [{db :db} _]
     {:db {:query ""
           :active-entity-id nil
-          :edit? false
           :results nil
           :page nil
-          :data {}
+          :data nil
           :fuse nil}
      :ajax {:method :get
             :uri "http://localhost:2468/all"

@@ -8,8 +8,11 @@
                       string?
                       #(re-matches email-regex %)))
 
+(def uuid-regex #"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+
 (s/def ::uuid-type (s/and
-                     string?))
+                     string?
+                     #(re-matches uuid-regex %)))
 
 (s/def ::related-ids-type (s/coll-of ::uuid-type
                                      :distinct true
@@ -39,7 +42,7 @@
                    ::latitude
                    ::precision]))
 
-(s/def ::timestamp-type instance?)
+(s/def ::timestamp-type inst?)
 
 (s/def ::slug-type
   (s/and

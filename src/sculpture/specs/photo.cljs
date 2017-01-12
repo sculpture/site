@@ -15,9 +15,10 @@
 (s/def ::photo
   (s/merge :sculpture.specs.entity/common
            (s/keys :req-un [::captured-at
-                            ::sculpture-id
                             ::url
-                            ::user-id])))
+                            ::user-id]
+                   ; TODO shouldn't be optional
+                   :opt-un [::sculpture-id])))
 
 (defmethod entity-type "photo"
   [_]

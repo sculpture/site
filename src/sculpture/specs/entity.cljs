@@ -9,6 +9,7 @@
                 "artist"
                 "region"
                 "tag"
+                "photo"
                 "user"})
 
 (s/def ::common

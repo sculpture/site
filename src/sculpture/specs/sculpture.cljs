@@ -5,14 +5,13 @@
     [sculpture.specs.types]))
 
 (s/def ::title string?)
-(s/def ::note (s/or :string string?
-                    :nil nil?))
+(s/def ::note (s/nilable string?))
 (s/def ::artist-ids :sculpture.specs.types/related-ids-type)
 (s/def ::tag-ids :sculpture.specs.types/related-ids-type)
 (s/def ::material-ids :sculpture.specs.types/related-ids-type)
-(s/def ::year :sculpture.specs.types/year-type)
-(s/def ::commissioned-by string?)
-(s/def ::location :sculpture.specs.types/location-type)
+(s/def ::year (s/nilable :sculpture.specs.types/year-type))
+(s/def ::commissioned-by (s/nilable string?))
+(s/def ::location (s/nilable :sculpture.specs.types/location-type))
 (s/def ::slug :sculpture.specs.types/slug-type)
 
 (s/def ::sculpture
