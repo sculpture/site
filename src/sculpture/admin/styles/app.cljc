@@ -10,10 +10,13 @@
 
     [:.search
      {:width "30%"
+      :max-height "100vh"
       :min-width "15em"
       :background-color "#fff"
       :box-shadow "0 0 2px 0 #ccc"
-      :margin [[0 "1em"]]}
+      :margin [[0 "1em"]]
+      :display "flex"
+      :flex-direction "column"}
 
      [:.query
       {:padding pad
@@ -29,58 +32,62 @@
         :width "100%"
         :box-sizing "border-box"}]]
 
-     [:.group
+     [:.results
+      {:overflow-x "hidden"
+       :overflow-y "scroll"}
 
-      [:h2
-       {:font-size "1em"
-        :margin-left pad
-        :padding [[pad 0]]}]
+      [:.group
 
-      (let [height (rem 2.6)]
-        [:a.result
-         {:display "block"
-          :clear "both"
-          :text-decoration "none"
-          :padding [[(m// pad 2) pad]]
-          :height height
-          :position "relative"}
+       [:h2
+        {:font-size "1em"
+         :margin-left pad
+         :padding [[pad 0]]}]
 
-         [:&:hover
-          {:background "#f3f3f3"}
-          ["&::after"
-           {:content "\"»\""
-            :position "absolute"
-            :right pad
-            :top (m// pad 2)
-            :color "#ccc"
-            :font-size (m// height 2)
-            :height height
-            :line-height height}]]
-
-         [:&:active
-          {:background "#eee"}
-          ["&::after"
-           {:color "#aaa"}]]
-
-         [:img
-          {:width height
+       (let [height (rem 2.6)]
+         [:a.result
+          {:display "block"
+           :clear "both"
+           :text-decoration "none"
+           :padding [[(m// pad 2) pad]]
            :height height
-           :margin-right (rem 0.5)
-           :background "#CCC"
-           :float "left"}]
+           :position "relative"}
 
-         [:.h1 :.h2
-          {:font-size "0.9em"
-           :height (m// height 2)
-           :line-height (m// height 2)}]
+          [:&:hover
+           {:background "#f3f3f3"}
+           ["&::after"
+            {:content "\"»\""
+             :position "absolute"
+             :right pad
+             :top (m// pad 2)
+             :color "#ccc"
+             :font-size (m// height 2)
+             :height height
+             :line-height height}]]
 
-         [:.h1
-          {:font-weight "bold"
-           :color "#000"
-           :white-space "nowrap"}]
+          [:&:active
+           {:background "#eee"}
+           ["&::after"
+            {:color "#aaa"}]]
 
-         [:.h2
-          {:color "#AAA"}]])]]))
+          [:img
+           {:width height
+            :height height
+            :margin-right (rem 0.5)
+            :background "#CCC"
+            :float "left"}]
+
+          [:.h1 :.h2
+           {:font-size "0.9em"
+            :height (m// height 2)
+            :line-height (m// height 2)}]
+
+          [:.h1
+           {:font-weight "bold"
+            :color "#000"
+            :white-space "nowrap"}]
+
+          [:.h2
+           {:color "#AAA"}]])]]]))
 
 (def app-styles
   [:.app
