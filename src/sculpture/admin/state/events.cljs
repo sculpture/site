@@ -1,7 +1,7 @@
-(ns sculpture.admin.events
+(ns sculpture.admin.state.events
   (:require
     [re-frame.core :refer [reg-event-fx dispatch]]
-    [sculpture.admin.search :as search]))
+    [sculpture.admin.state.search :as search]))
 
 (defn key-by-id [arr]
   (reduce (fn [memo a]

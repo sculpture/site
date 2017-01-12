@@ -1,7 +1,7 @@
 (ns sculpture.admin.views.search-result
   (:require
     [clojure.string :as string]
-    [re-frame.core :refer [subscribe dispatch]]
+    [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.views.entity.partials.photos :refer [photo-view]]))
 

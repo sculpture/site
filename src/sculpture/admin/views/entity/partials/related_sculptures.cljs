@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.entity.partials.related-sculptures
   (:require
-    [re-frame.core :refer [subscribe dispatch]]
+    [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.views.entity.partials.photos :refer [photo-view]]))
 

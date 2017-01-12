@@ -1,29 +1,8 @@
-(ns sculpture.admin.fx
+(ns sculpture.admin.state.fx.dispatch-debounce
   (:require
-    [ajax.core :as ajax]
     [re-frame.router :as router]
     [re-frame.core :refer [reg-fx]]
     [re-frame.loggers :refer [console]]))
-
-(reg-fx
-  :ajax
-  (fn [{:keys [uri method params body on-success on-error headers]
-        :or {on-success identity
-             on-error (fn [r]
-                        (.error js/console "Ajax request error" (pr-str r)))}}]
-    (ajax/ajax-request
-      {:uri uri
-       :method method
-       :body body
-       :params params
-       :headers headers
-       :format (ajax/transit-request-format)
-       :response-format (ajax/transit-response-format)
-       :handler
-       (fn [[ok response]]
-         (if ok
-           (on-success response)
-           (on-error response)))})))
 
 (def debounced-events (atom {}))
 

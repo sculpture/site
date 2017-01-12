@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.entity.sculpture
   (:require
-    [re-frame.core :refer [subscribe dispatch]]
+    [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.views.entity :refer [entity-view]]
     [sculpture.admin.views.entity.partials.photos :refer [photo-view]]
     [sculpture.admin.views.entity.partials.map :refer [map-view]]

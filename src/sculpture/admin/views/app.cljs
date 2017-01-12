@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.app
   (:require
-    [re-frame.core :refer [subscribe dispatch]]
+    [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.views.styles :refer [styles-view]]
     [sculpture.admin.views.search :refer [search-view]]

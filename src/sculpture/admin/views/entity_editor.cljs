@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.entity-editor
   (:require
-    [re-frame.core :refer [subscribe dispatch]]
+    [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.routes :as routes]
     [humandb.editor.field :refer [field]]))
 
@@ -63,4 +63,4 @@
                   (field-opts k)
                   {:value v
                    :on-change (fn [v]
-                                (dispatch [:update (entity :id) k v]))})]]])]]])
+                                (dispatch! [:update (entity :id) k v]))})]]])]]])

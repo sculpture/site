@@ -1,7 +1,7 @@
-(ns sculpture.admin.subs
+(ns sculpture.admin.state.subs
   (:require
     [re-frame.core :refer [reg-sub]]
-    [sculpture.admin.search :as search]))
+    [sculpture.admin.state.search :as search]))
 
 (reg-sub
   :query

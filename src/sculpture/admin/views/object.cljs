@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.object
   (:require
-    [re-frame.core :refer [subscribe dispatch]]
+    [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]))
 
 (defmulti object-view

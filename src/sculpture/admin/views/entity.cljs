@@ -1,7 +1,6 @@
 (ns sculpture.admin.views.entity
   (:require
-    [sculpture.admin.views.object :refer [object-view]]
-    [re-frame.core :refer [subscribe dispatch]]))
+    [sculpture.admin.views.object :refer [object-view]]))
 
 (defmulti entity-view :type)
 

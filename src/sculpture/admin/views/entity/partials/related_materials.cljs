@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.entity.partials.related-materials
   (:require
-    [re-frame.core :refer [subscribe dispatch]]
+    [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]))
 
 (defn related-material-view [material-id]

@@ -1,4 +1,4 @@
-(ns sculpture.admin.search
+(ns sculpture.admin.state.search
   (:require
     [cljsjs.fuse]))
 
