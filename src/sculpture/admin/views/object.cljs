@@ -50,8 +50,8 @@
 
 (defmethod object-view :id
   [entity-id]
-  (let [entity (subscribe [:get-entity entity-id])]
+  (let [entity @(subscribe [:get-entity entity-id])]
     [:a {:href (routes/entity-path {:id (entity :id)})}
-     (or (@entity :name)
-         (@entity :title)
-         (@entity :id))]))
+     (or (entity :name)
+         (entity :title)
+         (entity :id))]))
