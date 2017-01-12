@@ -6,6 +6,7 @@
     [sculpture.admin.views.entity.partials.map :refer [map-view]]
     [sculpture.admin.views.entity.partials.related-tags :refer [related-tags-view]]
     [sculpture.admin.views.entity.partials.related-materials :refer [related-materials-view]]
+    [sculpture.admin.views.entity.partials.related-artists :refer [related-artists-view]]
     [sculpture.admin.views.object :refer [object-view]]))
 
 (defn photos-view [sculpture-id]
@@ -19,6 +20,7 @@
   [sculpture]
   [:div.sculpture
    [:h1 (sculpture :title)]
+   [related-artists-view (sculpture :artist-ids)]
    [photos-view (sculpture :id)]
    [:div.year (sculpture :year)]
    [related-tags-view (sculpture :tag-ids)]
