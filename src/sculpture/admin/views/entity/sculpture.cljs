@@ -6,8 +6,7 @@
     [sculpture.admin.views.entity.partials.map :refer [map-view]]
     [sculpture.admin.views.entity.partials.related-tags :refer [related-tags-view]]
     [sculpture.admin.views.entity.partials.related-materials :refer [related-materials-view]]
-    [sculpture.admin.views.entity.partials.related-artists :refer [related-artists-view]]
-    [sculpture.admin.views.object :refer [object-view]]))
+    [sculpture.admin.views.entity.partials.related-artists :refer [related-artists-view]]))
 
 (defn photos-view [sculpture-id]
   (let [photos (subscribe [:photos-for-sculpture sculpture-id])]
@@ -32,4 +31,6 @@
       "Commissioned by "
       (sculpture :commissioned-by)])
 
-   [map-view (sculpture :location)]])
+   (when (sculpture :location)
+     [map-view {:center (sculpture :location)
+                :marker {:location (sculpture :location)}}])])

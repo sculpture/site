@@ -6,6 +6,7 @@
     [sculpture.admin.views.search :refer [search-view]]
     [sculpture.admin.views.entity :refer [entity-view]]
     [sculpture.admin.views.entity.sculpture]
+    [sculpture.admin.views.entity.region]
     [sculpture.admin.views.entity.artist]
     [sculpture.admin.views.entity-editor :refer [entity-editor-view]]))
 
