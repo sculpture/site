@@ -3,7 +3,7 @@
     [humandb.editor.fields.core :as fields]
     [humandb.editor.fields.misc]
     [humandb.editor.fields.location]
-    [humandb.editor.fields.polygon]))
+    [humandb.editor.fields.geojson]))
 
 (def field fields/field)
 

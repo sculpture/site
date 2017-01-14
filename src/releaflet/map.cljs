@@ -49,8 +49,8 @@
         create-map! (fn [node config]
                       (reset! leaflet-map (js/L.map node
                                                     (clj->js {:center (lnglat->jsloc (or (config :center)
-                                                                                          {:longitude 0
-                                                                                            :latitude 0}))
+                                                                                         {:longitude 0
+                                                                                          :latitude 0}))
                                                               :zoom (get config :initial-zoom-level 13)
                                                               :zoomControl (config :zoom-controls)
                                                               :attributionControl false })))
@@ -89,8 +89,10 @@
                                                               0.1))))))
 
                       (when geojson
-                        (.. (js/L.geoJSON geojson)
-                            (addTo @leaflet-marker-layer))))]
+                        (let [geojson-layer (js/L.geoJSON geojson)]
+                          (.. geojson-layer
+                              (addTo @leaflet-marker-layer))
+                          (.fitBounds @leaflet-map (.getBounds geojson-layer)))))]
     (r/create-class
       {:display-name "leaflet-map"
        :component-did-mount
