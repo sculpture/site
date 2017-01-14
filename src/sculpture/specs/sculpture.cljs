@@ -23,8 +23,8 @@
                             ::note
                             ::tag-ids
                             ::title
-                            ::year]
-                   :opt-un [::slug])))
+                            ::slug
+                            ::year])))
 
 (defmethod entity-type "sculpture"
   [_]
