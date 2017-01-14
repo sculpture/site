@@ -3,22 +3,21 @@
     [clojure.spec :as s]
     [sculpture.specs.entity :refer [entity-type]]))
 
-(s/def ::bounds (s/keys :req-un [::east
-                                 ::north
-                                 ::south
-                                 ::west]))
+(s/def ::lat double?) ; TODO bound
+(s/def ::lng double?) ; TODO bound
 
-(s/def ::geojson (s/nilable (s/and
-                              string?
-                              ; TODO
-                              )))
+(s/def ::coordinates (s/tuple ::lng ::lat))
+(s/def ::shape (s/coll-of ::coordinates :kind vector?))
+
+(s/def ::polygon (s/nilable
+                   (s/coll-of ::shape :kind vector?)))
+
 (s/def ::name string?)
 
 (s/def ::region
   (s/merge :sculpture.specs.entity/common
-           (s/keys :req-un [::bounds
-                            ::geojson
-                            ::name])))
+           (s/keys :req-un [::name
+                            ::polygon])))
 
 (defmethod entity-type "region"
   [_]

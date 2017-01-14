@@ -33,4 +33,4 @@
 
    (when (sculpture :location)
      [map-view {:center (sculpture :location)
-                :marker {:location (sculpture :location)}}])])
+                :markers [{:location (sculpture :location)}]}])])
