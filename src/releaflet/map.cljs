@@ -33,7 +33,6 @@
   [_]
   (let [leaflet-map (atom nil)
         leaflet-marker-layer (atom nil)
-        leaflet-fixed-layer (atom nil)
         leaflet-geojson-layer (atom nil)
         leaflet-draw-layer (atom nil)
         on-move-end (atom nil)
@@ -44,12 +43,6 @@
                                  (.removeLayer @leaflet-map @leaflet-marker-layer))
                                (reset! leaflet-marker-layer (js/L.layerGroup))
                                (.. @leaflet-marker-layer (addTo @leaflet-map)))
-        create-fixed-layer! (fn []
-                              (when @leaflet-fixed-layer
-                                (.removeLayer @leaflet-map @leaflet-fixed-layer))
-                              (reset! leaflet-fixed-layer (js/L.layerGroup))
-                              (.. @leaflet-fixed-layer (addTo @leaflet-map)))
-
         create-map! (fn [node config]
                       (reset! leaflet-map (js/L.map node
                                                     (clj->js {:center (lnglat->jsloc (or (config :center)
@@ -75,7 +68,6 @@
                                                             (@on-edit (.toGeoJSON @leaflet-geojson-layer))))))
         update-map! (fn [{:keys [center bounds markers geojson zoom-level draw?] :as config}]
                       (create-marker-layer!)
-                      (create-fixed-layer!)
 
                       (reset! on-move-end (config :on-move-end))
                       (reset! on-zoom-end (config :on-zoom-end))
@@ -90,9 +82,7 @@
 
                       (doseq [marker markers]
                         (let [m (make-marker marker)]
-                          (.. m (addTo (if (marker :fixed?)
-                                         @leaflet-fixed-layer
-                                         @leaflet-marker-layer)))
+                          (.. m (addTo @leaflet-marker-layer))
                           (when (marker :bound?)
                             (.. @leaflet-map (fitBounds (.pad (.getBounds m)
                                                               0.1))))))
