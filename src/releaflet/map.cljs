@@ -34,8 +34,11 @@
   (let [leaflet-map (atom nil)
         leaflet-marker-layer (atom nil)
         leaflet-fixed-layer (atom nil)
+        leaflet-geojson-layer (atom nil)
+        leaflet-draw-layer (atom nil)
         on-move-end (atom nil)
         on-zoom-end (atom nil)
+        on-edit (atom nil)
         create-marker-layer! (fn []
                                (when @leaflet-marker-layer
                                  (.removeLayer @leaflet-map @leaflet-marker-layer))
@@ -46,6 +49,7 @@
                                 (.removeLayer @leaflet-map @leaflet-fixed-layer))
                               (reset! leaflet-fixed-layer (js/L.layerGroup))
                               (.. @leaflet-fixed-layer (addTo @leaflet-map)))
+
         create-map! (fn [node config]
                       (reset! leaflet-map (js/L.map node
                                                     (clj->js {:center (lnglat->jsloc (or (config :center)
@@ -53,7 +57,7 @@
                                                                                           :latitude 0}))
                                                               :zoom (get config :initial-zoom-level 13)
                                                               :zoomControl (config :zoom-controls)
-                                                              :attributionControl false })))
+                                                              :attributionControl false})))
                       (.. (js/L.tileLayer
                             mapbox-tilelayer
                             (clj->js {:maxZoom 18}))
@@ -64,13 +68,18 @@
                                                       (@on-move-end e @leaflet-map))))
                       (.on @leaflet-map "zoomend" (fn [e]
                                                     (when @on-zoom-end
-                                                      (@on-zoom-end e @leaflet-map)))))
-        update-map! (fn [{:keys [center bounds markers geojson zoom-level] :as config}]
+                                                      (@on-zoom-end e @leaflet-map))))
+
+                      (.on @leaflet-map "draw:editvertex" (fn [e]
+                                                          (when @on-edit
+                                                            (@on-edit (.toGeoJSON @leaflet-geojson-layer))))))
+        update-map! (fn [{:keys [center bounds markers geojson zoom-level draw?] :as config}]
                       (create-marker-layer!)
                       (create-fixed-layer!)
 
                       (reset! on-move-end (config :on-move-end))
                       (reset! on-zoom-end (config :on-zoom-end))
+                      (reset! on-edit (config :on-edit))
 
                       (when center
                         (.. @leaflet-map (panTo (lnglat->jsloc center))))
@@ -82,17 +91,26 @@
                       (doseq [marker markers]
                         (let [m (make-marker marker)]
                           (.. m (addTo (if (marker :fixed?)
-                                     @leaflet-fixed-layer
-                                     @leaflet-marker-layer)))
+                                         @leaflet-fixed-layer
+                                         @leaflet-marker-layer)))
                           (when (marker :bound?)
                             (.. @leaflet-map (fitBounds (.pad (.getBounds m)
                                                               0.1))))))
 
+                      (when @leaflet-geojson-layer
+                        (.removeLayer @leaflet-map @leaflet-geojson-layer))
                       (when geojson
-                        (let [geojson-layer (js/L.geoJSON geojson)]
-                          (.. geojson-layer
-                              (addTo @leaflet-marker-layer))
-                          (.fitBounds @leaflet-map (.getBounds geojson-layer)))))]
+                        (reset! leaflet-geojson-layer (js/L.geoJSON geojson))
+                        (.. @leaflet-geojson-layer (addTo @leaflet-map))
+                        (.fitBounds @leaflet-map (.getBounds @leaflet-geojson-layer)))
+
+
+                      (when draw?
+                        (.enable (js/L.EditToolbar.Edit.
+                                  @leaflet-map
+                                  (clj->js {:featureGroup @leaflet-geojson-layer
+                                            :remove false})))))]
+
     (r/create-class
       {:display-name "leaflet-map"
        :component-did-mount
@@ -103,6 +121,6 @@
        (fn [this]
          (update-map! (r/props this)))
        :reagent-render
-       (fn []
-         [:div.map {:style {:height "200px"
-                            :width "200px"}}])})))
+       (fn [config]
+         [:div.map {:style {:height (or (config :height) "200px")
+                            :width (or (config :width) "200px")}}])})))
