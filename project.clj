@@ -12,6 +12,7 @@
   :plugins [[lein-figwheel "0.5.8"]]
 
   :figwheel {:server-port 3939
+             :ring-handler "sculpture.handler/force-index"
              :reload-clj-files {:clj false
                                 :cljc true}}
 
