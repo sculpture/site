@@ -23,14 +23,7 @@
   (let [pad 1.5
         location (or value {:longitude 0
                             :latitude 0
-                            :precision 50})
-        on-map-change (fn [_ m]
-                        (let [center (.getCenter m)
-                              bounds (.getBounds m)]
-                          (on-change
-                            {:longitude (.-lng center)
-                             :latitude (.-lat center)
-                             :precision (location :precision)})))]
+                            :precision 50})]
     [:div
      [map-view {:center location
                 :zoom-controls true
@@ -38,9 +31,19 @@
                 :markers [{:type :circle
                            :location {:latitude (location :latitude)
                                       :longitude (location :longitude)}
-                           :radius (location :precision)}]
-                :on-move-end on-map-change
-                :on-zoom-end on-map-change}]
+                           :radius (location :precision)
+                           :editable? true
+                           :bound? true
+                           :on-drag-end (fn [o]
+                                          (let [latlng (.getLatLng o)]
+                                            (on-change
+                                              {:longitude (.-lng latlng)
+                                               :latitude (.-lat latlng)
+                                               :precision (.getRadius o)})))}]
+                :on-edit (fn [o]
+                           (on-change
+                             (merge location
+                                    {:precision (.getRadius o)})))}]
      [:div
       "Longitude:"
       [:input {:value (location :longitude)

@@ -29,19 +29,26 @@
     ; default
     (js/L.marker (lnglat->jsloc (m :location)))))
 
+(defn debounce
+  "Returns a debounced version of f"
+  [f wait]
+  (let [timeout (r/atom nil)]
+    (fn [& args]
+      (js/clearTimeout @timeout)
+      (reset! timeout (js/setTimeout (fn []
+                                       (apply f args)) wait)))))
+
 (defn map-view
   [_]
   (let [leaflet-map (atom nil)
         leaflet-marker-layer (atom nil)
         leaflet-geojson-layer (atom nil)
         leaflet-draw-layer (atom nil)
-        on-move-end (atom nil)
-        on-zoom-end (atom nil)
         on-edit (atom nil)
         create-marker-layer! (fn []
                                (when @leaflet-marker-layer
                                  (.removeLayer @leaflet-map @leaflet-marker-layer))
-                               (reset! leaflet-marker-layer (js/L.layerGroup))
+                               (reset! leaflet-marker-layer (js/L.featureGroup))
                                (.. @leaflet-marker-layer (addTo @leaflet-map)))
         create-map! (fn [node config]
                       (reset! leaflet-map (js/L.map node
@@ -56,21 +63,19 @@
                             (clj->js {:maxZoom 18}))
                           (addTo @leaflet-map))
 
-                      (.on @leaflet-map "moveend" (fn [e]
-                                                    (when @on-move-end
-                                                      (@on-move-end e @leaflet-map))))
-                      (.on @leaflet-map "zoomend" (fn [e]
-                                                    (when @on-zoom-end
-                                                      (@on-zoom-end e @leaflet-map))))
+                      (.on @leaflet-map "draw:editresize"
+                           (debounce (fn [e]
+                                       (when @on-edit
+                                         (@on-edit (.-layer e))))
+                                     250))
 
-                      (.on @leaflet-map "draw:editvertex" (fn [e]
-                                                          (when @on-edit
-                                                            (@on-edit (.toGeoJSON @leaflet-geojson-layer))))))
+                      (.on @leaflet-map "draw:editvertex"
+                           (fn [e]
+                             (when @on-edit
+                               (@on-edit (.toGeoJSON @leaflet-geojson-layer))))))
         update-map! (fn [{:keys [center bounds markers geojson zoom-level draw?] :as config}]
                       (create-marker-layer!)
 
-                      (reset! on-move-end (config :on-move-end))
-                      (reset! on-zoom-end (config :on-zoom-end))
                       (reset! on-edit (config :on-edit))
 
                       (when center
@@ -83,6 +88,17 @@
                       (doseq [marker markers]
                         (let [m (make-marker marker)]
                           (.. m (addTo @leaflet-marker-layer))
+                          (when (marker :editable?)
+                            (.enable (js/L.EditToolbar.Edit.
+                                       @leaflet-map
+                                       (clj->js {:featureGroup @leaflet-marker-layer
+                                                 :remove false})))
+
+                            (when (marker :on-drag-end)
+                              (.on m "dragend"
+                                   (fn [e]
+                                     ((marker :on-drag-end) (.-target e))))))
+
                           (when (marker :bound?)
                             (.. @leaflet-map (fitBounds (.pad (.getBounds m)
                                                               0.1))))))
