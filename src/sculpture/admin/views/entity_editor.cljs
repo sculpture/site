@@ -19,7 +19,7 @@
     :id {:type :string
          :disabled true}
     :type {:type :enum
-           :options #{"artist" "sculpture"}}
+           :options #{"artist" "sculpture" "region" "material" "tag" "photo"}}
     :name {:type :string}
     :title {:type :string}
     :email {:type :email}
@@ -28,7 +28,7 @@
     :link-website {:type :url}
     :link-wikipedia {:type :url}
     :gender {:type :enum
-             :options #{"" "male" "female" "other"}}
+             :options #{nil "male" "female" "other"}}
     :note {:type :string
            :length :long}
     :year {:type :integer}

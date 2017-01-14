@@ -43,10 +43,10 @@
   [{:keys [value options on-change]}]
   [:select {:value value
             :on-change (fn [e]
-(on-change (.. e -target -value)))}
+                         (on-change (.. e -target -value)))}
    (for [option options]
-     ^{:key option}
-     [:option option])])
+     ^{:key (str option)}
+     [:option {:value option} (str option)])])
 
 (defn related-object-view [object]
   [:div
