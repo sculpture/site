@@ -28,22 +28,18 @@
      [map-view {:center location
                 :zoom-controls true
                 :initial-zoom-level 17
-                :markers [{:type :circle
-                           :location {:latitude (location :latitude)
-                                      :longitude (location :longitude)}
-                           :radius (location :precision)
-                           :editable? true
-                           :bound? true
-                           :on-drag-end (fn [o]
-                                          (let [latlng (.getLatLng o)]
-                                            (on-change
-                                              {:longitude (.-lng latlng)
-                                               :latitude (.-lat latlng)
-                                               :precision (.getRadius o)})))}]
-                :on-edit (fn [o]
-                           (on-change
-                             (merge location
-                                    {:precision (.getRadius o)})))}]
+                :shapes [{:type :circle
+                          :location {:latitude (location :latitude)
+                                     :longitude (location :longitude)}
+                          :radius (location :precision)
+                          :editable? true
+                          :bound? true
+                          :on-edit (fn [o]
+                                     (let [latlng (.getLatLng o)]
+                                       (on-change
+                                         {:longitude (.-lng latlng)
+                                          :latitude (.-lat latlng)
+                                          :precision (.getRadius o)})))}]}]
      [:div
       "Longitude:"
       [:input {:value (location :longitude)

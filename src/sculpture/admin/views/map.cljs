@@ -12,7 +12,7 @@
       {:width "100%"
        :height "100%"
        :initial-zoom-level 1
-       :markers (->> sculptures
+       :shapes (->> sculptures
                     (map (fn [sculpture]
                            (when (sculpture :location)
                              {:location (sculpture :location)

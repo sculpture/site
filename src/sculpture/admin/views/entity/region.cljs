@@ -10,5 +10,7 @@
    [:h1 (region :name)]
 
    (when (region :geojson)
-     [map-view {:geojson (js/JSON.parse (region :geojson))}])
+     [map-view {:shapes [{:type :geojson
+                          :bound? true
+                          :geojson (js/JSON.parse (region :geojson))}]}])
    [object-view region]])

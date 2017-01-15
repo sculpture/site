@@ -24,36 +24,30 @@
   (js/L.marker (lnglat->jsloc (m :location))
                #js {:icon (js/L.icon (clj->js (measle :red)))}))
 
-(defn make-marker [m]
+(defn create-geojson-object [m]
+  (let [geojson-layer-group (js/L.geoJSON (m :geojson))
+        shape (aget (.getLayers geojson-layer-group) 0)]
+    shape))
+
+(defn make-shape [m]
   (case (m :type)
     :circle (js/L.circle (lnglat->jsloc (m :location))
                          (clj->js
                            {:radius (m :radius)}))
     :icon (create-icon-marker m)
+    :geojson (create-geojson-object m)
     ; default
     (js/L.marker (lnglat->jsloc (m :location)))))
-
-(defn debounce
-  "Returns a debounced version of f"
-  [f wait]
-  (let [timeout (r/atom nil)]
-    (fn [& args]
-      (js/clearTimeout @timeout)
-      (reset! timeout (js/setTimeout (fn []
-                                       (apply f args)) wait)))))
 
 (defn map-view
   [_]
   (let [leaflet-map (atom nil)
-        leaflet-marker-layer (atom nil)
-        leaflet-geojson-layer (atom nil)
-        leaflet-draw-layer (atom nil)
-        on-edit (atom nil)
-        create-marker-layer! (fn []
-                               (when @leaflet-marker-layer
-                                 (.removeLayer @leaflet-map @leaflet-marker-layer))
-                               (reset! leaflet-marker-layer (js/L.featureGroup))
-                               (.. @leaflet-marker-layer (addTo @leaflet-map)))
+        leaflet-shape-layer (atom nil)
+        create-shape-layer! (fn []
+                               (when @leaflet-shape-layer
+                                 (.removeLayer @leaflet-map @leaflet-shape-layer))
+                               (reset! leaflet-shape-layer (js/L.featureGroup))
+                               (.. @leaflet-shape-layer (addTo @leaflet-map)))
         create-map! (fn [node config]
                       (reset! leaflet-map (js/L.map node
                                                     (clj->js {:center (lnglat->jsloc (or (config :center)
@@ -65,22 +59,10 @@
                       (.. (js/L.tileLayer
                             mapbox-tilelayer
                             (clj->js {:maxZoom 18}))
-                          (addTo @leaflet-map))
+                          (addTo @leaflet-map)))
 
-                      (.on @leaflet-map "draw:editresize"
-                           (debounce (fn [e]
-                                       (when @on-edit
-                                         (@on-edit (.-layer e))))
-                                     250))
-
-                      (.on @leaflet-map "draw:editvertex"
-                           (fn [e]
-                             (when @on-edit
-                               (@on-edit (.toGeoJSON @leaflet-geojson-layer))))))
-        update-map! (fn [{:keys [center bounds markers geojson zoom-level draw?] :as config}]
-                      (create-marker-layer!)
-
-                      (reset! on-edit (config :on-edit))
+        update-map! (fn [{:keys [center bounds shapes geojson zoom-level draw?] :as config}]
+                      (create-shape-layer!)
 
                       (when center
                         (.. @leaflet-map (panTo (lnglat->jsloc center))))
@@ -89,47 +71,37 @@
                         (.. @leaflet-map (fitBounds (clj->js [[(bounds :south) (bounds :west)]
                                                               [(bounds :north) (bounds :east)]]))))
 
-                      (doseq [marker markers]
-                        (let [m (make-marker marker)]
-                          (.. m (addTo @leaflet-marker-layer))
+                      (doseq [shape shapes]
+                        (let [m (make-shape shape)]
+                          (.. m (addTo @leaflet-shape-layer))
 
-                          (when (marker :popup)
-                            (.bindPopup m (marker :popup) #js {:closeButton false})
+                          (when (shape :popup)
+                            (.bindPopup m (shape :popup) #js {:closeButton false})
                             (.on m "mouseover" (fn [_] (.openPopup m)))
                             (.on m "mouseout" (fn [_] (.closePopup m))))
 
-                          (when (marker :on-click)
+                          (when (shape :on-click)
                             (.on m "click"
                                  (fn [e]
-                                   ((marker :on-click) (.-target e)))))
-                          (when (marker :editable?)
-                            (.enable (js/L.EditToolbar.Edit.
-                                       @leaflet-map
-                                       (clj->js {:featureGroup @leaflet-marker-layer
-                                                 :remove false})))
+                                   ((shape :on-click) (.-target e)))))
 
-                            (when (marker :on-drag-end)
-                              (.on m "dragend"
-                                   (fn [e]
-                                     ((marker :on-drag-end) (.-target e))))))
+                          (when (shape :editable?)
+                            (.. m -editing enable))
 
-                          (when (marker :bound?)
-                            (.. @leaflet-map (fitBounds (.pad (.getBounds m)
-                                                              0.1))))))
+                          (when (shape :on-edit)
+                            (.. m (on "edit" (fn [e]
+                                               (case (shape :type)
+                                                 :geojson
+                                                 ((shape :on-edit) (.toGeoJSON m))
+                                                 ((shape :on-edit) m))))))
 
-                      (when @leaflet-geojson-layer
-                        (.removeLayer @leaflet-map @leaflet-geojson-layer))
-                      (when geojson
-                        (reset! leaflet-geojson-layer (js/L.geoJSON geojson))
-                        (.. @leaflet-geojson-layer (addTo @leaflet-map))
-                        (.fitBounds @leaflet-map (.getBounds @leaflet-geojson-layer)))
+                          (when (shape :on-drag-end)
+                            (.on m "dragend"
+                                 (fn [e]
+                                   ((shape :on-drag-end) (.-target e)))))
 
-
-                      (when draw?
-                        (.enable (js/L.EditToolbar.Edit.
-                                  @leaflet-map
-                                  (clj->js {:featureGroup @leaflet-geojson-layer
-                                            :remove false})))))]
+                          (when (shape :bound?)
+                            (.. @leaflet-map (fitBounds (.pad (.getBounds m) 0.1)))))))]
 
     (r/create-class
       {:display-name "leaflet-map"
