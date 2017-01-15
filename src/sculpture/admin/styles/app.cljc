@@ -31,80 +31,69 @@
 
 (def entity-styles
   [:>.entity
-   {:padding "2em"
-    :flex-grow 2
-    :max-height "100vh"
-    :overflow-y "scroll"
-    :box-sizing "border-box"
-    :margin [[0 "1.5em" 0 0]]
-    :position "relative"}
-   (floating-box)
+   {:padding "2em"}
 
    [:a.edit
-    :a.view
     (button)
     {:position "absolute"
      :top "1em"
      :right "1em"}]
 
-   [:&.view
+   [:a.back
+    (button)
+    {:position "absolute"
+     :top "1em"
+     :left "1em"}]
 
-    [:.sculptures
-     {:display "flex"
-      :flex-wrap "wrap"}
+   [:.sculptures
+    {:display "flex"
+     :flex-wrap "wrap"}
 
-     (let [size "100px"]
+    (let [size "100px"]
 
-       [:.sculpture
-        {:display "inline-block"
-         :border "1px solid #ededed"
-         :width size
-         :padding "0.5em"
-         :margin "0.5em"
-         :text-align "center"
-         :text-decoration "none"}
+      [:.sculpture
+       {:display "inline-block"
+        :border "1px solid #ededed"
+        :width size
+        :padding "0.5em"
+        :margin "0.5em"
+        :text-align "center"
+        :text-decoration "none"}
 
-        [:.photo
-         {:width size
-          :height size
-          :display "flex"
-          :align-items "center"
-          :justify-content "center"
-          :margin-bottom "0.5em"}
+       [:.photo
+        {:width size
+         :height size
+         :display "flex"
+         :align-items "center"
+         :justify-content "center"
+         :margin-bottom "0.5em"}
 
-         [:img
-          {:max-width size
-           :max-height size
-           :vertical-align "center"
-           :text-align "center"}]]
+        [:img
+         {:max-width size
+          :max-height size
+          :vertical-align "center"
+          :text-align "center"}]]
 
-        [:.title
-         {:font-weight "bold"
-          :color "#000"}]
+       [:.title
+        {:font-weight "bold"
+         :color "#000"}]
 
-        [:.year
-         {:color "#AAA"}]
+       [:.year
+        {:color "#AAA"}]
 
-        [:&:hover
-         {:border-color "#ccc"}]
+       [:&:hover
+        {:border-color "#ccc"}]
 
-        [:&:active
-         {:border-color "#aaa"}]])]]
-
-   [:&.edit]])
+       [:&:active
+        {:border-color "#aaa"}]])]])
 
 (def search-styles
   (let [border-width (px 0)
         pad (rem 0.75)]
 
     [:>.search
-     {:width "30%"
-      :max-height "100vh"
-      :min-width "15em"
-      :margin [[0 "1.5em"]]
-      :display "flex"
+     {:display "flex"
       :flex-direction "column"}
-     (floating-box)
 
      [:.query
       {:padding pad
@@ -177,12 +166,47 @@
           [:.h2
            {:color "#AAA"}]])]]]))
 
+(def entity-edit-styles
+  [:>.edit
+   {:position "relative"}
+   [:a.button
+    {:position "absolute"
+     :top 0
+     :right 0}
+    (button)]])
+
 (def app-styles
   [:.app
-   {:display "flex"}
+   [:>.mega-map
+    {:width "100vw"
+     :height "100vh"}]
 
-   search-styles
-   entity-styles ])
+   [:>.sidebar
+    {:position "absolute"
+     :left "1.5em"
+     :top 0
+     :min-width "15em"
+     :width "30%"
+     :max-height "100vh"
+     :z-index 1000
+     :overflow-y "scroll"}
+    (floating-box)
+
+    search-styles
+    entity-styles]
+
+  [:>.main
+   {:position "absolute"
+    :top 0
+    :right "1.5em"
+    :z-index 1000
+    :padding "2em"
+    :max-height "100vh"
+    :overflow-y "scroll"
+    :box-sizing "border-box"}
+   (floating-box)
+
+   entity-edit-styles]])
 
 (def reset-styles
   [:body

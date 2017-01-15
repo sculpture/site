@@ -6,26 +6,30 @@
 
 (def mapbox-tilelayer (str "https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=" mapbox-token))
 
-#_(defn create-icon-marker [location]
-  (let [icon (js/L.icon (cljs->js {:iconUrl ""
-                                   :shadowUrl ""
-                                   :iconSize [w h]
-                                   :shadowSize [w h]
-                                   :iconAnchor [x y]
-                                   :shadowAnchor [x y]
-                                   :popupAnchor [x y]
-                                   }))]
-    (js/L.marker location {:icon icon})))
-
 (defn lnglat->jsloc [lnglat]
   (clj->js [(lnglat :latitude)
             (lnglat :longitude)]))
+
+(defn maki-marker []
+  {:iconUrl
+   (str "https://api.mapbox.com/v4/marker/" "pin-m-circle+00FFFF.png?access_token=" mapbox-token)})
+
+(defn measle [color]
+  {:iconUrl (case color
+              :red "https://maps.gstatic.com/intl/en_us/mapfiles/markers2/measle.png"
+              :blue "https://maps.gstatic.com/intl/en_ALL/mapfiles/markers2/measle_blue.png")
+   :iconSize [7 7]})
+
+(defn create-icon-marker [m]
+  (js/L.marker (lnglat->jsloc (m :location))
+               #js {:icon (js/L.icon (clj->js (measle :red)))}))
 
 (defn make-marker [m]
   (case (m :type)
     :circle (js/L.circle (lnglat->jsloc (m :location))
                          (clj->js
                            {:radius (m :radius)}))
+    :icon (create-icon-marker m)
     ; default
     (js/L.marker (lnglat->jsloc (m :location)))))
 
@@ -88,6 +92,16 @@
                       (doseq [marker markers]
                         (let [m (make-marker marker)]
                           (.. m (addTo @leaflet-marker-layer))
+
+                          (when (marker :popup)
+                            (.bindPopup m (marker :popup) #js {:closeButton false})
+                            (.on m "mouseover" (fn [_] (.openPopup m)))
+                            (.on m "mouseout" (fn [_] (.closePopup m))))
+
+                          (when (marker :on-click)
+                            (.on m "click"
+                                 (fn [e]
+                                   ((marker :on-click) (.-target e)))))
                           (when (marker :editable?)
                             (.enable (js/L.EditToolbar.Edit.
                                        @leaflet-map

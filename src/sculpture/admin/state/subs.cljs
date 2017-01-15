@@ -65,3 +65,11 @@
                      (= "sculpture" (entity :type))
                      (contains? (set (entity :artist-ids)) artist-id)))))))
 
+(reg-sub
+  :sculptures
+  (fn [db _]
+    (->> db
+         :data
+         vals
+         (filter (fn [entity]
+                   (= "sculpture" (entity :type)))))))

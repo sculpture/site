@@ -49,9 +49,7 @@
            (.indexOf (vec (keys field-opts)) key2)))
 
 (defn entity-editor-view [entity]
-  [:div
-   [:a.button.view {:href (routes/entity-path {:id (entity :id)})} "Back"]
-   [:table
+  [:table
     [:tbody
      (for [[k v] (into (sorted-map-by key-order-comparator) entity)]
        ^{:key k}
@@ -62,4 +60,4 @@
                   (field-opts k)
                   {:value v
                    :on-change (fn [v]
-                                (dispatch! [:update (entity :id) k v]))})]]])]]])
+                                (dispatch! [:update (entity :id) k v]))})]]])]])
