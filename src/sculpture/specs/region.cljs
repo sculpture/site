@@ -8,12 +8,14 @@
 
 (s/def ::name string?)
 (s/def ::slug :sculpture.specs.types/slug-type)
+(s/def ::tag-ids :sculpture.specs.types/related-ids-type)
 
 (s/def ::region
   (s/merge :sculpture.specs.entity/common
            (s/keys :req-un [::name
                             ::geojson
-                            ::slug])))
+                            ::slug
+                            ::tag-ids])))
 
 (defmethod entity-type "region"
   [_]

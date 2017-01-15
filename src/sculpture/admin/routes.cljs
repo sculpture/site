@@ -1,7 +1,6 @@
 (ns sculpture.admin.routes
   (:require
-    [secretary.core :as secretary :refer-macros [defroute]]
-    [accountant.core :as accountant]
+    [secretary.core :refer [defroute]]
     [sculpture.admin.state.core :refer [dispatch!]]))
 
 (defroute root-path "/" []
@@ -15,11 +14,3 @@
   (dispatch! [:set-page {:type :entity
                          :edit? true
                          :id id}]))
-
-(defn go-to [path]
-  (accountant/navigate! path))
-
-(defn init-router! []
-  (accountant/configure-navigation! {:nav-handler secretary/dispatch!
-                                     :path-exists? secretary/locate-route})
-  (accountant/dispatch-current!))

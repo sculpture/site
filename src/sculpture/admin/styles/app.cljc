@@ -181,6 +181,12 @@
     {:width "100vw"
      :height "100vh"}]
 
+   [:>button.new
+    {:position "absolute"
+     :top 0
+     :right 0
+     :z-index 1000}]
+
    [:>.sidebar
     {:position "absolute"
      :left "1.5em"

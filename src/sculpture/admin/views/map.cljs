@@ -2,6 +2,7 @@
   (:require
     [releaflet.map :as leaflet]
     [sculpture.admin.routes :as routes]
+    [sculpture.admin.router :as router]
     [sculpture.admin.state.core :refer [subscribe]]))
 
 (defn map-view []
@@ -18,5 +19,5 @@
                               :type :icon
                               :popup (sculpture :title)
                               :on-click (fn []
-                                          (routes/go-to (routes/entity-path {:id (sculpture :id)})))})))
+                                          (router/go-to! (routes/entity-path {:id (sculpture :id)})))})))
                     (remove nil?))}]]))

@@ -1,6 +1,11 @@
 (ns sculpture.admin.state.events
   (:require
     [re-frame.core :refer [dispatch] :as reframe]
+    [cljs-uuid-utils.core :as uuid]
+    [sculpture.admin.state.fx.dispatch-debounce]
+    [sculpture.admin.state.fx.ajax]
+    [sculpture.admin.state.fx.redirect]
+    [sculpture.admin.routes :as routes]
     [sculpture.admin.state.spec :refer [check-state!]]
     [sculpture.admin.state.search :as search]))
 
@@ -75,6 +80,18 @@
     {:db (assoc db :page page)}))
 
 (reg-event-fx
-  :update
+  :update-entity
   (fn [{db :db} [_ id k v]]
     {:db (assoc-in db [:data id k] v)}))
+
+(reg-event-fx
+  :remove-entity-key
+  (fn [{db :db} [_ id k]]
+    {:db (update-in db [:data id] (fn [e] (dissoc e k)))}))
+
+(reg-event-fx
+  :create-entity
+  (fn [{db :db} _]
+    (let [id (str (uuid/make-random-uuid))]
+      {:db (assoc-in db [:data id] {:id id})
+       :redirect-to (routes/entity-edit-path {:id id})})))

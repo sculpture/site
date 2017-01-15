@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.app
   (:require
-    [sculpture.admin.state.core :refer [subscribe]]
+    [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.views.styles :refer [styles-view]]
     [sculpture.admin.views.search :refer [search-view]]
@@ -27,11 +27,17 @@
         "Edit"]
        [entity-view @entity]])))
 
+(defn new-entity-button-view []
+  [:button.new {:on-click (fn [_]
+                            (dispatch! [:create-entity]))}
+   "New"])
+
 (defn app-view []
   (let [page @(subscribe [:page])]
     [:div.app
      [styles-view]
      [map-view]
+     [new-entity-button-view]
      [:div.sidebar
       (case (:type page)
         :entity [active-entity-view (page :id) ]

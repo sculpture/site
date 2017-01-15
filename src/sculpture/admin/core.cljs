@@ -2,8 +2,11 @@
   (:require
     [reagent.core :as r]
     [sculpture.admin.state.core :refer [dispatch-sync!]]
+    [sculpture.admin.state.events]
+    [sculpture.admin.state.subs]
     [sculpture.specs.core]
-    [sculpture.admin.routes :refer [init-router!]]
+    [sculpture.admin.routes]
+    [sculpture.admin.router :refer [init-router!]]
     [sculpture.admin.views.app :refer [app-view]]))
 
 (enable-console-print!)

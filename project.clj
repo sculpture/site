@@ -2,12 +2,13 @@
 
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.293"]
-                 [re-frame "0.8.0"]
+                 [re-frame "0.9.1"]
                  [cljs-ajax "0.5.8"]
                  [garden "1.3.2"]
                  [secretary "1.2.3"]
                  [venantius/accountant "0.1.7"]
-                 [cljsjs/fuse "2.5.0-0"]]
+                 [cljsjs/fuse "2.5.0-0"]
+                 [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]]
 
   :plugins [[lein-figwheel "0.5.8"]]
 
