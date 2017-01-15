@@ -29,15 +29,42 @@
         shape (aget (.getLayers geojson-layer-group) 0)]
     shape))
 
-(defn make-shape [m]
-  (case (m :type)
-    :circle (js/L.circle (lnglat->jsloc (m :location))
-                         (clj->js
-                           {:radius (m :radius)}))
-    :icon (create-icon-marker m)
-    :geojson (create-geojson-object m)
-    ; default
-    (js/L.marker (lnglat->jsloc (m :location)))))
+(defn make-shape [opts]
+  (let [shape (case (opts :type)
+                :circle (js/L.circle (lnglat->jsloc (opts :location))
+                                     (clj->js
+                                       {:radius (opts :radius)}))
+                :icon (create-icon-marker opts)
+                :geojson (create-geojson-object opts)
+                ; default
+                (js/L.marker (lnglat->jsloc (opts :location))))]
+
+    (when (opts :popup)
+      (.bindPopup shape (opts :popup) #js {:closeButton false})
+      (.on shape "mouseover" (fn [_] (.openPopup shape)))
+      (.on shape "mouseout" (fn [_] (.closePopup shape))))
+
+    (when (opts :on-click)
+      (.on shape "click"
+           (fn [e]
+             ((opts :on-click) (.-target e)))))
+
+    (when (opts :editable?)
+      (.. shape -editing enable))
+
+    (when (opts :on-edit)
+      (.. shape (on "edit" (fn [e]
+                             (case (opts :type)
+                               :geojson
+                               ((opts :on-edit) (.toGeoJSON shape))
+                               ((opts :on-edit) shape))))))
+
+    (when (opts :on-drag-end)
+      (.on shape "dragend"
+           (fn [e]
+             ((opts :on-drag-end) (.-target e)))))
+
+    shape))
 
 (defn map-view
   [_]
@@ -61,9 +88,7 @@
                             (clj->js {:maxZoom 18}))
                           (addTo @leaflet-map)))
 
-        update-map! (fn [{:keys [center bounds shapes geojson zoom-level draw?] :as config}]
-                      (create-shape-layer!)
-
+        update-map! (fn [{:keys [center bounds shapes] :as config}]
                       (when center
                         (.. @leaflet-map (panTo (lnglat->jsloc center))))
 
@@ -71,37 +96,12 @@
                         (.. @leaflet-map (fitBounds (clj->js [[(bounds :south) (bounds :west)]
                                                               [(bounds :north) (bounds :east)]]))))
 
-                      (doseq [shape shapes]
-                        (let [m (make-shape shape)]
-                          (.. m (addTo @leaflet-shape-layer))
-
-                          (when (shape :popup)
-                            (.bindPopup m (shape :popup) #js {:closeButton false})
-                            (.on m "mouseover" (fn [_] (.openPopup m)))
-                            (.on m "mouseout" (fn [_] (.closePopup m))))
-
-                          (when (shape :on-click)
-                            (.on m "click"
-                                 (fn [e]
-                                   ((shape :on-click) (.-target e)))))
-
-                          (when (shape :editable?)
-                            (.. m -editing enable))
-
-                          (when (shape :on-edit)
-                            (.. m (on "edit" (fn [e]
-                                               (case (shape :type)
-                                                 :geojson
-                                                 ((shape :on-edit) (.toGeoJSON m))
-                                                 ((shape :on-edit) m))))))
-
-                          (when (shape :on-drag-end)
-                            (.on m "dragend"
-                                 (fn [e]
-                                   ((shape :on-drag-end) (.-target e)))))
-
-                          (when (shape :bound?)
-                            (.. @leaflet-map (fitBounds (.pad (.getBounds m) 0.1)))))))]
+                      (create-shape-layer!)
+                      (doseq [shape-opts shapes]
+                        (let [shape (make-shape shape-opts)]
+                          (.. shape (addTo @leaflet-shape-layer))
+                          (when (shape-opts :bound?)
+                            (.. @leaflet-map (fitBounds (.pad (.getBounds shape) 0.1)))))))]
 
     (r/create-class
       {:display-name "leaflet-map"
