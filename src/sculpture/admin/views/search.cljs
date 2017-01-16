@@ -5,10 +5,17 @@
     [sculpture.admin.views.search-result :refer [search-result-view]]))
 
 (defn query-view []
-  [:div.query
-   [:input {:value @(subscribe [:query])
-            :on-change (fn [e]
-                         (dispatch! [:set-query (.. e -target -value)]))}]])
+  (let [query @(subscribe [:query])]
+    [:div.query
+     [:input {:placeholder "Search Sculpture"
+              :value query
+              :on-change (fn [e]
+                           (dispatch! [:set-query (.. e -target -value)]))}]
+     (when (seq query)
+       [:button.clear
+        {:on-click (fn [_]
+                     (dispatch! [:set-query ""]))}
+        "X"])]))
 
 (defn results-view []
   [:div.results

@@ -89,7 +89,8 @@
 
 (def search-styles
   (let [border-width (px 0)
-        pad (rem 0.75)]
+        pad (rem 0.75)
+        input-pad (rem 0.5)]
 
     [:>.search
      {:display "flex"
@@ -103,11 +104,16 @@
        {:height (rem 2)
         :border-radius "3px"
         :border "none"
-        :padding [[0 (rem 0.5)]]
+        :padding [[0 input-pad]]
         :line-height (rem 2)
         :font-size "1.1em"
         :width "100%"
-        :box-sizing "border-box"}]]
+        :box-sizing "border-box"}]
+
+      [:button.clear
+       {:position "absolute"
+        :top (m/+ pad input-pad)
+        :right (m/+ pad input-pad)}]]
 
      [:.results
       {:overflow-x "hidden"
