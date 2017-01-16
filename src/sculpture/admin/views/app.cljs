@@ -3,7 +3,7 @@
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.views.styles :refer [styles-view]]
-    [sculpture.admin.views.search :refer [search-view]]
+    [sculpture.admin.views.search :refer [query-view results-view]]
     [sculpture.admin.views.map :refer [map-view]]
     [sculpture.admin.views.entity :refer [entity-view]]
     [sculpture.admin.views.entity.sculpture]
@@ -22,7 +22,7 @@
     (when @entity
       [:div.entity.view
        [:a.back.button {:href (routes/root-path)}
-        "<< Search"]
+        "<< Back to Results"]
        [:a.edit.button {:href (routes/entity-edit-path {:id (@entity :id)})}
         "Edit"]
        [entity-view @entity]])))
@@ -32,19 +32,29 @@
                             (dispatch! [:create-entity]))}
    "New"])
 
+(defn sidebar-view []
+  (let [page @(subscribe [:page])
+        entity-id (when
+                    (= :entity (:type page))
+                    (page :id))]
+    [:div.sidebar
+     [:div.search
+      [query-view]
+      (when-not entity-id
+        [results-view])]
+     (when entity-id
+       [active-entity-view entity-id])]))
+
 (defn app-view []
   (let [page @(subscribe [:page])]
     [:div.app
      [styles-view]
      [map-view]
      [new-entity-button-view]
-     [:div.sidebar
-      (case (:type page)
-        :entity [active-entity-view (page :id) ]
-        [search-view])]
+     [sidebar-view]
 
-      (when (and page
-              (= :entity (:type page))
-              (:edit? page))
-        [:div.main
-         [edit-entity-view (page :id)]])]))
+     (when (and page
+             (= :entity (:type page))
+             (:edit? page))
+       [:div.main
+        [edit-entity-view (page :id)]])]))

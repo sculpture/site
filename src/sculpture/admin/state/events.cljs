@@ -68,7 +68,8 @@
 (reg-event-fx
   :set-results
   (fn [{db :db} [_ query]]
-    {:db (assoc db :results
+    {:redirect-to (routes/root-path)
+     :db (assoc db :results
            (map
              (fn [id]
                (get-in db [:data id]))

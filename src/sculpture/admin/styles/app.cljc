@@ -31,7 +31,8 @@
 
 (def entity-styles
   [:>.entity
-   {:padding "2em"}
+   {:padding "2em"
+    :position "relative"}
 
    [:a.edit
     (button)
