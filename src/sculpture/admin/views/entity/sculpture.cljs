@@ -13,25 +13,26 @@
     [:div.photos
      (for [photo @photos]
        ^{:key (photo :id)}
-       [photo-view photo :thumb false])]))
+       [photo-view photo :large false])]))
 
 (defmethod entity-view "sculpture"
   [sculpture]
   [:div.sculpture
-   [:h1 (sculpture :title)]
-   [related-artists-view (sculpture :artist-ids)]
    [photos-view (sculpture :id)]
-   [:div.year (sculpture :year)]
-   [related-tags-view (sculpture :tag-ids)]
-   [related-materials-view (sculpture :material-ids)]
-   [:div.note (sculpture :note)]
+   [:div.info
+    [:h1 (sculpture :title)]
+    [related-artists-view (sculpture :artist-ids)]
+    [:div.year (sculpture :year)]
+    [related-tags-view (sculpture :tag-ids)]
+    [related-materials-view (sculpture :material-ids)]
+    [:div.note (sculpture :note)]
 
-   (when (sculpture :commissioned-by)
-     [:div.commissioned-by
-      "Commissioned by "
-      (sculpture :commissioned-by)])
+    (when (sculpture :commissioned-by)
+      [:div.commissioned-by
+       "Commissioned by "
+       (sculpture :commissioned-by)])
 
-   (when (sculpture :location)
-     [map-view {:center (sculpture :location)
-                :shapes [{:location (sculpture :location)
-                          :type :icon}]}])])
+    (when (sculpture :location)
+      [map-view {:center (sculpture :location)
+                 :shapes [{:location (sculpture :location)
+                           :type :icon}]}])]])

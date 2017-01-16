@@ -31,7 +31,7 @@
 
 (def entity-styles
   [:>.entity
-   {:padding "2em"
+   {:padding-top "2.5em"
     :position "relative"}
 
    [:a.edit
@@ -45,6 +45,14 @@
     {:position "absolute"
      :top "1em"
      :left "1em"}]
+
+   [:div>.photos
+    [:.photo
+     [:img
+      {:width "100%"}]]]
+
+   [:.info
+    {:padding "2em"}]
 
    [:.sculptures
     {:display "flex"
@@ -198,7 +206,7 @@
     {:position "absolute"
      :left "1.5em"
      :top 0
-     :min-width "15em"
+     :min-width "19em"
      :width "30%"
      :max-height "100vh"
      :z-index 1000

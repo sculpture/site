@@ -7,10 +7,11 @@
 (defmethod entity-view "region"
   [region]
   [:div.region
-   [:h1 (region :name)]
+   [:div.info
+    [:h1 (region :name)]
 
-   (when (region :geojson)
-     [map-view {:shapes [{:type :geojson
-                          :bound? true
-                          :geojson (js/JSON.parse (region :geojson))}]}])
-   [object-view region]])
+    (when (region :geojson)
+      [map-view {:shapes [{:type :geojson
+                           :bound? true
+                           :geojson (js/JSON.parse (region :geojson))}]}])
+    [object-view region]]])

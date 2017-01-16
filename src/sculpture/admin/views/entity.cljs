@@ -6,6 +6,8 @@
 
 (defmethod entity-view :default
   [entity]
-  [object-view entity])
+  [:div
+   [:div.info
+    [object-view entity]]])
 
 

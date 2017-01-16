@@ -9,14 +9,15 @@
 (defmethod entity-view "artist"
   [artist]
   [:div.artist
-   [:h1 (artist :name)]
-   (artist :gender)
-   (when (artist :link-wikipedia)
-     [:a.link {:href (artist :link-wikipedia)} "Wikipedia"])
-   (when (artist :link-website)
-     [:a.link {:href (artist :link-website)} "Website"])
-   [related-tags-view (artist :tag-ids)]
-   [:h2 "Sculptures"]
-   [related-sculptures-view @(subscribe [:sculptures-for-artist (artist :id)])]])
+   [:div.info
+    [:h1 (artist :name)]
+    (artist :gender)
+    (when (artist :link-wikipedia)
+      [:a.link {:href (artist :link-wikipedia)} "Wikipedia"])
+    (when (artist :link-website)
+      [:a.link {:href (artist :link-website)} "Website"])
+    [related-tags-view (artist :tag-ids)]
+    [:h2 "Sculptures"]
+    [related-sculptures-view @(subscribe [:sculptures-for-artist (artist :id)])]]])
 
 
