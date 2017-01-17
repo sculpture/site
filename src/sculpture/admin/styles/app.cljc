@@ -52,7 +52,7 @@
      :top "1em"
      :left "1em"}]
 
-   [:div>.photos
+   [:.banner
     [:.photo
      [:img
       {:width "100%"
@@ -95,6 +95,9 @@
      [:&.location:before (fontawesome \uf041)]
      [:&.commission:before (fontawesome \uf0e3)]
      [:&.note:before (fontawesome \uf249)]
+     [:&.captured-at:before (fontawesome \uf133)]
+     [:&.user:before (fontawesome \uf007)]
+     [:&.sculpture:before (fontawesome \uf03e)]
 
      [:>div
       {:display "inline-block"}]]]

@@ -15,8 +15,9 @@
     [:div.photos
      (for [photo @photos]
        ^{:key (photo :id)}
-       [photo-view {:photo photo
-                    :size :large}])]))
+       [:a {:href (routes/entity-path {:id (photo :id)})}
+        [photo-view {:photo photo
+                     :size :large}]])]))
 
 (defmethod entity-view "sculpture"
   [sculpture]

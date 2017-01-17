@@ -2,6 +2,7 @@
 
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.293"]
+                 [com.andrewmcveigh/cljs-time "0.4.0"]
                  [re-frame "0.9.1"]
                  [cljs-ajax "0.5.8"]
                  [garden "1.3.2"]

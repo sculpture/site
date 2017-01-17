@@ -9,6 +9,7 @@
     [sculpture.admin.views.entity.sculpture]
     [sculpture.admin.views.entity.region]
     [sculpture.admin.views.entity.artist]
+    [sculpture.admin.views.entity.photo]
     [sculpture.admin.views.entity-editor :refer [entity-editor-view]]))
 
 (defn edit-entity-view [entity-id]
