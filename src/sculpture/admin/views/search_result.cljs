@@ -24,6 +24,7 @@
 (defn search-result-view [entity]
   (let [data (search-result-data entity)]
     [:a.result {:href (routes/entity-path {:id (entity :id)})}
-     [photo-view (data :image) :thumb false]
+     [photo-view {:photo (data :image)
+                  :size :thumb}]
      [:div.h1 (data :h1)]
      [:div.h2 (data :h2)]]))

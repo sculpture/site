@@ -15,7 +15,8 @@
     [:div.photos
      (for [photo @photos]
        ^{:key (photo :id)}
-       [photo-view photo :large false])]))
+       [photo-view {:photo photo
+                    :size :large}])]))
 
 (defmethod entity-view "sculpture"
   [sculpture]

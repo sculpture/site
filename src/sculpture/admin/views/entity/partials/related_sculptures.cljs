@@ -8,7 +8,8 @@
   (let [photos (subscribe [:photos-for-sculpture (sculpture :id)])]
     [:a.sculpture
      {:href (routes/entity-path {:id (sculpture :id)})}
-     [photo-view (first @photos) :thumb false]
+     [photo-view {:photo (first @photos)
+                  :size :thumb}]
      [:div.title (sculpture :title)]
      [:div.year (sculpture :year)]]))
 
