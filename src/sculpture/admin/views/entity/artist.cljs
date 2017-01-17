@@ -4,8 +4,7 @@
    [sculpture.admin.views.entity :refer [entity-view]]
    [sculpture.admin.views.entity.partials.related-sculptures :refer [related-sculptures-view]]
    [sculpture.admin.views.entity.partials.related-tags :refer [related-tags-view]]
-   [sculpture.admin.views.entity.partials.photo-mosaic :refer [photo-mosaic-view]]
-   [sculpture.admin.views.object :refer [object-view]]))
+   [sculpture.admin.views.entity.partials.photo-mosaic :refer [photo-mosaic-view]]))
 
 (defmethod entity-view "artist"
   [artist]
