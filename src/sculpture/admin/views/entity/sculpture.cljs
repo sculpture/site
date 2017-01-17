@@ -1,5 +1,6 @@
 (ns sculpture.admin.views.entity.sculpture
   (:require
+    [clojure.string :as string]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.views.entity :refer [entity-view]]
@@ -43,7 +44,18 @@
       [:div.row.materials
        [related-materials-view (sculpture :material-ids)]])
 
-    [:div.row.location]
+    (when (sculpture :location)
+      [:div.row.location
+       [:a {:href "#"
+            :on-click (fn [e]
+                        (.preventDefault e)
+                        (dispatch! [:sculpture.mega-map/go-to (sculpture :location)]))}
+        (-> (sculpture :location)
+            (select-keys [:longitude :latitude])
+            vals
+            (->>
+              (map (fn [c] (/ (js/Math.round (* c 1000)) 1000)))
+              (string/join ", " )))]])
 
     (when (seq (sculpture :commissioned-by))
       [:div.row.commission
@@ -52,10 +64,10 @@
     (when (seq (sculpture :note))
       [:div.row.note (sculpture :note)])
 
-    (when (sculpture :location)
-      [map-view {:disable-interaction? true
-                 :on-click (fn [_]
-                             (dispatch! [:sculpture.mega-map/go-to (sculpture :location)]))
-                 :center (sculpture :location)
-                 :shapes [{:location (sculpture :location)
-                           :type :icon}]}])]])
+    #_(when (sculpture :location)
+        [map-view {:disable-interaction? true
+                   :on-click (fn [_]
+                               (dispatch! [:sculpture.mega-map/go-to (sculpture :location)]))
+                   :center (sculpture :location)
+                   :shapes [{:location (sculpture :location)
+                             :type :icon}]}])]])
