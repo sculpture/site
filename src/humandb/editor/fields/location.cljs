@@ -27,7 +27,7 @@
     [:div
      [map-view {:center location
                 :zoom-controls true
-                :initial-zoom-level 17
+                :zoom-level 17
                 :shapes [{:type :circle
                           :location {:latitude (location :latitude)
                                      :longitude (location :longitude)}

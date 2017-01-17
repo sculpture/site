@@ -43,7 +43,8 @@
           :results nil
           :page nil
           :data nil
-          :fuse nil}
+          :fuse nil
+          :mega-map {:dirty? false}}
      :ajax {:method :get
             :uri "http://localhost:2468/all"
             :on-success
@@ -96,3 +97,16 @@
     (let [id (str (uuid/make-random-uuid))]
       {:db (assoc-in db [:data id] {:id id})
        :redirect-to (routes/entity-edit-path {:id id})})))
+
+(reg-event-fx
+  :sculpture.mega-map/go-to
+  (fn [{db :db} [_ location]]
+    {:db (-> db
+             (assoc-in [:mega-map :dirty?] false)
+             (assoc-in [:mega-map :center] location)
+             (assoc-in [:mega-map :zoom-level] 15))}))
+
+(reg-event-fx
+  :sculpture.mega-map/mark-as-dirty
+  (fn [{db :db} _]
+    {:db (assoc-in db [:mega-map :dirty?] true)}))

@@ -73,3 +73,9 @@
          vals
          (filter (fn [entity]
                    (= "sculpture" (entity :type)))))))
+
+
+(reg-sub
+  :sculpture.mega-map/config
+  (fn [db _]
+    (db :mega-map)))

@@ -4,7 +4,7 @@
     [sculpture.admin.routes :as routes]
     [sculpture.admin.views.styles :refer [styles-view]]
     [sculpture.admin.views.search :refer [query-view results-view]]
-    [sculpture.admin.views.map :refer [map-view]]
+    [sculpture.admin.views.mega-map :refer [mega-map-view]]
     [sculpture.admin.views.entity :refer [entity-view]]
     [sculpture.admin.views.entity.sculpture]
     [sculpture.admin.views.entity.region]
@@ -49,7 +49,7 @@
   (let [page @(subscribe [:page])]
     [:div.app
      [styles-view]
-     [map-view]
+     [mega-map-view]
      [new-entity-button-view]
      [sidebar-view]
 
