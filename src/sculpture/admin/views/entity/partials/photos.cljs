@@ -6,6 +6,7 @@
   (if photo
     (case size
       :thumb (str photo-host "thumb/" (photo :url))
+      :medium (str photo-host "large/" (photo :url))
       :large (str photo-host "large/" (photo :url))
       :original (str photo-host "original/" (photo :url)))
     "http://placehold.it/50x50"))
