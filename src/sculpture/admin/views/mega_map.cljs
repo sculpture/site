@@ -8,7 +8,16 @@
 
 (defn mega-map-view []
   (let [config @(subscribe [:sculpture.mega-map/config])
-        sculptures @(subscribe [:sculptures])]
+        sculptures @(subscribe [:sculptures])
+        sculpture-markers (->> sculptures
+                               (map (fn [sculpture]
+                                      (when (sculpture :location)
+                                        {:location (sculpture :location)
+                                         :type :icon
+                                         :popup (sculpture :title)
+                                         :on-click (fn []
+                                                     (router/go-to! (routes/entity-path {:id (sculpture :id)})))})))
+                               (remove nil?))]
     [:div.mega-map
      [leaflet/map-view
       (merge
@@ -17,13 +26,7 @@
          :zoom-level 1
          :on-view-change (fn []
                            (dispatch! [:sculpture.mega-map/mark-as-dirty]))
-         :shapes (->> sculptures
-                      (map (fn [sculpture]
-                             (when (sculpture :location)
-                               {:location (sculpture :location)
-                                :type :icon
-                                :popup (sculpture :title)
-                                :on-click (fn []
-                                            (router/go-to! (routes/entity-path {:id (sculpture :id)})))})))
-                      (remove nil?))}
+         :shapes (if (config :current-marker)
+                   (conj sculpture-markers (config :current-marker))
+                   sculpture-markers)}
         config)]]))

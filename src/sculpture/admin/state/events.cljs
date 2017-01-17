@@ -107,6 +107,13 @@
              (assoc-in [:mega-map :zoom-level] 15))}))
 
 (reg-event-fx
+  :sculpture.mega-map/show
+  (fn [{db :db} [_ marker]]
+    {:db (-> db
+             (assoc-in [:mega-map :dirty?] false)
+             (assoc-in [:mega-map :current-marker] marker))}))
+
+(reg-event-fx
   :sculpture.mega-map/mark-as-dirty
   (fn [{db :db} _]
     {:db (assoc-in db [:mega-map :dirty?] true)}))
