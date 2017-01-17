@@ -1,6 +1,7 @@
 (ns sculpture.admin.views.entity.sculpture
   (:require
-    [sculpture.admin.state.core :refer [subscribe]]
+    [sculpture.admin.routes :as routes]
+    [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.views.entity :refer [entity-view]]
     [sculpture.admin.views.entity.partials.photos :refer [photo-view]]
     [sculpture.admin.views.entity.partials.map :refer [map-view]]
@@ -18,21 +19,43 @@
 (defmethod entity-view "sculpture"
   [sculpture]
   [:div.sculpture
-   [photos-view (sculpture :id)]
+   [:div.banner
+    [photos-view (sculpture :id)]]
+
    [:div.info
     [:h1 (sculpture :title)]
-    [related-artists-view (sculpture :artist-ids)]
-    [:div.year (sculpture :year)]
-    [related-tags-view (sculpture :tag-ids)]
-    [related-materials-view (sculpture :material-ids)]
-    [:div.note (sculpture :note)]
+    [:h2
+     (let [artists @(subscribe [:get-entities (sculpture :artist-ids)])]
+       (into [:div.artists]
+             (interpose
+               [:span ", "]
+               (for [artist artists]
+                 [:a {:href (routes/entity-path {:id (artist :id)})} (artist :name)]))))
 
-    (when (sculpture :commissioned-by)
-      [:div.commissioned-by
-       "Commissioned by "
+     [:div.year (sculpture :year)]]]
+
+   [:div.extra
+    (when (seq (sculpture :tag-ids))
+      [:div.row.tags
+       [related-tags-view (sculpture :tag-ids)]])
+
+    (when (seq (sculpture :material-ids))
+      [:div.row.materials
+       [related-materials-view (sculpture :material-ids)]])
+
+    [:div.row.location]
+
+    (when (seq (sculpture :commissioned-by))
+      [:div.row.commission
        (sculpture :commissioned-by)])
 
+    (when (seq (sculpture :note))
+      [:div.row.note (sculpture :note)])
+
     (when (sculpture :location)
-      [map-view {:center (sculpture :location)
+      [map-view {:disable-interaction? true
+                 :on-click (fn [_]
+                             (dispatch! [:sculpture.mega-map/go-to (sculpture :location)]))
+                 :center (sculpture :location)
                  :shapes [{:location (sculpture :location)
                            :type :icon}]}])]])

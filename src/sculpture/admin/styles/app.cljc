@@ -4,9 +4,15 @@
     [garden.units :refer [px em rem]]
     [garden.arithmetic :as m]))
 
+(def accent-color "#53acf1")
+
 (defn floating-box []
   {:background "#fff"
    :box-shadow "0 0 2px 0 #ccc"})
+
+(defn fontawesome [unicode]
+  {:content (str "\"" unicode "\"")
+   :font-family "FontAwesome"})
 
 (defn button []
   [:&
@@ -49,23 +55,62 @@
    [:div>.photos
     [:.photo
      [:img
-      {:width "100%"}]]]
+      {:width "100%"
+       :display "block"}]]]
 
    [:.info
-    {:padding "2em"}]
+    {:padding "1.5em"
+     :background accent-color
+     :color "white"}
+
+    [:a
+     {:color "white"
+      :text-decoration "none"}
+
+     [:&:hover
+      {:text-decoration "underline"}]]
+
+    [:h1
+     {:font-size "1.25em"}]
+
+    [:h2
+     {:font-size "1em"
+      :font-weight "normal"
+      :display "flex"
+      :justify-content "space-between"}]]
+
+   [:.extra
+    {:padding "1.5em"}
+
+    [:.row
+
+     [:&:before
+      {:width "1em"
+       :text-align "center"
+       :display "inline-block"
+       :margin-right "0.5em"}]
+
+     [:&.tags:before (fontawesome \uf02c)]
+     [:&.materials:before (fontawesome \uf0e3)]
+     [:&.location:before (fontawesome \uf041)]
+     [:&.commission:before (fontawesome \uf0e3)]
+     [:&.note:before (fontawesome \uf249)]
+
+     [:>div
+      {:display "inline-block"}]]]
 
    [:.sculptures
     {:display "flex"
      :flex-wrap "wrap"}
 
-    (let [size "100px"]
+    (let [size "85px"]
 
       [:.sculpture
        {:display "inline-block"
         :border "1px solid #ededed"
         :width size
         :padding "0.5em"
-        :margin "0.5em"
+        :margin [[0 "0.5em" "0.5em" 0]]
         :text-align "center"
         :text-decoration "none"}
 
@@ -107,7 +152,7 @@
 
      [:.query
       {:padding pad
-       :background "#53acf1"}
+       :background accent-color}
 
       [:input
        {:height (rem 2)
