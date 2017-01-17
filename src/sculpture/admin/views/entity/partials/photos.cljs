@@ -4,7 +4,7 @@
 
 (defn image-url [photo size]
   (if photo
-    (case size
+    (case (or size :thumb)
       :thumb (str photo-host "thumb/" (photo :url))
       :medium (str photo-host "large/" (photo :url))
       :large (str photo-host "large/" (photo :url))
