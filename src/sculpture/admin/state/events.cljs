@@ -104,7 +104,7 @@
     {:db (-> db
              (assoc-in [:mega-map :dirty?] false)
              (assoc-in [:mega-map :center] location)
-             (assoc-in [:mega-map :zoom-level] 15))}))
+             (assoc-in [:mega-map :zoom-level] 18))}))
 
 (reg-event-fx
   :sculpture.mega-map/show
