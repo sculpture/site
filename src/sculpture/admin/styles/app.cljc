@@ -98,6 +98,9 @@
      [:&.captured-at:before (fontawesome \uf133)]
      [:&.user:before (fontawesome \uf007)]
      [:&.sculpture:before (fontawesome \uf03e)]
+     [:&.gender:before (fontawesome \uf22d)]
+     [:&.website:before (fontawesome \uf0c1)]
+     [:&.wikipedia:before (fontawesome \uf266)]
 
      [:>div
       {:display "inline-block"}]]]

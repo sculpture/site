@@ -12,8 +12,7 @@
    [:div.banner
     [photo-mosaic-view]]
    [:div.info
-    [:h1 (artist :name)]
-    (artist :gender)]
+    [:h1 (artist :name)]]
    [:div.extra
     (when (artist :link-wikipedia)
       [:div.row.wikipedia
@@ -24,6 +23,9 @@
     (when (seq (artist :tag-ids))
       [:div.row.tags
        [related-tags-view (artist :tag-ids)]])
+    (when (artist :gender)
+      [:div.row.gender
+       (artist :gender)])]
     [:h2 "Sculptures"]
     [related-sculptures-view @(subscribe [:sculptures-for-artist (artist :id)])]]])
 
