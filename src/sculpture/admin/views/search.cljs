@@ -2,7 +2,7 @@
   (:require
     [clojure.string :as string]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
-    [sculpture.admin.views.search-result :refer [search-result-view]]))
+    [sculpture.admin.views.entity.partials.list :refer [entity-list-view]]))
 
 (defn query-view []
   (let [query @(subscribe [:query])]
@@ -27,9 +27,7 @@
         [:h2 (-> (str type)
                  (string/capitalize)
                  (str "s"))]
-        (for [result results]
-          ^{:key (result :id)}
-          [search-result-view result])]))])
+        [entity-list-view results]]))])
 
 (defn search-view []
   [:div.search

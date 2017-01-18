@@ -26,6 +26,7 @@
     (when (artist :gender)
       [:div.row.gender
        (artist :gender)])]
+   [:div.related
     [:h2 "Sculptures"]
     [related-sculptures-view @(subscribe [:sculptures-for-artist (artist :id)])]]])
 

@@ -35,6 +35,100 @@
     {:color "#666"
      :border-color "#888"}]])
 
+; UNUSED
+(defn entity-box-styles []
+  (let [size "85px"]
+    [:&
+     {:display "inline-block"
+      :border "1px solid #ededed"
+      :width size
+      :padding "0.5em"
+      :margin [[0 "0.5em" "0.5em" 0]]
+      :text-align "center"
+      :text-decoration "none"}
+
+     [:.photo
+      {:width size
+       :height size
+       :display "flex"
+       :align-items "center"
+       :justify-content "center"
+       :margin-bottom "0.5em"}
+
+      [:img
+       {:max-width size
+        :max-height size
+        :vertical-align "center"
+        :text-align "center"}]]
+
+     [:.title
+      {:font-weight "bold"
+       :color "#000"}]
+
+     [:.year
+      {:color "#AAA"}]
+
+     [:&:hover
+      {:border-color "#ccc"}]
+
+     [:&:active
+      {:border-color "#aaa"}]]))
+
+
+(def entity-list-styles
+  (let [pad (rem 0.75)
+        height (rem 2.6)]
+    [:.entity-list
+     {:overflow-x "hidden"
+      :overflow-y "scroll"}
+
+     [:.entity
+      {:display "block"
+       :clear "both"
+       :text-decoration "none"
+       :padding [[(m// pad 2) pad]]
+       :height height
+       :position "relative"}
+
+      [:&:hover
+       {:background "#f3f3f3"}
+       ["&::after"
+        {:content "\"»\""
+         :position "absolute"
+         :right pad
+         :top (m// pad 2)
+         :color "#ccc"
+         :font-size (m// height 2)
+         :height height
+         :line-height height}]]
+
+      [:&:active
+       {:background "#eee"}
+       ["&::after"
+        {:color "#aaa"}]]
+
+      [:img
+       {:width height
+        :height height
+        :margin-right (rem 0.5)
+        :background "#CCC"
+        :float "left"}]
+
+      [:.h1 :.h2
+       {:font-size "0.9em"
+        :height (m// height 2)
+        :line-height (m// height 2)}]
+
+      [:.h1
+       {:font-weight "bold"
+        :color "#000"
+        :white-space "nowrap"}]
+
+      [:.h2
+       {:color "#AAA"}]]
+
+     ]))
+
 (def entity-styles
   [:>.entity
    {:padding-top "2.5em"
@@ -105,47 +199,10 @@
      [:>div
       {:display "inline-block"}]]]
 
-   [:.sculptures
-    {:display "flex"
-     :flex-wrap "wrap"}
-
-    (let [size "85px"]
-
-      [:.sculpture
-       {:display "inline-block"
-        :border "1px solid #ededed"
-        :width size
-        :padding "0.5em"
-        :margin [[0 "0.5em" "0.5em" 0]]
-        :text-align "center"
-        :text-decoration "none"}
-
-       [:.photo
-        {:width size
-         :height size
-         :display "flex"
-         :align-items "center"
-         :justify-content "center"
-         :margin-bottom "0.5em"}
-
-        [:img
-         {:max-width size
-          :max-height size
-          :vertical-align "center"
-          :text-align "center"}]]
-
-       [:.title
-        {:font-weight "bold"
-         :color "#000"}]
-
-       [:.year
-        {:color "#AAA"}]
-
-       [:&:hover
-        {:border-color "#ccc"}]
-
-       [:&:active
-        {:border-color "#aaa"}]])]])
+    [:h2
+     {:font-size "1em"
+      :margin-left (rem 0.75)
+      :padding [[(rem 0.75) 0]]}]])
 
 (def search-styles
   (let [border-width (px 0)
@@ -176,61 +233,13 @@
         :right (m/+ pad input-pad)}]]
 
      [:.results
-      {:overflow-x "hidden"
-       :overflow-y "scroll"}
 
       [:.group
 
        [:h2
         {:font-size "1em"
          :margin-left pad
-         :padding [[pad 0]]}]
-
-       (let [height (rem 2.6)]
-         [:a.result
-          {:display "block"
-           :clear "both"
-           :text-decoration "none"
-           :padding [[(m// pad 2) pad]]
-           :height height
-           :position "relative"}
-
-          [:&:hover
-           {:background "#f3f3f3"}
-           ["&::after"
-            {:content "\"»\""
-             :position "absolute"
-             :right pad
-             :top (m// pad 2)
-             :color "#ccc"
-             :font-size (m// height 2)
-             :height height
-             :line-height height}]]
-
-          [:&:active
-           {:background "#eee"}
-           ["&::after"
-            {:color "#aaa"}]]
-
-          [:img
-           {:width height
-            :height height
-            :margin-right (rem 0.5)
-            :background "#CCC"
-            :float "left"}]
-
-          [:.h1 :.h2
-           {:font-size "0.9em"
-            :height (m// height 2)
-            :line-height (m// height 2)}]
-
-          [:.h1
-           {:font-weight "bold"
-            :color "#000"
-            :white-space "nowrap"}]
-
-          [:.h2
-           {:color "#AAA"}]])]]]))
+         :padding [[pad 0]]}]]]]))
 
 (def entity-edit-styles
   [:>.edit
@@ -265,7 +274,8 @@
     (floating-box)
 
     search-styles
-    entity-styles]
+    entity-styles
+    entity-list-styles]
 
   [:>.main
    {:position "absolute"
