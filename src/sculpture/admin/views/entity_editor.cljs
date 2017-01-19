@@ -99,11 +99,11 @@
        ^{:key k}
        [:tr
         [:td [:button {:on-click (fn []
-                                   (dispatch! [:remove-entity-key (entity :id) k]))} "X"]]
+                                   (dispatch! [:sculpture.edit/remove-entity-key (entity :id) k]))} "X"]]
         [:td (str k)]
         [:td
          [field (merge
                   (field-opts k)
                   {:value v
                    :on-change (fn [v]
-                                (dispatch! [:update-entity (entity :id) k v]))})]]])]])
+                                (dispatch! [:sculpture.edit/update-entity (entity :id) k v]))})]]])]])

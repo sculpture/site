@@ -50,10 +50,10 @@
             :uri "http://localhost:2468/all"
             :on-success
             (fn [data]
-              (dispatch [:init-data data]))}}))
+              (dispatch [:sculpture.data/set-data data]))}}))
 
 (reg-event-fx
-  :init-data
+  :sculpture.data/set-data
   (fn [{db :db} [_ data]]
     {:db (-> db
              (assoc :data (key-by-id data))
@@ -89,17 +89,17 @@
      :dispatch [:sculpture.search/set-query-focused false]}))
 
 (reg-event-fx
-  :update-entity
+  :sculpture.edit/update-entity
   (fn [{db :db} [_ id k v]]
     {:db (assoc-in db [:data id k] v)}))
 
 (reg-event-fx
-  :remove-entity-key
+  :sculpture.edit/remove-entity-key
   (fn [{db :db} [_ id k]]
     {:db (update-in db [:data id] (fn [e] (dissoc e k)))}))
 
 (reg-event-fx
-  :create-entity
+  :sculpture.edit/create-entity
   (fn [{db :db} _]
     (let [id (str (uuid/make-random-uuid))]
       {:db (assoc-in db [:data id] {:id id})

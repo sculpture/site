@@ -27,7 +27,7 @@
 
 (defn new-entity-button-view []
   [:button.new {:on-click (fn [_]
-                            (dispatch! [:create-entity]))}
+                            (dispatch! [:sculpture.edit/create-entity]))}
    "New"])
 
 (defn sidebar-view []
