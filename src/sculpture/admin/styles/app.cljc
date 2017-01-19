@@ -129,8 +129,11 @@
 
      ]))
 
+(def photo-mosaic-styles
+  [:.photo-mosaic])
+
 (def entity-styles
-  [:>.entity
+  [:>.active-entity
    {:padding-top "2.5em"
     :position "relative"}
 
@@ -146,11 +149,25 @@
      :top "1em"
      :left "1em"}]
 
-   [:.banner
-    [:.photo
-     [:img
-      {:width "100%"
-       :display "block"}]]]
+   [:>.entity
+
+    [:>.photo-mosaic
+     {:background "#CCC"}
+
+     [:>a
+      {:display "block"}
+
+      [:>.photo
+
+       [:>img
+        {:display "block"
+         :max-width "100%"}]]]]
+
+    [:>.photo
+
+     [:>img
+      {:display "block"
+       :max-width "100%"}]]]
 
    [:.info
     {:padding "1.5em"
@@ -173,16 +190,20 @@
       :display "flex"
       :justify-content "space-between"}]]
 
-   [:.extra
+   [:.meta
     {:padding "1.5em"}
 
     [:.row
+     {:margin-bottom "0.75em"}
+
+     [:&:last-child
+      {:margin-bottom 0}]
 
      [:&:before
       {:width "1em"
        :text-align "center"
        :display "inline-block"
-       :margin-right "0.5em"}]
+       :margin-right "0.75em"}]
 
      [:&.tags:before (fontawesome \uf02c)]
      [:&.materials:before (fontawesome \uf0e3)]
@@ -199,10 +220,11 @@
      [:>div
       {:display "inline-block"}]]]
 
+   [:.related
     [:h2
      {:font-size "1em"
       :margin-left (rem 0.75)
-      :padding [[(rem 0.75) 0]]}]])
+      :padding [[(rem 0.75) 0]]}]]])
 
 (def search-styles
   (let [border-width (px 0)

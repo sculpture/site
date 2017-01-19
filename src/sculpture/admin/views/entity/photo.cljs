@@ -10,12 +10,11 @@
 
 (defmethod entity-view "photo"
   [photo]
-  [:div.photo
-   [:div.banner
-    [photo-view {:photo photo
-                 :size :medium}]]
-   ;[:div.info]
-   [:div.extra
+  [:div.photo.entity
+   [photo-view {:photo photo
+                :size :medium}]
+
+   [:div.meta
 
     [:div.row.user
      (let [user @(subscribe [:get-entity (photo :user-id)])]

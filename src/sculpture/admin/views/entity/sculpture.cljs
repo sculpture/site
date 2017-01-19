@@ -4,26 +4,17 @@
     [sculpture.admin.routes :as routes]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.views.entity :refer [entity-view]]
-    [sculpture.admin.views.entity.partials.photos :refer [photo-view]]
+    [sculpture.admin.views.entity.partials.photo-mosaic :refer [photo-mosaic-view]]
     [sculpture.admin.views.entity.partials.map :refer [map-view]]
     [sculpture.admin.views.entity.partials.related-tags :refer [related-tags-view]]
     [sculpture.admin.views.entity.partials.related-materials :refer [related-materials-view]]
     [sculpture.admin.views.entity.partials.related-artists :refer [related-artists-view]]))
 
-(defn photos-view [sculpture-id]
-  (let [photos (subscribe [:photos-for-sculpture sculpture-id])]
-    [:div.photos
-     (for [photo @photos]
-       ^{:key (photo :id)}
-       [:a {:href (routes/entity-path {:id (photo :id)})}
-        [photo-view {:photo photo
-                     :size :large}]])]))
-
 (defmethod entity-view "sculpture"
   [sculpture]
-  [:div.sculpture
-   [:div.banner
-    [photos-view (sculpture :id)]]
+  [:div.sculpture.entity
+
+   [photo-mosaic-view @(subscribe [:photos-for-sculpture (sculpture :id)])]
 
    [:div.info
     [:h1 (sculpture :title)]
@@ -37,7 +28,7 @@
 
      [:div.year (sculpture :year)]]]
 
-   [:div.extra
+   [:div.meta
     (when (seq (sculpture :tag-ids))
       [:div.row.tags
        [related-tags-view (sculpture :tag-ids)]])
@@ -64,7 +55,7 @@
        (sculpture :commissioned-by)])
 
     (when (seq (sculpture :note))
-      [:div.row.note (sculpture :note)])
+      [:div.row.note (sculpture :note)])]
 
     #_(when (sculpture :location)
         [map-view {:disable-interaction? true
@@ -72,4 +63,4 @@
                                (dispatch! [:sculpture.mega-map/go-to (sculpture :location)]))
                    :center (sculpture :location)
                    :shapes [{:location (sculpture :location)
-                             :type :icon}]}])]])
+                             :type :icon}]}])])

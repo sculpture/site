@@ -9,11 +9,10 @@
 (defmethod entity-view "artist"
   [artist]
   [:div.artist
-   [:div.banner
-    [photo-mosaic-view]]
+   [photo-mosaic-view []]
    [:div.info
     [:h1 (artist :name)]]
-   [:div.extra
+   [:div.meta
     (when (artist :link-wikipedia)
       [:div.row.wikipedia
        [:a.link {:href (artist :link-wikipedia)} "Wikipedia"]])

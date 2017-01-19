@@ -21,7 +21,7 @@
 (defn active-entity-view [entity-id]
   (let [entity (subscribe [:get-entity entity-id])]
     (when @entity
-      [:div.entity.view
+      [:div.active-entity
        [:a.back.button {:href (routes/root-path)}
         "<< Back to Results"]
        [:a.edit.button {:href (routes/entity-edit-path {:id (@entity :id)})}
