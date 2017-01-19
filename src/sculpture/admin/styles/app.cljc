@@ -129,9 +129,6 @@
 
      ]))
 
-(def photo-mosaic-styles
-  [:.photo-mosaic])
-
 (def entity-styles
   [:>.active-entity
    {:padding-top "2.5em"
@@ -151,17 +148,33 @@
 
    [:>.entity
 
-    [:>.photo-mosaic
-     {:background "#CCC"}
+    (let [height "50vh"]
+      [:>.photo-mosaic
+       {:overflow "hidden"
+        :max-height height}
 
-     [:>a
-      {:display "block"}
+       [:>.many
+        {:display "flex"}
 
-      [:>.photo
+        [:>.col
+         {:display "flex"
+          :flex-direction "column"
+          :width "50%"}
 
-       [:>img
-        {:display "block"
-         :max-width "100%"}]]]]
+         [:>a
+          {:display "block"}
+
+          [:>img
+           {:display "block"
+            :width "100%"}]]]]
+
+       [:>.single
+        [:>a
+         {:display "block"}
+
+         [:>img
+          {:display "block"
+           :width "100%"}]]]])
 
     [:>.photo
 

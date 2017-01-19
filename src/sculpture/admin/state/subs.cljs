@@ -66,6 +66,26 @@
                      (contains? (set (entity :artist-ids)) artist-id)))))))
 
 (reg-sub
+  :sculpture-photos-for-artist
+  (fn [db [_ artist-id]]
+    (let [entities (->> db
+                        :data
+                        vals)
+          sculpture-ids (->> entities
+                             (filter (fn [entity]
+                                       (and
+                                         (= "sculpture" (entity :type))
+                                         (contains? (set (entity :artist-ids)) artist-id))))
+                             (map :id)
+                             set)
+          photos (->> entities
+                      (filter (fn [entity]
+                                (and
+                                  (= "photo" (entity :type))
+                                  (contains? sculpture-ids (entity :sculpture-id))))))]
+      photos)))
+
+(reg-sub
   :sculptures
   (fn [db _]
     (->> db

@@ -11,9 +11,14 @@
       :original (str photo-host "original/" (photo :url)))
     "http://placehold.it/50x50"))
 
+(defn image-view [{:keys [photo size]}]
+ [:img {:src (image-url photo size)}])
+
 (defn photo-view [{:keys [photo size attribution? on-click]}]
   [:div.photo {:on-click (or on-click (fn []))}
-   [:img {:src (image-url photo size)}]
+   [image-view {:photo photo
+                :size size}]
+
    (when attribution?
      [:div "By ..."])])
 

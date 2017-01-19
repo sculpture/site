@@ -8,8 +8,8 @@
 
 (defmethod entity-view "artist"
   [artist]
-  [:div.artist
-   [photo-mosaic-view []]
+  [:div.artist.entity
+   [photo-mosaic-view @(subscribe [:sculpture-photos-for-artist (artist :id)])]
    [:div.info
     [:h1 (artist :name)]]
    [:div.meta
