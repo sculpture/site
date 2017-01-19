@@ -22,10 +22,7 @@
   (let [entity (subscribe [:get-entity entity-id])]
     (when @entity
       [:div.active-entity
-       [:a.back.button {:href (routes/root-path)}
-        "<< Back to Results"]
-       [:a.edit.button {:href (routes/entity-edit-path {:id (@entity :id)})}
-        "Edit"]
+       [:a.edit.button {:href (routes/entity-edit-path {:id (@entity :id)})}]
        [entity-view @entity]])))
 
 (defn new-entity-button-view []
@@ -39,12 +36,14 @@
                     (= :entity (:type page))
                     (page :id))]
     [:div.sidebar
-     [:div.search
       [query-view]
-      (when-not entity-id
-        [results-view])]
-     (when entity-id
-       [active-entity-view entity-id])]))
+      (when (not= :root (:type page))
+        [:a.back.button {:href (routes/root-path)}])
+      [:div.content
+       (when-not entity-id
+         [results-view])
+       (when entity-id
+         [active-entity-view entity-id])]]))
 
 (defn app-view []
   (let [page @(subscribe [:page])]

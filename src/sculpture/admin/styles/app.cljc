@@ -4,7 +4,7 @@
     [garden.units :refer [px em rem]]
     [garden.arithmetic :as m]))
 
-(def accent-color "#53acf1")
+(def accent-color "rgba(83,172,241,1)")
 
 (defn floating-box []
   {:background "#fff"
@@ -34,6 +34,30 @@
    [:&:active
     {:color "#666"
      :border-color "#888"}]])
+
+(defn side-button [icon side]
+  (let [width (em 1.5)]
+    [:&
+     {:background "#cad2d3"
+      :position "absolute"
+      :top "4em"
+      :width width
+      :height "3em"
+      :display "block"
+      :line-height "3em"
+      :text-decoration "none"
+      :text-align "center"
+      :color "white"}
+
+     (case side
+       :left {:left (m/- width)}
+       :right {:right (m/- width)})
+
+     [:&:before
+      (fontawesome icon)]
+
+     [:&:hover
+      {:background accent-color}]]))
 
 ; UNUSED
 (defn entity-box-styles []
@@ -131,20 +155,9 @@
 
 (def entity-styles
   [:>.active-entity
-   {:padding-top "2.5em"
-    :position "relative"}
 
-   [:a.edit
-    (button)
-    {:position "absolute"
-     :top "1em"
-     :right "1em"}]
-
-   [:a.back
-    (button)
-    {:position "absolute"
-     :top "1em"
-     :left "1em"}]
+   [:>a.edit
+    (side-button \uf040 :right)]
 
    [:>.entity
 
@@ -239,42 +252,39 @@
       :margin-left (rem 0.75)
       :padding [[(rem 0.75) 0]]}]]])
 
-(def search-styles
-  (let [border-width (px 0)
-        pad (rem 0.75)
-        input-pad (rem 0.5)]
+(def pad (rem 0.75))
 
-    [:>.search
-     {:display "flex"
-      :flex-direction "column"}
+(def search-query-styles
+  (let [input-pad (rem 0.5)]
+    [:>.query
+     {:padding pad
+      :background accent-color}
 
-     [:.query
-      {:padding pad
-       :background accent-color}
+     [:>input
+      {:height (rem 2)
+       :border-radius "3px"
+       :border "none"
+       :padding [[0 input-pad]]
+       :line-height (rem 2)
+       :font-size "1.1em"
+       :width "100%"
+       :box-sizing "border-box"}]
 
-      [:input
-       {:height (rem 2)
-        :border-radius "3px"
-        :border "none"
-        :padding [[0 input-pad]]
-        :line-height (rem 2)
-        :font-size "1.1em"
-        :width "100%"
-        :box-sizing "border-box"}]
+     [:>button.clear
+      {:position "absolute"
+       :top (m/+ pad input-pad)
+       :right (m/+ pad input-pad)}]]))
 
-      [:button.clear
-       {:position "absolute"
-        :top (m/+ pad input-pad)
-        :right (m/+ pad input-pad)}]]
+(def search-result-styles
+  [:>.results
+   {:overflow-y "scroll"}
 
-     [:.results
+   [:>.group
 
-      [:.group
-
-       [:h2
-        {:font-size "1em"
-         :margin-left pad
-         :padding [[pad 0]]}]]]]))
+    [:>h2
+     {:font-size "1em"
+      :margin-left pad
+      :padding [[pad 0]]}]]])
 
 (def entity-edit-styles
   [:>.edit
@@ -299,18 +309,27 @@
 
    [:>.sidebar
     {:position "absolute"
-     :left "1.5em"
+     :left "2em"
      :top 0
      :min-width "19em"
      :width "30%"
      :max-height "100vh"
      :z-index 1000
-     :overflow-y "scroll"}
+     :display "flex"
+     :flex-direction "column"}
     (floating-box)
 
-    search-styles
-    entity-styles
-    entity-list-styles]
+    [:>a.back
+     (side-button \uf0d9 :left)]
+
+    search-query-styles
+
+    [:>.content
+     {:overflow-y "scroll"}
+
+     search-result-styles
+     entity-styles
+     entity-list-styles]]
 
   [:>.main
    {:position "absolute"
