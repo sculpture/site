@@ -5,6 +5,7 @@
     [garden.arithmetic :as m]))
 
 (def accent-color "rgba(83,172,241,1)")
+(def secondary-color "#CCC")
 
 (defn floating-box []
   {:background "#fff"
@@ -273,7 +274,17 @@
      [:>button.clear
       {:position "absolute"
        :top (m/+ pad input-pad)
-       :right (m/+ pad input-pad)}]]))
+       :right (m/+ pad input-pad)
+       :background "none"
+       :border "none"
+       :color secondary-color
+       :cursor "pointer"}
+
+      [:&:hover
+       {:color accent-color}]
+
+      [:&:before
+       (fontawesome \uf057)]]]))
 
 (def search-result-styles
   [:>.results

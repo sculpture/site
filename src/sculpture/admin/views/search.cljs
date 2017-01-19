@@ -14,8 +14,7 @@
      (when (seq query)
        [:button.clear
         {:on-click (fn [_]
-                     (dispatch! [:set-query ""]))}
-        "X"])]))
+                     (dispatch! [:set-query ""]))}])]))
 
 (defn results-view []
   [:div.results
