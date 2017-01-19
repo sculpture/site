@@ -27,15 +27,17 @@
 
 (defn results-view []
   [:div.results
-   (let [results (subscribe [:results])
-         grouped-results (group-by :type @results)]
-     (for [[type results] grouped-results]
-       ^{:key type}
-       [:div.group {:class (str type)}
-        [:h2 (-> (str type)
-                 (string/capitalize)
-                 (str "s"))]
-        [entity-list-view results]]))])
+   (let [results @(subscribe [:results])
+         grouped-results (group-by :type results)]
+     (if-not (seq results)
+       [:div.no-results "No results"]
+       (for [[type results] grouped-results]
+         ^{:key type}
+         [:div.group {:class (str type)}
+          [:h2 (-> (str type)
+                   (string/capitalize)
+                   (str "s"))]
+          [entity-list-view results]])))])
 
 (defn search-view []
   [:div.search

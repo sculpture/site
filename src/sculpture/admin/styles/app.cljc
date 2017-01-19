@@ -290,6 +290,9 @@
   [:>.results
    {:overflow-y "scroll"}
 
+   [:>.no-results
+    {:padding [[pad]]}]
+
    [:>.group
 
     [:>h2
