@@ -34,16 +34,23 @@
   (let [page @(subscribe [:page])
         entity-id (when
                     (= :entity (:type page))
-                    (page :id))]
+                    (page :id))
+        typing-query? @(subscribe [:typing-query?])
+        query @(subscribe [:query])]
     [:div.sidebar
       [query-view]
       (when (not= :root (:type page))
         [:a.back.button {:href (routes/root-path)}])
       [:div.content
-       (when-not entity-id
-         [results-view])
-       (when entity-id
-         [active-entity-view entity-id])]]))
+       (cond
+         (and typing-query? (seq query))
+         [results-view]
+         entity-id
+         [active-entity-view entity-id]
+         (seq query)
+         [results-view]
+         :default
+         [:div])]]))
 
 (defn app-view []
   (let [page @(subscribe [:page])]

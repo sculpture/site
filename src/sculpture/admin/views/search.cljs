@@ -9,6 +9,15 @@
     [:div.query
      [:input {:placeholder "Search Sculpture"
               :value query
+              :auto-focus true
+              :on-focus (fn [_]
+                          (dispatch! [:set-typing-query true]))
+              :on-blur (fn [_]
+                         ; set a timeout so that when user clicks a search result
+                         ; the link click actually registers
+                         ; without it, a click on a link triggers on-blur, which may remove the link
+                         ; and then prevent the click target from changing the url
+                         (js/setTimeout (fn [] (dispatch! [:set-typing-query false])) 75))
               :on-change (fn [e]
                            (dispatch! [:set-query (.. e -target -value)]))}]
      (when (seq query)

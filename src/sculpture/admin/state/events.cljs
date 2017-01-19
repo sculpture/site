@@ -41,6 +41,7 @@
     {:db {:query ""
           :active-entity-id nil
           :results nil
+          :typing-query false
           :page nil
           :data nil
           :fuse nil
@@ -59,6 +60,11 @@
            :fuse (search/init data))}))
 
 (reg-event-fx
+  :set-typing-query
+  (fn [{db :db} [_ bool]]
+    {:db (assoc db :typing-query? bool)}))
+
+(reg-event-fx
   :set-query
   (fn [{db :db} [_ query]]
     {:db (assoc db :query query)
@@ -69,8 +75,7 @@
 (reg-event-fx
   :set-results
   (fn [{db :db} [_ query]]
-    {:redirect-to (routes/root-path)
-     :db (assoc db :results
+    {:db (assoc db :results
            (map
              (fn [id]
                (get-in db [:data id]))
@@ -79,7 +84,8 @@
 (reg-event-fx
   :set-page
   (fn [{db :db} [_ page]]
-    {:db (assoc db :page page)}))
+    {:db (assoc db :page page)
+     :dispatch [:set-typing-query false]}))
 
 (reg-event-fx
   :update-entity

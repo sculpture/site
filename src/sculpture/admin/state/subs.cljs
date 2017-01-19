@@ -99,3 +99,8 @@
   :sculpture.mega-map/config
   (fn [db _]
     (db :mega-map)))
+
+(reg-sub
+  :typing-query?
+  (fn [db _]
+    (db :typing-query?)))
