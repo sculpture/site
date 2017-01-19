@@ -38,13 +38,13 @@
 (reg-event-fx
   :init
   (fn [{db :db} _]
-    {:db {:query ""
+    {:db {:search {:query ""
+                   :results nil
+                   :focused? false
+                   :fuse nil }
           :active-entity-id nil
-          :results nil
-          :typing-query false
           :page nil
           :data nil
-          :fuse nil
           :mega-map {:dirty? false}}
      :ajax {:method :get
             :uri "http://localhost:2468/all"
@@ -55,37 +55,38 @@
 (reg-event-fx
   :init-data
   (fn [{db :db} [_ data]]
-    {:db (assoc db
-           :data (key-by-id data)
-           :fuse (search/init data))}))
+    {:db (-> db
+             (assoc :data (key-by-id data))
+             (assoc-in [:search :fuse]
+               (search/init data)))}))
 
 (reg-event-fx
-  :set-typing-query
+  :sculpture.search/set-query-focused
   (fn [{db :db} [_ bool]]
-    {:db (assoc db :typing-query? bool)}))
+    {:db (assoc-in db [:search :focused?] bool)}))
 
 (reg-event-fx
-  :set-query
+  :sculpture.search/set-query
   (fn [{db :db} [_ query]]
-    {:db (assoc db :query query)
+    {:db (assoc-in db [:search :query] query)
      :dispatch-debounce {:id :query
                          :timeout 250
-                         :dispatch [:set-results query]}}))
+                         :dispatch [:sculpture.search/set-results query]}}))
 
 (reg-event-fx
-  :set-results
+  :sculpture.search/set-results
   (fn [{db :db} [_ query]]
-    {:db (assoc db :results
+    {:db (assoc-in db [:search :results]
            (map
              (fn [id]
                (get-in db [:data id]))
-             (search/search (db :fuse) query 20)))}))
+             (search/search (get-in db [:search :fuse]) query 20)))}))
 
 (reg-event-fx
   :set-page
   (fn [{db :db} [_ page]]
     {:db (assoc db :page page)
-     :dispatch [:set-typing-query false]}))
+     :dispatch [:sculpture.search/set-query-focused false]}))
 
 (reg-event-fx
   :update-entity

@@ -19,11 +19,9 @@
 
 ; -- keys in ::app-state
 
-(s/def ::query (s/nilable string?))
 
 (s/def ::active-entity-id (s/nilable ::entity-id))
 
-(s/def ::results (s/nilable (s/coll-of ::entity)))
 
 (s/def ::page (s/nilable
                 (s/keys :req-un [::type]
@@ -34,17 +32,29 @@
                 ; use s/map-of to check all
                 (s/every-kv ::entity-id ::entity)))
 
+
+
+; -- ::search
+
+(s/def ::query (s/nilable string?))
+(s/def ::results (s/nilable (s/coll-of ::entity)))
 (s/def ::fuse any?)
+(s/def ::focused? ::boolean)
+
+(s/def ::search
+  (s/keys :req-un [::query
+                   ::results
+                   ::fuse
+                   ::focused?]))
+
 
 ; -- ::app-state
 
 (s/def ::app-state
-  (s/keys :req-un [::query
+  (s/keys :req-un [::search
                    ::active-entity-id
-                   ::results
                    ::page
-                   ::data
-                   ::fuse]))
+                   ::data]))
 
 ; -- helpers
 

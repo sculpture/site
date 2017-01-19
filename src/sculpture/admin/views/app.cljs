@@ -35,8 +35,8 @@
         entity-id (when
                     (= :entity (:type page))
                     (page :id))
-        typing-query? @(subscribe [:typing-query?])
-        query @(subscribe [:query])]
+        typing-query? @(subscribe [:sculpture.search/query-focused?])
+        query @(subscribe [:sculpture.search/query])]
     [:div.sidebar
       [query-view]
       (when (not= :root (:type page))

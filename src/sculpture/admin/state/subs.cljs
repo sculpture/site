@@ -4,14 +4,14 @@
     [sculpture.admin.state.search :as search]))
 
 (reg-sub
-  :query
+  :sculpture.search/query
   (fn [db _]
-    (db :query)))
+    (get-in db [:search :query])))
 
 (reg-sub
-  :results
+  :sculpture.search/results
   (fn [db _]
-    (db :results)))
+    (get-in db [:search :results])))
 
 (reg-sub
   :page
@@ -48,7 +48,7 @@
 (reg-sub
   :related-entity-search
   (fn [db [_ type query]]
-    (->> (search/search (db :fuse) query 20)
+    (->> (search/search (get-in db [:search :fuse]) query 20)
          (map (fn [id]
                 (get-in db [:data id])))
          (filter (fn [entity]
@@ -101,6 +101,6 @@
     (db :mega-map)))
 
 (reg-sub
-  :typing-query?
+  :sculpture.search/query-focused?
   (fn [db _]
-    (db :typing-query?)))
+    (get-in db [:search :focused?])))
