@@ -2,7 +2,9 @@
   (:require
     [reagent.core :as r]))
 
-(def photo-host "http://sculpture.s3-website-us-east-1.amazonaws.com/")
+(def photo-host
+   #_"https://s3-ca-central-1.amazonaws.com/sculpture-photos/"
+   "https://1510904592.rsc.cdn77.org/")
 
 (defn image-url [photo size]
   (if photo
