@@ -164,11 +164,11 @@
 
     (let [height "50vh"]
       [:>.photo-mosaic
-       {:overflow "hidden"
-        :max-height height}
 
        [:>.many
-        {:display "flex"}
+        {:display "flex"
+         :overflow "hidden"
+         :max-height height}
 
         [:>.col
          {:display "flex"
@@ -183,6 +183,7 @@
             :width "100%"}]]]]
 
        [:>.single
+
         [:>a
          {:display "block"}
 
