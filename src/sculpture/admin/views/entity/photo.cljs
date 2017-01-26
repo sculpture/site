@@ -29,4 +29,17 @@
     [:div.row.captured-at
      (f/unparse
        (f/formatter "yyyy-MM-dd" )
-       (c/from-date (photo :captured-at)))]]])
+       (c/from-date (photo :captured-at)))]
+
+    [:div.row.dimensions
+     (photo :width) "x" (photo :height)]
+
+    [:div.row.colors
+     (for [color (photo :colors)]
+       ^{:key color}
+       [:div.color
+        [:div.swatch {:style {:background-color color
+                              :width "1em"
+                              :height "1em"
+                              :display "inline-block"}}]
+        color])]]])
