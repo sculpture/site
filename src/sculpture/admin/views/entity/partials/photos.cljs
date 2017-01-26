@@ -9,9 +9,9 @@
 (defn image-url [photo size]
   (if photo
     (case (or size :thumb)
-      :preload (str photo-host "thumb/" (photo :url))
+      :preload (str photo-host "preload/" (photo :url))
       :thumb (str photo-host "thumb/" (photo :url))
-      :medium (str photo-host "large/" (photo :url))
+      :medium (str photo-host "medium/" (photo :url))
       :large (str photo-host "large/" (photo :url))
       :original (str photo-host "original/" (photo :url)))
     "http://placehold.it/50x50"))
