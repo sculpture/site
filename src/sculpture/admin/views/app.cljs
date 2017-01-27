@@ -27,8 +27,15 @@
 
 (defn new-entity-button-view []
   [:button.new {:on-click (fn [_]
-                            (dispatch! [:sculpture.edit/create-entity]))}
-   "New"])
+                            (dispatch! [:sculpture.edit/create-entity]))}])
+
+(defn toolbar-view []
+  [:div.toolbar
+
+   [new-entity-button-view]
+
+   [:div.user
+    [:img.avatar {:src "https://placehold.it/50x50/00ff00"}]]])
 
 (defn sidebar-view []
   (let [page @(subscribe [:page])
@@ -57,7 +64,7 @@
     [:div.app
      [styles-view]
      [mega-map-view]
-     [new-entity-button-view]
+     [toolbar-view]
      [sidebar-view]
 
      (when (and page

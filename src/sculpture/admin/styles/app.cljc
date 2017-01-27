@@ -2,63 +2,32 @@
   (:require
     [garden.core :refer [css]]
     [garden.units :refer [px em rem]]
-    [garden.arithmetic :as m]))
-
-(def accent-color "rgba(83,172,241,1)")
-(def secondary-color "#CCC")
+    [garden.arithmetic :as m]
+    [sculpture.admin.styles.toolbar :refer [toolbar]]
+    [sculpture.admin.styles.fontawesome :refer [fontawesome]]
+    [sculpture.admin.styles.button :refer [button]]
+    [sculpture.admin.styles.flat-button :refer [flat-button]]
+    [sculpture.admin.styles.colors :refer [accent-color secondary-color]]))
 
 (defn floating-box []
   {:background "#fff"
    :box-shadow "0 0 2px 0 #ccc"})
 
-(defn fontawesome [unicode]
-  {:content (str "\"" unicode "\"")
-   :font-family "FontAwesome"})
-
-(defn button []
-  [:&
-   {:display "inline-block"
-    :border "1px solid #ccc"
-    :border-radius "3px"
-    :padding [[0 "0.25em"]]
-    :text-transform "uppercase"
-    :font-size "0.7em"
-    :line-height "1.7em"
-    :height "1.5em"
-    :text-decoration "none"
-    :color "#aaa"}
-
-   [:&:hover
-    {:color "#888"
-     :border-color "#aaa"}]
-
-   [:&:active
-    {:color "#666"
-     :border-color "#888"}]])
 
 (defn side-button [icon side]
   (let [width (em 1.5)]
     [:&
-     {:background "#cad2d3"
-      :position "absolute"
+     (flat-button icon)
+     {:position "absolute"
       :top "4em"
       :width width
       :height "3em"
-      :display "block"
       :line-height "3em"
-      :text-decoration "none"
-      :text-align "center"
-      :color "white"}
+      }
 
      (case side
        :left {:left (m/- width)}
-       :right {:right (m/- width)})
-
-     [:&:before
-      (fontawesome icon)]
-
-     [:&:hover
-      {:background accent-color}]]))
+       :right {:right (m/- width)})]))
 
 ; UNUSED
 (defn entity-box-styles []
@@ -316,11 +285,7 @@
     {:width "100vw"
      :height "100vh"}]
 
-   [:>button.new
-    {:position "absolute"
-     :top 0
-     :right 0
-     :z-index 1000}]
+   (toolbar)
 
    [:>.sidebar
     {:position "absolute"
