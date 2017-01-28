@@ -1,5 +1,7 @@
 (defproject sculpture "0.0.1"
 
+  :source-paths ["src"]
+
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.293"]
                  [com.andrewmcveigh/cljs-time "0.4.0"]
@@ -14,6 +16,7 @@
   :plugins [[lein-figwheel "0.5.8"]]
 
   :figwheel {:server-port 3939
+             ;:force-index true
              :ring-handler "sculpture.handler/force-index"
              :reload-clj-files {:clj false
                                 :cljc true}}
