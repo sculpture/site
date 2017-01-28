@@ -13,35 +13,6 @@
 
    [:>.entity
 
-    (let [height "50vh"]
-      [:>.photo-mosaic
-
-       [:>.many
-        {:display "flex"
-         :overflow "hidden"
-         :max-height height}
-
-        [:>.col
-         {:display "flex"
-          :flex-direction "column"
-          :width "50%"}
-
-         [:>a
-          {:display "block"}
-
-          [:>img
-           {:display "block"
-            :width "100%"}]]]]
-
-       [:>.single
-
-        [:>a
-         {:display "block"}
-
-         [:>img
-          {:display "block"
-           :width "100%"}]]]])
-
     [:>.photo
 
      [:>img
