@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.styles
   (:require
-    [sculpture.admin.styles.app :refer [styles]]))
+    [sculpture.admin.styles.core :refer [styles]]))
 
 (defn styles-view []
   [:style

@@ -2,7 +2,7 @@
   (:require
     [sculpture.admin.styles.flat-button :refer [flat-button]]))
 
-(defn toolbar []
+(def toolbar-styles
   (let [height "2rem"]
     [:>.toolbar
      {:position "absolute"
