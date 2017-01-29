@@ -26,6 +26,7 @@
                     :tag-ids []
                     :slug ""
                     :year nil
+                    :size nil
 }
 
                    "artist"
@@ -87,6 +88,7 @@
     :geojson {:type :geojson}
     :link-website {:type :url}
     :link-wikipedia {:type :url}
+    :size {:type :integer}
     :gender {:type :enum
              :options #{"" "male" "female" "other"}}
     :note {:type :string

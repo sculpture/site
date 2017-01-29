@@ -13,6 +13,7 @@
 (s/def ::commissioned-by (s/nilable string?))
 (s/def ::location (s/nilable :sculpture.specs.types/location-type))
 (s/def ::slug :sculpture.specs.types/slug-type)
+(s/def ::size (s/nilable integer?))
 
 (s/def ::sculpture
   (s/merge :sculpture.specs.entity/common
@@ -20,6 +21,7 @@
                             ::commissioned-by
                             ::material-ids
                             ::location
+                            ::size
                             ::note
                             ::tag-ids
                             ::title
