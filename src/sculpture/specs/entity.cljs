@@ -8,9 +8,11 @@
                 "material"
                 "artist"
                 "region"
-                "tag"
                 "photo"
-                "user"})
+                "user"
+                "sculpture-tag"
+                "region-tag"
+                "artist-tag"})
 
 (s/def ::common
   (s/keys :req-un [::id

@@ -12,6 +12,14 @@
            (s/keys :req-un [::name
                             ::slug])))
 
-(defmethod entity-type "tag"
+(defmethod entity-type "artist-tag"
+  [_]
+  ::tag)
+
+(defmethod entity-type "sculpture-tag"
+  [_]
+  ::tag)
+
+(defmethod entity-type "region-tag"
   [_]
   ::tag)
