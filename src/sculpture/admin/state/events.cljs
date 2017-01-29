@@ -2,6 +2,7 @@
   (:require
     [re-frame.core :refer [dispatch] :as reframe]
     [cljs-uuid-utils.core :as uuid]
+    [sculpture.admin.state.events.oauth]
     [sculpture.admin.state.fx.dispatch-debounce]
     [sculpture.admin.state.fx.ajax]
     [sculpture.admin.state.fx.redirect]
@@ -41,11 +42,16 @@
     {:db {:search {:query ""
                    :results nil
                    :focused? false
-                   :fuse nil }
+                   :fuse nil}
+          :user {:token nil
+                 :email nil
+                 :name nil
+                 :avatar nil}
           :active-entity-id nil
           :page nil
           :data nil
           :mega-map {:dirty? false}}
+     :dispatch [:init-oauth]
      :ajax {:method :get
             :uri "http://localhost:2468/all"
             :on-success

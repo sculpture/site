@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.app
   (:require
-    [sculpture.admin.state.core :refer [subscribe dispatch!]]
+    [sculpture.admin.state.core :refer [subscribe dispatch! dispatch-sync!]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.views.styles :refer [styles-view]]
     [sculpture.admin.views.search :refer [query-view results-view]]
@@ -30,12 +30,15 @@
                             (dispatch! [:sculpture.edit/create-entity]))}])
 
 (defn toolbar-view []
-  [:div.toolbar
-
-   [new-entity-button-view]
-
-   [:div.user
-    [:img.avatar {:src "https://placehold.it/50x50/00ff00"}]]])
+  (let [user @(subscribe [:user])]
+    (if (user :name)
+      [:div.toolbar
+       [new-entity-button-view]
+       [:img.avatar {:src (user :avatar)}]]
+      [:div.toolbar
+       [:button.auth
+        {:on-click (fn []
+                     (dispatch-sync! [:request-oauth-token]))}]])))
 
 (defn sidebar-view []
   (let [page @(subscribe [:page])

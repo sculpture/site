@@ -4,6 +4,11 @@
     [sculpture.admin.state.search :as search]))
 
 (reg-sub
+  :user
+  (fn [db _]
+    (db :user)))
+
+(reg-sub
   :sculpture.search/query
   (fn [db _]
     (get-in db [:search :query])))

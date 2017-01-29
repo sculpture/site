@@ -1,6 +1,7 @@
 (ns sculpture.admin.styles.toolbar
   (:require
-    [sculpture.admin.styles.flat-button :refer [flat-button]]))
+    [sculpture.admin.styles.flat-button :refer [flat-button]]
+    [sculpture.admin.styles.colors :refer [accent-color]]))
 
 (def toolbar-styles
   (let [height "2rem"]
@@ -9,7 +10,16 @@
       :top "0.75rem"
       :right 0
       :z-index 1000
-      :height height}
+      :height height
+      :background accent-color
+      :color "white"}
+
+     [:>button.auth
+      (flat-button \uf234)
+      {:height height
+       :width height
+       :vertical-align "top"
+       :-webkit-font-smoothing "antialiased"}]
 
      [:>button.new
       (flat-button \uf067)
@@ -17,10 +27,6 @@
        :width height
        :vertical-align "top"}]
 
-     [:>.user
+     [:>img.avatar
       {:height "100%"
-       :display "inline-block"}
-
-      [:>img.avatar
-       {:height "100%"
-        :display "inline-block"}]]]))
+       :display "inline-block"}]]))

@@ -48,11 +48,25 @@
                    ::focused?]))
 
 
+; -- ::user
+
+(s/def ::token (s/nilable string?))
+(s/def ::email (s/nilable string?))
+(s/def ::name (s/nilable string?))
+(s/def ::avatar (s/nilable string?))
+
+(s/def ::user
+  (s/keys :req-un [::token
+                   ::email
+                   ::avatar
+                   ::name]))
+
 ; -- ::app-state
 
 (s/def ::app-state
   (s/keys :req-un [::search
                    ::active-entity-id
+                   ::user
                    ::page
                    ::data]))
 
