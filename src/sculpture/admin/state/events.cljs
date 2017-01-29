@@ -108,7 +108,8 @@
   :sculpture.edit/create-entity
   (fn [{db :db} _]
     (let [id (str (uuid/make-random-uuid))]
-      {:db (assoc-in db [:data id] {:id id})
+      {:db (assoc-in db [:data id] {:id id
+                                    :type "sculpture"})
        :redirect-to (routes/entity-edit-path {:id id})})))
 
 (reg-event-fx
