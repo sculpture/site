@@ -18,6 +18,8 @@
   (case type
     "sculpture"
     (array-map
+      :id ""
+      :type "sculpture"
       :title ""
       :artist-ids []
       :commissioned-by ""
@@ -31,6 +33,8 @@
 
     "artist"
     (array-map
+      :id ""
+      :type "artist"
       :name ""
       :gender nil
       :link-website ""
@@ -44,6 +48,8 @@
 
     "region"
     (array-map
+      :id ""
+      :type "region"
       :name ""
       :geojson nil
       :slug ""
@@ -51,16 +57,36 @@
 
     "material"
     (array-map
+      :id ""
+      :type "material"
       :name ""
       :slug "")
 
-    "tag"
+    "artist-tag"
     (array-map
+      :id ""
+      :type "artist-tag"
+      :name ""
+      :slug "")
+
+    "sculpture-tag"
+    (array-map
+      :id ""
+      :type "sculpture-tag"
+      :name ""
+      :slug "")
+
+    "region-tag"
+    (array-map
+      :id ""
+      :type "region-tag"
       :name ""
       :slug "")
 
     "photo"
     (array-map
+      :id ""
+      :type "photo"
       :sculpture-id nil
       :captured-at nil
       :url ""
@@ -68,6 +94,8 @@
 
     "user"
     (array-map
+      :id ""
+      :type "user"
       :name ""
       :email "")
 
