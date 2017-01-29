@@ -14,8 +14,16 @@
                           ; TODO regex wikipedia
                           )))
 (s/def ::name string?)
+(s/def ::bio (s/nilable string?))
 (s/def ::slug :sculpture.specs.types/slug-type)
 (s/def ::tag-ids :sculpture.specs.types/related-ids-type)
+
+(s/def ::birth-date (s/nilable :sculpture.specs.types/timestamp-type))
+(s/def ::death-date (s/nilable :sculpture.specs.types/timestamp-type))
+
+(s/def ::birth-date-accuracy (s/nilable int?))
+(s/def ::death-date-accuracy (s/nilable int?))
+
 
 (s/def ::artist
   (s/merge :sculpture.specs.entity/common
@@ -23,6 +31,11 @@
                             ::gender
                             ::link-website
                             ::link-wikipedia
+                            ::bio
+                            ::birth-date
+                            ::birth-date-accuracy
+                            ::death-date
+                            ::death-date-accuracy
                             ::slug
                             ::tag-ids])))
 

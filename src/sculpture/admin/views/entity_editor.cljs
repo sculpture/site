@@ -27,29 +27,39 @@
                     :slug ""
                     :year nil
 }
+
                    "artist"
                    {:name ""
                     :gender nil
                     :link-website ""
                     :link-wikipedia ""
+                    :birth-date nil
+                    :birth-date-accuracy nil
+                    :death-date nil
+                    :death-date-accuracy nil
                     :slug ""
                     :tag-ids []}
+
                    "region"
                    {:name ""
                     :geojson nil
                     :slug ""
                     :tag-ids []}
+
                    "material"
                    {:name ""
                     :slug ""}
+
                    "tag"
                    {:name ""
                     :slug ""}
+
                    "photo"
                    {:sculpture-id nil
                     :captured-at nil
                     :url ""
                     :user-id nil}
+
                    "user"
                    {:name ""
                     :email ""}
@@ -67,6 +77,12 @@
     :name {:type :string}
     :title {:type :string}
     :email {:type :email}
+    :bio {:type :string
+          :length :long}
+    :birth-date {:type :date}
+    :birth-date-accuracy {:type :integer}
+    :death-date {:type :date}
+    :death-date-accuracy {:type :integer}
     :slug {:type :string}
     :geojson {:type :geojson}
     :link-website {:type :url}
