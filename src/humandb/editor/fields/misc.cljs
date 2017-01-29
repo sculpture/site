@@ -7,6 +7,13 @@
   [entity k _]
   [:div "UNKNOWN FIELD TYPE"])
 
+(defmethod field :date
+  [{:keys [value on-change]}]
+  [:input {:type "date"
+           :value value
+           :on-change (fn [e]
+                        (on-change (.. e -target -value)))}])
+
 (defmethod field :string
   [{:keys [length value disabled on-change]}]
   (let [element (case length
