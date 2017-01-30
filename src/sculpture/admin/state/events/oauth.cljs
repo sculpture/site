@@ -2,15 +2,16 @@
   (:require
     [clojure.string :as string]
     [re-frame.core :refer [reg-event-fx dispatch]]
-    [ajax.core :as ajax])
+    [ajax.core :as ajax]
+    [sculpture.env :refer [env]])
   (:import
     [goog.Uri]))
 
 (def uri "https://accounts.google.com/o/oauth2/v2/auth")
 
-(def client-id "CHANGE ME")
+(def client-id (env :google-client-id))
 
-(def redirect-uri "http://localhost:3939/oauth/")
+(def redirect-uri (env :oauth-redirect-uri))
 
 (defn ->query-string [m]
   (.toString (.createFromMap goog.Uri.QueryData (clj->js m))))

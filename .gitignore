@@ -5,3 +5,5 @@
 /lib
 /resources/public/js/dev
 /notes
+.lein-env
+profiles.clj

@@ -11,9 +11,12 @@
                  [secretary "1.2.3"]
                  [venantius/accountant "0.1.7"]
                  [cljsjs/fuse "2.5.0-0"]
-                 [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]]
+                 [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]
 
-  :plugins [[lein-figwheel "0.5.8"]]
+                 [environ "1.1.0"]]
+
+  :plugins [[lein-figwheel "0.5.8"]
+            [lein-environ "1.1.0"]]
 
   :figwheel {:server-port 3939
              ;:force-index true

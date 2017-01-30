@@ -1,6 +1,8 @@
-(ns releaflet.mapbox)
+(ns releaflet.mapbox
+  (:require
+    [sculpture.env :refer [env]]))
 
-(def token "CHANGEME")
+(def token (env :mapbox-token))
 
 (def tilelayer-url (str "https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=" token))
 
