@@ -14,7 +14,7 @@
    :box-shadow "0 0 2px 0 #ccc"})
 
 (def app-styles
-  [:.app
+  [:>.app
    [:>.mega-map
     {:width "100vw"
      :height "100vh"}]
@@ -45,15 +45,15 @@
      entity-styles
      entity-list-styles]]
 
-  [:>.main
-   {:position "absolute"
-    :top 0
-    :right "1.5em"
-    :z-index 1000
-    :padding "2em"
-    :max-height "100vh"
-    :overflow-y "scroll"
-    :box-sizing "border-box"}
-   (floating-box)
+   [:>.main
+    {:position "absolute"
+     :top 0
+     :right "1.5em"
+     :z-index 1000
+     :padding "2em"
+     :max-height "100vh"
+     :overflow-y "scroll"
+     :box-sizing "border-box"}
+    (floating-box)
 
-   editor-styles]])
+    editor-styles]])

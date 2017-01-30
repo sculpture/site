@@ -10,7 +10,7 @@
      {:overflow-x "hidden"
       :overflow-y "scroll"}
 
-     [:.entity
+     [:>.entity
       {:display "block"
        :clear "both"
        :text-decoration "none"
@@ -35,24 +35,30 @@
        ["&::after"
         {:color "#aaa"}]]
 
-      [:img
-       {:width height
-        :height height
-        :margin-right (rem 0.5)
+      [:>.photo
+       {:margin-right (rem 0.5)
         :background "#CCC"
-        :float "left"}]
+        :float "left"
+        :width height
+        :height height
+        :overflow "hidden"}
 
-      [:.h1 :.h2
+       [:>.image
+
+        [:>img
+         {:width height
+          :height height}]]]
+
+      [:>.h1
+       :>.h2
        {:font-size "0.9em"
         :height (m// height 2)
         :line-height (m// height 2)}]
 
-      [:.h1
+      [:>.h1
        {:font-weight "bold"
         :color "#000"
         :white-space "nowrap"}]
 
-      [:.h2
-       {:color "#AAA"}]]
-
-     ]))
+      [:>.h2
+       {:color "#AAA"}]]]))

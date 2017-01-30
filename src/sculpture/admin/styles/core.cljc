@@ -21,6 +21,7 @@
   (css
     reset-styles
     body-styles
-    app-styles))
+    [:#app
+     app-styles]))
 
 

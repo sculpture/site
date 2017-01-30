@@ -13,65 +13,59 @@
 
    [:>.entity
 
-    [:>.photo
+    [:>.info
+     {:padding "1.5em"
+      :background accent-color
+      :color "white"}
 
-     [:>img
-      {:display "block"
-       :max-width "100%"}]]]
+     [:>a
+      {:color "white"
+       :text-decoration "none"}
 
-   [:.info
-    {:padding "1.5em"
-     :background accent-color
-     :color "white"}
+      [:&:hover
+       {:text-decoration "underline"}]]
 
-    [:a
-     {:color "white"
-      :text-decoration "none"}
+     [:>h1
+      {:font-size "1.25em"}]
 
-     [:&:hover
-      {:text-decoration "underline"}]]
+     [:>h2
+      {:font-size "1em"
+       :font-weight "normal"
+       :display "flex"
+       :justify-content "space-between"}]]
 
-    [:h1
-     {:font-size "1.25em"}]
+    [:>.meta
+     {:padding "1.5em"}
 
-    [:h2
-     {:font-size "1em"
-      :font-weight "normal"
-      :display "flex"
-      :justify-content "space-between"}]]
+     [:>.row
+      {:margin-bottom "0.75em"}
 
-   [:.meta
-    {:padding "1.5em"}
+      [:&:last-child
+       {:margin-bottom 0}]
 
-    [:.row
-     {:margin-bottom "0.75em"}
+      [:&:before
+       {:width "1em"
+        :text-align "center"
+        :display "inline-block"
+        :margin-right "0.75em"}]
 
-     [:&:last-child
-      {:margin-bottom 0}]
+      [:&.tags:before (fontawesome \uf02c)]
+      [:&.materials:before (fontawesome \uf0e3)]
+      [:&.location:before (fontawesome \uf041)]
+      [:&.commission:before (fontawesome \uf0e3)]
+      [:&.note:before (fontawesome \uf249)]
+      [:&.captured-at:before (fontawesome \uf133)]
+      [:&.user:before (fontawesome \uf007)]
+      [:&.sculpture:before (fontawesome \uf03e)]
+      [:&.gender:before (fontawesome \uf22d)]
+      [:&.website:before (fontawesome \uf0c1)]
+      [:&.wikipedia:before (fontawesome \uf266)]
 
-     [:&:before
-      {:width "1em"
-       :text-align "center"
-       :display "inline-block"
-       :margin-right "0.75em"}]
+      [:>div
+       {:display "inline-block"}]]]
 
-     [:&.tags:before (fontawesome \uf02c)]
-     [:&.materials:before (fontawesome \uf0e3)]
-     [:&.location:before (fontawesome \uf041)]
-     [:&.commission:before (fontawesome \uf0e3)]
-     [:&.note:before (fontawesome \uf249)]
-     [:&.captured-at:before (fontawesome \uf133)]
-     [:&.user:before (fontawesome \uf007)]
-     [:&.sculpture:before (fontawesome \uf03e)]
-     [:&.gender:before (fontawesome \uf22d)]
-     [:&.website:before (fontawesome \uf0c1)]
-     [:&.wikipedia:before (fontawesome \uf266)]
-
-     [:>div
-      {:display "inline-block"}]]]
-
-   [:.related
-    [:h2
-     {:font-size "1em"
-      :margin-left (rem 0.75)
-      :padding [[(rem 0.75) 0]]}]]])
+    [:>.related
+     [:>h2
+      {:font-size "1em"
+       :margin-left (rem 0.75)
+       :padding [[(rem 0.75) 0]]}]]]])

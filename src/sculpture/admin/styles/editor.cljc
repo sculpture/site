@@ -5,6 +5,7 @@
 (def editor-styles
   [:>.edit
    {:position "relative"}
+
    [:a.button
     {:position "absolute"
      :top 0
