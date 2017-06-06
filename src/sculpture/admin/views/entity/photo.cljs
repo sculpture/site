@@ -1,7 +1,6 @@
 (ns sculpture.admin.views.entity.photo
   (:require
-    [cljs-time.format :as f]
-    [cljs-time.coerce :as c]
+    [sculpture.admin.helpers :as helpers]
     [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.views.entity :refer [entity-view]]
@@ -27,9 +26,7 @@
         (sculpture :title)])]
 
     [:div.row.captured-at
-     (f/unparse
-       (f/formatter "yyyy-MM-dd" )
-       (c/from-date (photo :captured-at)))]
+     (helpers/format-date (photo :captured-at) "yyyy-MM-dd")]
 
     [:div.row.dimensions
      (photo :width) "x" (photo :height)]

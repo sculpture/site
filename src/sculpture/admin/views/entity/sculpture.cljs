@@ -1,6 +1,7 @@
 (ns sculpture.admin.views.entity.sculpture
   (:require
     [clojure.string :as string]
+    [sculpture.admin.helpers :as helpers]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.views.entity :refer [entity-view]]
@@ -26,7 +27,7 @@
                (for [artist artists]
                  [:a {:href (routes/entity-path {:id (artist :id)})} (artist :name)]))))
 
-     [:div.year (sculpture :year)]]]
+     [:div.year (helpers/format-date (sculpture :date) "yyyy")]]]
 
    [:div.meta
     (when (seq (sculpture :tag-ids))

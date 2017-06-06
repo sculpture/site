@@ -9,7 +9,8 @@
 (s/def ::artist-ids :sculpture.specs.types/related-ids-type)
 (s/def ::tag-ids :sculpture.specs.types/related-ids-type)
 (s/def ::material-ids :sculpture.specs.types/related-ids-type)
-(s/def ::year (s/nilable :sculpture.specs.types/year-type))
+(s/def ::date (s/nilable :sculpture.specs.types/timestamp-type))
+(s/def ::date-precision (s/nilable #{"year" "year-month" "year-month-day"}))
 (s/def ::commissioned-by (s/nilable string?))
 (s/def ::location (s/nilable :sculpture.specs.types/location-type))
 (s/def ::slug :sculpture.specs.types/slug-type)
@@ -26,7 +27,8 @@
                             ::tag-ids
                             ::title
                             ::slug
-                            ::year])))
+                            ::date
+                            ::date-precision])))
 
 (defmethod entity-type "sculpture"
   [_]

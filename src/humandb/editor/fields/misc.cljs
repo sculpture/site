@@ -1,5 +1,7 @@
 (ns humandb.editor.fields.misc
   (:require
+    [cljs-time.format :as f]
+    [cljs-time.coerce :as c]
     [reagent.core :as r]
     [humandb.editor.fields.core :refer [field]]))
 
@@ -10,9 +12,14 @@
 (defmethod field :date
   [{:keys [value on-change]}]
   [:input {:type "date"
-           :value value
+           :value (f/unparse
+                    (f/formatter "yyyy-MM-dd")
+                    (c/from-date value))
            :on-change (fn [e]
-                        (on-change (.. e -target -value)))}])
+                        (on-change (c/to-date
+                                     (f/parse
+                                       (f/formatter "yyyy-MM-dd")
+                                       (.. e -target -value)))))}])
 
 (defmethod field :string
   [{:keys [length value disabled on-change]}]

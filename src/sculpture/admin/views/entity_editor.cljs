@@ -28,7 +28,8 @@
       :note ""
       :tag-ids []
       :slug ""
-      :year nil
+      :date nil
+      :date-precision ""
       :size nil)
 
     "artist"
@@ -126,7 +127,9 @@
                  :options #{"" "male" "female" "other"}}
         :note {:type :string
                :length :long}
-        :year {:type :integer}
+        :date {:type :date}
+        :date-precision {:type :enum
+                         :options #{"" "year" "year-month" "year-month-day"}}
         :commissioned-by {:type :string}
         :location {:type :location}
         :material-ids {:type :multi-lookup
