@@ -21,8 +21,8 @@
 (s/def ::birth-date (s/nilable :sculpture.specs.types/timestamp-type))
 (s/def ::death-date (s/nilable :sculpture.specs.types/timestamp-type))
 
-(s/def ::birth-date-accuracy (s/nilable int?))
-(s/def ::death-date-accuracy (s/nilable int?))
+(s/def ::birth-date-precision (s/nilable int?))
+(s/def ::death-date-precision (s/nilable int?))
 
 
 (s/def ::artist
@@ -33,9 +33,9 @@
                             ::link-wikipedia
                             ::bio
                             ::birth-date
-                            ::birth-date-accuracy
+                            ::birth-date-precision
                             ::death-date
-                            ::death-date-accuracy
+                            ::death-date-precision
                             ::slug
                             ::tag-ids])))
 

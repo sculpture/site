@@ -41,9 +41,9 @@
       :link-website ""
       :link-wikipedia ""
       :birth-date nil
-      :birth-date-accuracy nil
+      :birth-date-precision nil
       :death-date nil
-      :death-date-accuracy nil
+      :death-date-precision nil
       :slug ""
       :tag-ids [])
 
@@ -115,9 +115,9 @@
         :bio {:type :string
               :length :long}
         :birth-date {:type :date}
-        :birth-date-accuracy {:type :integer}
+        :birth-date-precision {:type :integer}
         :death-date {:type :date}
-        :death-date-accuracy {:type :integer}
+        :death-date-precision {:type :integer}
         :slug {:type :string}
         :geojson {:type :geojson}
         :link-website {:type :url}
