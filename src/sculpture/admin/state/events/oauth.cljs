@@ -34,7 +34,9 @@
            (->query-string {:response_type "token"
                             :client_id client-id
                             :redirect_uri redirect-uri
-                            :scope "email profile"})))
+                            :scope "email profile"}))
+      "Log In with Google"
+      "width=500,height=700")
     {}))
 
 (reg-event-fx
