@@ -1,14 +1,18 @@
 (ns sculpture.admin.state.events
   (:require
-    [re-frame.core :refer [dispatch] :as reframe]
+    [re-frame.core :refer [dispatch reg-fx] :as reframe]
     [cljs-uuid-utils.core :as uuid]
     [sculpture.admin.state.events.oauth]
-    [sculpture.admin.state.fx.dispatch-debounce]
-    [sculpture.admin.state.fx.ajax]
-    [sculpture.admin.state.fx.redirect]
+    [sculpture.admin.state.fx.dispatch-debounce :refer [dispatch-debounce-fx]]
+    [sculpture.admin.state.fx.ajax :refer [ajax-fx]]
+    [sculpture.admin.state.fx.redirect :refer [redirect-to-fx]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.state.spec :refer [check-state!]]
     [sculpture.admin.state.search :as search]))
+
+(reg-fx :ajax ajax-fx)
+(reg-fx :redirect-to redirect-to-fx)
+(reg-fx :dispatch-debounce dispatch-debounce-fx)
 
 (defn key-by-id [arr]
   (reduce (fn [memo a]
