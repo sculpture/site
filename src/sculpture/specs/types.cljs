@@ -18,9 +18,6 @@
                                      :distinct true
                                      :kind vector?))
 
-(s/def ::year-type (s/and
-                     integer?))
-
 (s/def ::link-type (s/and
                      string?
                      ; TODO regex http(s)
