@@ -13,9 +13,9 @@
 (s/def ::region
   (s/merge :sculpture.specs.entity/common
            (s/keys :req-un [::name
-                            ::geojson
                             ::slug]
-                   :opt-un [::tag-ids])))
+                   :opt-un [::tag-ids
+                            ::geojson])))
 
 (defmethod entity-type "region"
   [_]

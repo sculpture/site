@@ -28,16 +28,16 @@
 (s/def ::artist
   (s/merge :sculpture.specs.entity/common
            (s/keys :req-un [::name
-                            ::gender
-                            ::link-website
-                            ::link-wikipedia
-                            ::bio
-                            ::birth-date
-                            ::birth-date-precision
-                            ::death-date
-                            ::death-date-precision
-                            ::slug
-                            ::tag-ids])))
+                            ::slug]
+                   :req-opt [::gender
+                             ::link-website
+                             ::link-wikipedia
+                             ::bio
+                             ::birth-date
+                             ::birth-date-precision
+                             ::death-date
+                             ::death-date-precision
+                             ::tag-ids])))
 
 (defmethod entity-type "artist"
   [_]
