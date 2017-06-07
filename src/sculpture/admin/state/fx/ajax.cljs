@@ -1,6 +1,7 @@
 (ns sculpture.admin.state.fx.ajax
   (:require
-    [ajax.core :as ajax]))
+    [ajax.core :as ajax]
+    [cognitect.transit :as transit]))
 
 (defn ajax-fx
   [{:keys [uri method params body on-success on-error headers]
@@ -14,7 +15,9 @@
      :params params
      :headers headers
      :format (ajax/transit-request-format)
-     :response-format (ajax/transit-response-format)
+     :response-format (ajax/transit-response-format
+                        {:type :json
+                         :reader (transit/reader :json {:handlers {"u" uuid}})})
      :handler
      (fn [[ok response]]
        (if ok

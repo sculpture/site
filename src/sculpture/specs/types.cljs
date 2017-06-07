@@ -8,11 +8,7 @@
                       string?
                       #(re-matches email-regex %)))
 
-(def uuid-regex #"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
-
-(s/def ::uuid-type (s/and
-                     string?
-                     #(re-matches uuid-regex %)))
+(s/def ::uuid-type uuid?)
 
 (s/def ::related-ids-type (s/coll-of ::uuid-type
                                      :distinct true

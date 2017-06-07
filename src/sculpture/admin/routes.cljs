@@ -8,9 +8,9 @@
 
 (defroute entity-path "/entity/:id" [id]
   (dispatch! [:set-page {:type :entity
-                         :id id}]))
+                         :id (UUID. id nil)}]))
 
 (defroute entity-edit-path "/entity/:id/edit" [id]
   (dispatch! [:set-page {:type :entity
                          :edit? true
-                         :id id}]))
+                         :id (UUID. id nil)}]))
