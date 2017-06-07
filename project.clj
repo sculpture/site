@@ -2,18 +2,32 @@
 
   :source-paths ["src"]
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [; COMMON
+                 [org.clojure/clojure "1.8.0"]
+                 [environ "1.1.0"]
+
+                 ; CLIENT
                  [org.clojure/clojurescript "1.9.293"]
-                 [com.andrewmcveigh/cljs-time "0.4.0"]
-                 [re-frame "0.9.1"]
                  [cljs-ajax "0.5.8"]
+                 [cljsjs/fuse "2.5.0-0"]
                  [garden "1.3.2"]
+                 [com.andrewmcveigh/cljs-time "0.4.0"]
+                 [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]
+                 [re-frame "0.9.1"]
                  [secretary "1.2.3"]
                  [venantius/accountant "0.1.7"]
-                 [cljsjs/fuse "2.5.0-0"]
-                 [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]
 
-                 [environ "1.1.0"]]
+                 ; API
+                 [base64-clj "0.1.1"]
+                 [compojure "1.5.1"]
+                 [http-kit "2.2.0"]
+                 [io.forward/yaml "1.0.6"]
+                 [javax.servlet/servlet-api "2.5"]
+                 [org.clojure/data.json "0.2.6"]
+                 [ring-cors "0.1.8"]
+                 [ring-middleware-format "0.7.0"]]
+
+  :main sculpture.api.core
 
   :plugins [[lein-figwheel "0.5.8"]
             [lein-environ "1.1.0"]]

@@ -6,4 +6,6 @@
 /resources/public/js/dev
 /notes
 .lein-env
+.lein-repl-history
+.nrepl-port
 profiles.clj
