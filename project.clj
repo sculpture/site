@@ -3,11 +3,11 @@
   :source-paths ["src"]
 
   :dependencies [; COMMON
-                 [org.clojure/clojure "1.8.0"]
+                 [org.clojure/clojure "1.9.0-alpha17"]
                  [environ "1.1.0"]
 
                  ; CLIENT
-                 [org.clojure/clojurescript "1.9.293"]
+                 [org.clojure/clojurescript "1.9.562"]
                  [cljs-ajax "0.5.8"]
                  [cljsjs/fuse "2.5.0-0"]
                  [garden "1.3.2"]

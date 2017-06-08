@@ -1,7 +1,7 @@
 (ns sculpture.specs.user
   (:require
-    [sculpture.specs.entity :refer [entity-type]]
-    [clojure.spec :as s]))
+    [clojure.spec.alpha :as s]
+    [sculpture.specs.entity :refer [entity-type]]))
 
 (s/def ::email :sculpture.specs.types/email-type)
 (s/def ::name string?)

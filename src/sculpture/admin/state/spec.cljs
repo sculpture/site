@@ -1,6 +1,6 @@
 (ns sculpture.admin.state.spec
   (:require
-    [clojure.spec :as s]
+    [clojure.spec.alpha :as s]
     [sculpture.specs.entity]
     [sculpture.specs.types]))
 
