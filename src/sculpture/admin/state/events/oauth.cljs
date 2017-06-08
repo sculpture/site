@@ -3,15 +3,17 @@
     [clojure.string :as string]
     [re-frame.core :refer [reg-event-fx dispatch]]
     [ajax.core :as ajax]
-    [sculpture.env :refer [env]])
+    [sculpture.admin.env :refer [env]])
   (:import
     [goog.Uri]))
 
 (def uri "https://accounts.google.com/o/oauth2/v2/auth")
 
-(def client-id (env :google-client-id))
+(defn client-id []
+  (env :google-client-id))
 
-(def redirect-uri (env :oauth-redirect-uri))
+(defn redirect-uri []
+  (env :oauth-redirect-uri))
 
 (defn ->query-string [m]
   (.toString (.createFromMap goog.Uri.QueryData (clj->js m))))
@@ -32,8 +34,8 @@
     (js/window.open
       (str uri "?"
            (->query-string {:response_type "token"
-                            :client_id client-id
-                            :redirect_uri redirect-uri
+                            :client_id (client-id)
+                            :redirect_uri (redirect-uri)
                             :scope "email profile"}))
       "Log In with Google"
       "width=500,height=700")
@@ -55,7 +57,7 @@
        :response-format (ajax/json-response-format {:keywords? true})
        :handler (fn [[ok response]]
                   (if ok
-                    (if (= (response :aud) client-id)
+                    (if (= (response :aud) (client-id))
                       (dispatch [:request-oauth-user-info])
                       (println "TOKEN INVALID"))
                     (println "TOKEN INVALID")))})

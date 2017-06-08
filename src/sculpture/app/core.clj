@@ -1,8 +1,7 @@
-(ns sculpture.api.core
+(ns sculpture.app.core
   (:require
     [org.httpkit.server :refer [run-server]]
-    [sculpture.api.routes :refer [app]]
-    [sculpture.api.db :as db]))
+    [sculpture.app.routes :refer [app]]))
 
 (defonce server (atom nil))
 
@@ -14,7 +13,6 @@
 (defn start-server!
   [port]
   (stop-server!)
-  (db/load!)
   (reset! server (run-server #'app {:port port})))
 
 

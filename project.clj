@@ -4,7 +4,6 @@
 
   :dependencies [; COMMON
                  [org.clojure/clojure "1.9.0-alpha17"]
-                 [environ "1.1.0"]
 
                  ; CLIENT
                  [org.clojure/clojurescript "1.9.562"]
@@ -17,6 +16,10 @@
                  [secretary "1.2.3"]
                  [venantius/accountant "0.1.7"]
 
+                 ; SERVER
+                 [environ "1.1.0"]
+                 [hiccup "1.0.5"]
+
                  ; API
                  [base64-clj "0.1.1"]
                  [compojure "1.5.1"]
@@ -27,14 +30,12 @@
                  [ring-cors "0.1.8"]
                  [ring-middleware-format "0.7.0"]]
 
-  :main sculpture.api.core
+  :main sculpture.core
 
-  :plugins [[lein-figwheel "0.5.8"]
+  :plugins [[lein-figwheel "0.5.10"]
             [lein-environ "1.1.0"]]
 
   :figwheel {:server-port 3939
-             ;:force-index true
-             :ring-handler "sculpture.handler/force-index"
              :reload-clj-files {:clj false
                                 :cljc true}}
 
@@ -43,8 +44,16 @@
                         :figwheel     {:on-jsload "sculpture.admin.core/reload"}
                         :compiler     {:main       "sculpture.admin.core"
                                        :asset-path "/js/dev/out"
-                                       :output-to  "resources/public/js/dev/sculpture.js"
-                                       :output-dir "resources/public/js/dev/out"}}]}
+                                       :output-to  "resources/public/js/sculpture.js"
+                                       :output-dir "resources/public/js/dev/out"}}
+
+                       {:id           "prod"
+                        :source-paths ["src"]
+                        :compiler     {:optimizations :advanced
+                                       :main       "sculpture.admin.core"
+                                       :asset-path "/js/prod/out"
+                                       :output-to  "resources/public/js/sculpture.js"
+                                       :output-dir "resources/public/js/prod/out"}}]}
 
   :profiles {:test {:dependencies [[com.codeborne/phantomjsdriver "1.3.0"
                                     :exclusions [org.seleniumhq.selenium/selenium-java
