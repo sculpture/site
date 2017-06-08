@@ -2,6 +2,7 @@
   (:require
     [compojure.core :refer [GET POST PUT DELETE defroutes context]]
     [compojure.handler :refer [api]]
+    [compojure.route :as route]
     [ring.middleware.format :refer [wrap-restful-format]]
     [ring.middleware.cors :refer [wrap-cors]]
     [sculpture.api.db :as db]))
@@ -9,7 +10,8 @@
 (defroutes routes
   (GET "/all" _
     {:status 200
-     :body (db/all)}))
+     :body (db/all)})
+  (route/not-found "Page not found"))
 
 (def app
   (-> routes
