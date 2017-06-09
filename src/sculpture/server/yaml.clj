@@ -1,4 +1,4 @@
-(ns sculpture.api.yaml
+(ns sculpture.server.yaml
   (:require
     [yaml.writer]
     [yaml.reader]))

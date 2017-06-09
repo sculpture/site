@@ -1,4 +1,4 @@
-(ns sculpture.app.pages.oauth
+(ns sculpture.server.pages.oauth
   (:require
     [hiccup.core :as hiccup]))
 

@@ -1,4 +1,4 @@
-(ns sculpture.api.routes
+(ns sculpture.server.api-routes
   (:require
     [compojure.core :refer [GET POST PUT DELETE defroutes context]]
     [compojure.handler :refer [api]]
@@ -9,9 +9,9 @@
     [ring.middleware.session :refer [wrap-session]]
     [ring.middleware.session.cookie :refer [cookie-store]]
     [ring.util.codec :refer [form-encode]]
-    [sculpture.api.db :as db]
-    [sculpture.api.oauth :as oauth]
-    [sculpture.app.pages.oauth :as pages.oauth]))
+    [sculpture.server.db :as db]
+    [sculpture.server.oauth :as oauth]
+    [sculpture.server.pages.oauth :as pages.oauth]))
 
 (defroutes routes
   (context "/api" _
@@ -69,6 +69,9 @@
         (db/update! entity user-id)
         {:status 401
          :body {:error "You must be logged in to perform this action."}}))
+
+    ; TODO insert
+    ; TODO delete
 
     (route/not-found "Page not found")))
 

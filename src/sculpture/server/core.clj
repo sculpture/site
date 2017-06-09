@@ -1,14 +1,14 @@
-(ns sculpture.core
+(ns sculpture.server.core
   (:require
     [compojure.core :refer [routes]]
     [org.httpkit.server :refer [run-server]]
-    [sculpture.api.db :as db]
-    [sculpture.api.routes :as api]
-    [sculpture.app.routes :as app]))
+    [sculpture.server.db :as db]
+    [sculpture.server.api-routes :as api]
+    [sculpture.server.client-routes :as client]))
 
 (def app
   (routes #'api/handler
-          #'app/handler))
+          #'client/handler))
 
 (defonce server (atom nil))
 
@@ -24,7 +24,7 @@
   (reset! server (run-server #'app {:port port})))
 
 (defn start! [port]
-  (println "starting on port " port)
+  (println "starting on port" port)
   (start-server! port))
 
 (defn -main [& args]

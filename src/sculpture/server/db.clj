@@ -1,11 +1,11 @@
-(ns sculpture.api.db
+(ns sculpture.server.db
   (:require
     [clojure.spec.alpha :as s]
     [clojure.data :refer [diff]]
     [environ.core :refer [env]]
     [sculpture.specs.core]
-    [sculpture.api.github :as github]
-    [sculpture.api.yaml :as yaml]))
+    [sculpture.server.github :as github]
+    [sculpture.server.yaml :as yaml]))
 
 (def repo (env :github-repo))
 (def branch (env :github-repo-branch))

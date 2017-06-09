@@ -30,7 +30,7 @@
                  [ring-cors "0.1.8"]
                  [ring-middleware-format "0.7.0"]]
 
-  :main sculpture.core
+  :main sculpture.server.core
 
   :plugins [[lein-figwheel "0.5.10"]
             [lein-environ "1.1.0"]]

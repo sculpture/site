@@ -1,4 +1,4 @@
-(ns sculpture.app.pages.index
+(ns sculpture.server.pages.index
   (:require
     [environ.core :refer [env]]
     [hiccup.core :as hiccup]))

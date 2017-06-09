@@ -1,4 +1,4 @@
-(ns sculpture.api.oauth
+(ns sculpture.server.oauth
   (:require
     [clojure.data.json :as json]
     [environ.core :refer [env]]

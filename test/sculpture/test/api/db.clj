@@ -1,8 +1,8 @@
-(ns sculpture.test.api.db
+(ns sculpture.test.server.db
   (:require
     [clojure.test :refer :all]
     [sculpture.test.fixtures.github :refer [github-api-mock]]
-    [sculpture.api.db :as db]))
+    [sculpture.server.db :as db]))
 
 (defn db-reset [t]
   (db/clear!)

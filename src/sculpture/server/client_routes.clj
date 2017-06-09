@@ -1,9 +1,9 @@
-(ns sculpture.app.routes
+(ns sculpture.server.client-routes
   (:require
     [compojure.core :refer [GET POST PUT DELETE defroutes context]]
     [compojure.route :refer [resources]]
     [ring.util.response :refer [resource-response]]
-    [sculpture.app.pages.index :as pages.index]))
+    [sculpture.server.pages.index :as pages.index]))
 
 (defroutes routes
 
