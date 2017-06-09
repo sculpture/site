@@ -3,14 +3,9 @@
     [compojure.core :refer [GET POST PUT DELETE defroutes context]]
     [compojure.route :refer [resources]]
     [ring.util.response :refer [resource-response]]
-    [sculpture.app.pages.index :as pages.index]
-    [sculpture.app.pages.oauth :as pages.oauth]))
+    [sculpture.app.pages.index :as pages.index]))
 
 (defroutes routes
-  (GET "/oauth/" _
-    {:status 200
-     :headers {"Content-Type" "text/html"}
-     :body (pages.oauth/html)})
 
   (GET  "/js/sculpture.js" _
     (if-let [response (resource-response (str "public/js/sculpture.js"))]

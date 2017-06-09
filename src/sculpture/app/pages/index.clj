@@ -28,7 +28,7 @@
 
       [:script {:type "text/javascript"}
        "window.env = {};"
-       (for [k [:mapbox-token :google-client-id :oauth-redirect-uri]]
+       (for [k [:mapbox-token]]
          (str "window.env['" (name k) "'] = '" (env k) "';"))]
 
       [:script {:type "text/javascript"

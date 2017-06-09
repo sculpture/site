@@ -8,8 +8,10 @@
     [ring.middleware.cors :refer [wrap-cors]]
     [ring.middleware.session :refer [wrap-session]]
     [ring.middleware.session.cookie :refer [cookie-store]]
+    [ring.util.codec :refer [form-encode]]
     [sculpture.api.db :as db]
-    [sculpture.api.oauth :as oauth]))
+    [sculpture.api.oauth :as oauth]
+    [sculpture.app.pages.oauth :as pages.oauth]))
 
 (defroutes routes
   (context "/api" _
@@ -25,8 +27,23 @@
         {:status 401
          :body {:error "You are not logged in"}}))
 
-    (PUT "/oauth/authenticate" [provider token]
-      (if-let [user-info (oauth/get-user-info provider token)]
+    (GET "/oauth/:provider/request-token" [provider]
+      (case provider
+        "google"
+        {:status 302
+         :body {:ok true}
+         :headers {"Location" (str "https://accounts.google.com/o/oauth2/v2/auth?"
+                                   (form-encode {:response_type "token"
+                                                 :client_id (env :google-client-id)
+                                                 :redirect_uri (env :oauth-redirect-uri)
+                                                 :scope "email profile"}))}}))
+    (GET "/oauth/:provider/post-auth" _
+      {:status 200
+       :headers {"Content-Type" "text/html"}
+       :body (pages.oauth/html)})
+
+    (PUT "/oauth/:provider/authenticate" [provider token]
+      (if-let [user-info (oauth/get-user-info (keyword provider) token)]
         (do
           (if-let [user (db/select {:type "user"
                                     :email (user-info :email)})]
