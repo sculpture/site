@@ -38,7 +38,7 @@
       [:div.toolbar
        [:button.auth
         {:on-click (fn []
-                     (dispatch-sync! [:oauth/authenticate]))}]])))
+                     (dispatch-sync! [:sculpture.user/authenticate]))}]])))
 
 (defn sidebar-view []
   (let [page @(subscribe [:page])

@@ -2,7 +2,6 @@
   (:require
     [re-frame.core :refer [dispatch reg-fx] :as reframe]
     [cljs-uuid-utils.core :as uuid]
-    [sculpture.admin.state.events.oauth]
     [sculpture.admin.state.fx.dispatch-debounce :refer [dispatch-debounce-fx]]
     [sculpture.admin.state.fx.ajax :refer [ajax-fx]]
     [sculpture.admin.state.fx.redirect :refer [redirect-to-fx]]
@@ -72,6 +71,32 @@
   :sculpture.user/-handle-user-info
   (fn [{db :db} [_ user]]
     {:db (assoc db :user user)}))
+
+(defn message-event-handler [e]
+  (let [token (.-data e)]
+    (dispatch [:oauth/-remote-auth token])))
+
+(defn attach-message-listener! []
+  (js/window.addEventListener "message" message-event-handler))
+
+(reg-event-fx
+  :sculpture.user/authenticate
+  (fn [_ _]
+    (attach-message-listener!)
+    (js/window.open "/api/oauth/google/request-token"
+      "Log In to Sculpture"
+      "width=500,height=700")
+    {}))
+
+(reg-event-fx
+  :sculpture.user/-remote-auth
+  (fn [_ [_ token]]
+    {:ajax {:method :put
+            :uri "/api/oauth/google/authenticate"
+            :params {:token token}
+            :on-success
+            (fn [data]
+              (dispatch [:sculpture.user/-handle-user-info data]))}}))
 
 (reg-event-fx
   :sculpture.data/-remote-get-data
