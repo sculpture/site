@@ -7,8 +7,8 @@
     [sculpture.app.routes :as app]))
 
 (def app
-  (routes api/handler
-          app/handler))
+  (routes #'api/handler
+          #'app/handler))
 
 (defonce server (atom nil))
 
