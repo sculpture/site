@@ -3,19 +3,74 @@
     [compojure.core :refer [GET POST PUT DELETE defroutes context]]
     [compojure.handler :refer [api]]
     [compojure.route :as route]
+    [environ.core :refer [env]]
     [ring.middleware.format :refer [wrap-restful-format]]
     [ring.middleware.cors :refer [wrap-cors]]
-    [sculpture.api.db :as db]))
+    [ring.middleware.session :refer [wrap-session]]
+    [ring.middleware.session.cookie :refer [cookie-store]]
+    [sculpture.api.db :as db]
+    [sculpture.api.oauth :as oauth]))
 
 (defroutes routes
-  (GET "/all" _
-    {:status 200
-     :body (db/all)})
-  (route/not-found "Page not found"))
+  (context "/api" _
 
-(def app
+    (GET "/entities" req
+      {:status 200
+       :body (db/all)})
+
+    (GET "/session" req
+      (if-let [user-id (get-in req [:session :user-id])]
+        {:status 200
+         :body (db/get-by-id user-id)}
+        {:status 401
+         :body {:error "You are not logged in"}}))
+
+    (PUT "/oauth/authenticate" [provider token]
+      (if-let [user-info (oauth/get-user-info provider token)]
+        (do
+          (if-let [user (db/select {:type "user"
+                                    :email (user-info :email)})]
+            {:status 200
+             :body user
+             :session {:user-id (user :id)}}
+            (let [user {:type "user"
+                        :id (java.util.UUID/randomUUID)
+                        :name (user-info :name)
+                        :email (user-info :email)
+                        :avatar (user-info :avatar)}
+                  _ (db/insert! user)]
+              {:status 200
+               :body user
+               :session {:user-id (user :id)}})))
+        {:status 401
+         :body {:error "User could not be authenticated"}}))
+
+    ; REQUIRE AUTH
+
+    (PUT "/entities" [entity :as req]
+      (if-let [user-id (get-in req [:session :user-id])]
+        (db/update! entity user-id)
+        {:status 401
+         :body {:error "You must be logged in to perform this action."}}))
+
+    (route/not-found "Page not found")))
+
+
+(def cookie-secret (or (env :cookie-secret)
+                       (throw (Exception. "Must set cookie secret"))))
+(def cookie-secure? (or (env :cookie-secure?) false))
+(def cookie-max-age (or (env :cookie-max-age) (* 60 60 24 365)))
+
+(def handler
   (-> routes
       wrap-restful-format
       api
       (wrap-cors :access-control-allow-origin [#".*"]
-                 :access-control-allow-methods [:get :put :post :delete])))
+                 :access-control-allow-methods [:get :put :post :delete])
+      (wrap-session {:store (cookie-store {:key cookie-secret})
+                     :cookie-name "sculpture"
+                     :cookie-attrs {:secure cookie-secure?
+                                    :max-age cookie-max-age}})))
+
+
+

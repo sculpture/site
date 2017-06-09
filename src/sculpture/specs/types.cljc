@@ -14,11 +14,11 @@
                                      :distinct true
                                      :kind vector?))
 
-(s/def ::link-type (s/and
-                     string?
-                     ; TODO regex http(s)
+(s/def ::url-type (s/and
+                    string?
+                    ; TODO regex http(s)
 
-                     ))
+                    ))
 
 
 (s/def ::longitude (s/and

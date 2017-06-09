@@ -26,5 +26,5 @@
      :headers {"Content-Type" "text/html"}
      :body (pages.index/html)}))
 
-(def app
+(def handler
   (-> routes))

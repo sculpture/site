@@ -42,7 +42,7 @@
 
 (reg-event-fx
   :init
-  (fn [{db :db} _]
+  (fn [_ _]
     {:db {:search {:query ""
                    :results nil
                    :focused? false
@@ -55,15 +55,35 @@
           :page nil
           :data nil
           :mega-map {:dirty? false}}
-     :dispatch [:init-oauth]
-     :ajax {:method :get
-            :uri "http://localhost:2468/all"
-            :on-success
-            (fn [data]
-              (dispatch [:sculpture.data/set-data data]))}}))
+     :dispatch-n [[:sculpture.user/-remote-auth]
+                  [:sculpture.data/-remote-get-data]]}))
+
 
 (reg-event-fx
-  :sculpture.data/set-data
+  :sculpture.user/-remote-auth
+  (fn [_ _]
+    {:ajax {:method :get
+            :uri "/api/session"
+            :on-success
+            (fn [data]
+              (dispatch [:sculpture.user/-handle-user-info data]))}}))
+
+(reg-event-fx
+  :sculpture.user/-handle-user-info
+  (fn [{db :db} [_ user]]
+    {:db (assoc db :user user)}))
+
+(reg-event-fx
+  :sculpture.data/-remote-get-data
+  (fn [_ _]
+   {:ajax {:method :get
+           :uri "/api/entities"
+           :on-success
+           (fn [data]
+             (dispatch [:sculpture.data/-set-data data]))}}))
+
+(reg-event-fx
+  :sculpture.data/-set-data
   (fn [{db :db} [_ data]]
     {:db (-> db
              (assoc :data (key-by-id data))

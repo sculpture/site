@@ -41,6 +41,7 @@
                                    :email (author :email)}})))
 
 (defn- fetch-data []
+  (println "Fetching data from github")
   (->> (github/fetch-paths-in-dir repo branch "data/")
        (mapcat (fn [path]
                  (->> path
@@ -56,13 +57,25 @@
   {:pre [(uuid? id)]}
   (contains? @records id))
 
-(defn select [id]
+(defn get-by-id [id]
   {:pre [(uuid? id)]}
   (@records id))
 
 (defn user-exists? [id]
   {:pre [(uuid? id)]}
-  (= "user" (:type (select id))))
+  (= "user" (:type (get-by-id id))))
+
+(defn select
+  "Given a map, return entity matching all values in map"
+  [kvs]
+  {:pre [(map? kvs)]}
+  (->> @records
+       vals
+       (filter (fn [e]
+                 (every? true?
+                         (map (fn [[k v]]
+                                (= v (get e k))) kvs))))
+       first))
 
 (defn all []
   (or (vals @records) []))
@@ -87,7 +100,7 @@
   (swap! records assoc (entity :id) entity)
   (push! (entity :type)
          (str "Update " (entity :type) " " (or (entity :slug) (entity :id)))
-         (select user-id))
+         (get-by-id user-id))
   true)
 
 (defn insert! [entity user-id]
@@ -98,7 +111,7 @@
   (swap! records assoc (entity :id) entity)
   (push! (entity :type)
          (str "Add " (entity :type) " " (or (entity :slug) (entity :id)))
-         (select user-id))
+         (get-by-id user-id))
   true)
 
 (defn delete! [entity user-id]
@@ -109,7 +122,7 @@
   (swap! records dissoc (entity :id))
   (push! (entity :type)
          (str "Delete " (entity :type) " " (or (entity :slug) (entity :id)))
-         (select user-id))
+         (get-by-id user-id))
   true)
 
 (defn clear! []

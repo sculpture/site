@@ -7,10 +7,10 @@
 (s/def ::gender #{"male"
                   "female"
                   "other"})
-(s/def ::link-website (s/nilable :sculpture.specs.types/link-type))
+(s/def ::link-website (s/nilable :sculpture.specs.types/url-type))
 (s/def ::link-wikipedia (s/nilable
                           (s/and
-                          :sculpture.specs.types/link-type
+                          :sculpture.specs.types/url-type
                           ; TODO regex wikipedia
                           )))
 (s/def ::name string?)
