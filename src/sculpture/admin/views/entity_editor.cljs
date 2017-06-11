@@ -12,7 +12,7 @@
 (defn lookup-on-find
   []
   (fn [id callback]
-    (callback @(subscribe [:get-entity id])) ))
+    (callback @(subscribe [:get-entity id]))))
 
 (defn entity-defaults [type]
   (case type
@@ -157,14 +157,18 @@
     {}))
 
 (defn entity-editor-view [entity]
-  [:table
-    [:tbody
-     (let [default-entity (entity-defaults (:type entity))]
+  (let [invalid-fields @(subscribe [:sculpture.edit/invalid-fields])
+        default-entity (entity-defaults (:type entity))]
+    [:div.entity.edit
+     [:a.button.view {:href (routes/entity-path entity)} "X"]
+     [:table
+      [:tbody
        (for [k (keys default-entity)]
          (let [v (or (entity k)
                      (default-entity k))]
            ^{:key k}
-           [:tr
+           [:tr {:class (when (contains? invalid-fields k)
+                          "invalid")}
             [:td [:button {:on-click (fn []
                                        (dispatch! [:sculpture.edit/remove-entity-key (entity :id) k]))} "X"]]
             [:td (str k)]
@@ -173,4 +177,9 @@
                       (field-opts k (entity :type))
                       {:value v
                        :on-change (fn [v]
-                                    (dispatch! [:sculpture.edit/update-entity (entity :id) k v]))})]]])))]])
+                                    (dispatch! [:sculpture.edit/update-entity (entity :id) k v]))})]]]))]]
+     [:button {:disabled (not (empty? invalid-fields))
+               :on-click
+               (fn [_]
+                 (dispatch! [:sculpture.edit/save]))}
+      "Save"]]))

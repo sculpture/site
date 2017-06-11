@@ -59,6 +59,11 @@
                               ::avatar
                               ::name])))
 
+; -- ::entity-draft
+
+(s/def ::entity-draft
+  (s/nilable map?))
+
 ; -- ::app-state
 
 (s/def ::app-state
@@ -66,10 +71,14 @@
                    ::active-entity-id
                    ::user
                    ::page
-                   ::data]))
+                   ::data
+                   ::entity-draft]))
 
 ; -- helpers
 
 (defn check-state! [db]
   (when-let [ed (s/explain-data ::app-state db)]
-    (with-out-str (s/explain-out ed))))
+    ed))
+
+(defn validate [entity]
+  (:cljs.spec.alpha/problems (s/explain-data ::entity entity)))

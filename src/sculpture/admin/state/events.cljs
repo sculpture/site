@@ -6,7 +6,7 @@
     [sculpture.admin.state.fx.ajax :refer [ajax-fx]]
     [sculpture.admin.state.fx.redirect :refer [redirect-to-fx]]
     [sculpture.admin.routes :as routes]
-    [sculpture.admin.state.spec :refer [check-state!]]
+    [sculpture.admin.state.spec :refer [check-state! validate]]
     [sculpture.admin.state.search :as search]))
 
 (reg-fx :ajax ajax-fx)
@@ -22,12 +22,15 @@
 (def validate-schema-interceptor
   (reframe/after
     (fn [db [event-id]]
-      (when-let [error-msg (check-state! db)]
+      (when-let [errors (check-state! db)]
         (js/console.error
           (str
             "Event " event-id
-            " caused the state to be invalid:\n\n")
-          error-msg)))))
+            " caused the state to be invalid:\n")
+          (pr-str (map (fn [problem]
+                         {:path (problem :path)
+                          :pred (problem :pred)})
+                       (:cljs.spec.alpha/problems errors))))))))
 
 (defn reg-event-fx
   ([id handler-fn]
@@ -48,12 +51,15 @@
                    :fuse nil}
           :user nil
           :active-entity-id nil
+          :entity-draft nil
           :page nil
           :data nil
           :mega-map {:dirty? false}}
      :dispatch-n [[:sculpture.user/-remote-auth]
                   [:sculpture.data/-remote-get-data]]}))
 
+
+;; sculpture.user
 
 (reg-event-fx
   :sculpture.user/-remote-auth
@@ -95,6 +101,8 @@
             (fn [data]
               (dispatch [:sculpture.user/-handle-user-info data]))}}))
 
+;; sculpture.data
+
 (reg-event-fx
   :sculpture.data/-remote-get-data
   (fn [_ _]
@@ -111,6 +119,8 @@
              (assoc :data (key-by-id data))
              (assoc-in [:search :fuse]
                (search/init data)))}))
+
+;; sculpture.search
 
 (reg-event-fx
   :sculpture.search/set-query-focused
@@ -134,11 +144,42 @@
                (get-in db [:data id]))
              (search/search (get-in db [:search :fuse]) query 20)))}))
 
+;; set-page
+
 (reg-event-fx
   :set-page
   (fn [{db :db} [_ page]]
     {:db (assoc db :page page)
-     :dispatch [:sculpture.search/set-query-focused false]}))
+     :dispatch-n [[:sculpture.search/set-query-focused false]
+                  [:sculpture.edit/-set-draft (if (page :edit?)
+                                                (page :id)
+                                                nil)]]}))
+
+;; sculpture.edit
+
+(reg-event-fx
+  :sculpture.edit/-set-draft
+  (fn [{db :db} [_ id]]
+    {:db (assoc db :entity-draft (if id
+                                   (get-in db [:data id])
+                                   nil))}))
+
+(reg-event-fx
+  :sculpture.edit/-validate-draft
+  (fn [{db :db} _]
+    (println "validating..." )
+    {:db (assoc db :errors)}
+
+    ))
+
+(reg-event-fx
+  :sculpture.edit/save
+  (fn [{db :db} _]
+    (let [entity (db :entity-draft)]
+      (if (nil? (validate entity))
+        {:db (assoc-in db [:data (entity :id)] entity)
+         :dispatch [:sculpture.edit/-remote-persist-entity (entity :id)]}
+        {}))))
 
 (reg-event-fx
   :sculpture.edit/-remote-persist-entity
@@ -157,18 +198,12 @@
 (reg-event-fx
   :sculpture.edit/update-entity
   (fn [{db :db} [_ id k v]]
-    {:db (assoc-in db [:data id k] v)
-     :dispatch-debounce {:id :update-entity
-                         :timeout 750
-                         :dispatch [:sculpture.edit/-remote-persist-entity id]}}))
+    {:db (assoc-in db [:entity-draft k] v)}))
 
 (reg-event-fx
   :sculpture.edit/remove-entity-key
   (fn [{db :db} [_ id k]]
-    {:db (update-in db [:data id] (fn [e] (dissoc e k)))
-     :dispatch-debounce {:id :update-entity
-                         :timeout 750
-                         :dispatch [:sculpture.edit/-remote-persist-entity id]}}))
+    {:db (update-in db [:entity-draft] (fn [e] (dissoc e k)))}))
 
 (reg-event-fx
   :sculpture.edit/create-entity
@@ -177,6 +212,8 @@
       {:db (assoc-in db [:data id] {:id id
                                     :type "sculpture"})
        :redirect-to (routes/entity-edit-path {:id id})})))
+
+;; sculpture.mega-map
 
 (reg-event-fx
   :sculpture.mega-map/go-to

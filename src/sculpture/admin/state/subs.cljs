@@ -1,6 +1,7 @@
 (ns sculpture.admin.state.subs
   (:require
     [re-frame.core :refer [reg-sub]]
+    [sculpture.admin.state.spec :refer [validate]]
     [sculpture.admin.state.search :as search]))
 
 (reg-sub
@@ -46,9 +47,17 @@
            (get-in db [:data id])) ids)))
 
 (reg-sub
-  :edit?
+  :entity-draft
   (fn [db _]
-    (db :edit?)))
+    (db :entity-draft)))
+
+(reg-sub
+  :sculpture.edit/invalid-fields
+  (fn [db _]
+    (->> (validate (db :entity-draft))
+         (map :path)
+         (map last)
+         set)))
 
 (reg-sub
   :related-entity-search

@@ -12,12 +12,6 @@
     [sculpture.admin.views.entity.photo]
     [sculpture.admin.views.entity-editor :refer [entity-editor-view]]))
 
-(defn edit-entity-view [entity-id]
-  (let [entity (subscribe [:get-entity entity-id])]
-    [:div.entity.edit
-     [:a.button.view {:href (routes/entity-path {:id entity-id})} "X"]
-     [entity-editor-view @entity]]))
-
 (defn active-entity-view [entity-id]
   (when-let [entity @(subscribe [:get-entity entity-id])]
     [:div.active-entity
@@ -69,8 +63,6 @@
      [toolbar-view]
      [sidebar-view]
 
-     (when (and page
-             (= :entity (:type page))
-             (:edit? page))
+     (when-let [entity-draft @(subscribe [:entity-draft])]
        [:div.main
-        [edit-entity-view (page :id)]])]))
+        [entity-editor-view entity-draft]])]))

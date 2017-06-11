@@ -10,4 +10,7 @@
     {:position "absolute"
      :top 0
      :right 0}
-    (button)]])
+    (button)]
+
+   [:.invalid
+    {:background "red"}]])
