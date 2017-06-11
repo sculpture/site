@@ -83,7 +83,7 @@
   [_]
   (let [show-search? (r/atom false)
         results (r/atom [])]
-    (fn [{:keys [value lookup-type on-change on-search on-find]}]
+    (fn [{:keys [value on-change on-search on-find]}]
       (let [ids (set value)
             on-search (or on-search (fn [query cb] (cb [])))]
         [:div
@@ -94,10 +94,10 @@
               [related-object-existing-view id on-find]
               [:button {:on-click
                         (fn [_]
-                          (on-change (disj ids id)))} "X"]]))
+                          (on-change (disj ids id)))} "×"]]))
          (if @show-search?
            [:div
-            [:input {:placeholder "TODO Search as you type"
+            [:input {:placeholder "Search"
                      :on-change (fn [e]
                                   (on-search (.. e -target -value)
                                              (fn [rs]
@@ -121,3 +121,27 @@
             "+"])]))))
 
 
+(defmethod field :single-lookup
+  [_]
+  (let [results (r/atom [])]
+    (fn [{:keys [value on-change on-find on-search]}]
+      (if value
+        [:div
+         [related-object-existing-view value on-find]
+         [:button {:on-click
+                   (fn [_]
+                     (on-change nil))} "×"]]
+        [:div
+         [:input {:placeholder "Search"
+                  :on-change (fn [e]
+                               (on-search (.. e -target -value)
+                                          (fn [rs]
+                                            (reset! results rs))))}]
+         [:div
+          (when @results
+            (for [result @results]
+              ^{:key (result :id)}
+              [:div {:on-click (fn []
+                                 (on-change (result :id))
+                                 (reset! results []))}
+               [related-object-view result]]))]]))))
