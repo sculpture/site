@@ -160,7 +160,8 @@
   (let [invalid-fields @(subscribe [:sculpture.edit/invalid-fields])
         default-entity (entity-defaults (:type entity))]
     [:div.entity.edit
-     [:a.button.view {:href (routes/entity-path entity)} "X"]
+     [:button {:on-click (fn [_]
+                           (dispatch! [:sculpture.edit/stop-editing]))} "×"]
      [:table
       [:tbody
        (for [k (keys default-entity)]

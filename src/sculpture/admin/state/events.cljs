@@ -150,19 +150,19 @@
   :set-page
   (fn [{db :db} [_ page]]
     {:db (assoc db :page page)
-     :dispatch-n [[:sculpture.search/set-query-focused false]
-                  [:sculpture.edit/-set-draft (if (page :edit?)
-                                                (page :id)
-                                                nil)]]}))
+     :dispatch [:sculpture.search/set-query-focused false]}))
 
 ;; sculpture.edit
 
 (reg-event-fx
-  :sculpture.edit/-set-draft
+  :sculpture.edit/edit-entity
   (fn [{db :db} [_ id]]
-    {:db (assoc db :entity-draft (if id
-                                   (get-in db [:data id])
-                                   nil))}))
+    {:db (assoc db :entity-draft (get-in db [:data id]))}))
+
+(reg-event-fx
+  :sculpture.edit/stop-editing
+  (fn [{db :db} _]
+    {:db (assoc db :entity-draft nil)}))
 
 (reg-event-fx
   :sculpture.edit/save
@@ -200,10 +200,9 @@
 (reg-event-fx
   :sculpture.edit/create-entity
   (fn [{db :db} _]
-    (let [id (str (uuid/make-random-uuid))]
-      {:db (assoc-in db [:data id] {:id id
-                                    :type "sculpture"})
-       :redirect-to (routes/entity-edit-path {:id id})})))
+    (let [id (uuid/make-random-uuid)]
+      {:db (assoc-in db [:entity-draft] {:id id
+                                         :type "sculpture"})})))
 
 ;; sculpture.mega-map
 

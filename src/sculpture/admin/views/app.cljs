@@ -16,7 +16,8 @@
   (when-let [entity @(subscribe [:get-entity entity-id])]
     [:div.active-entity
      (when @(subscribe [:user])
-       [:a.edit.button {:href (routes/entity-edit-path {:id (entity :id)})}])
+       [:button.edit {:on-click (fn [_]
+                                  (dispatch! [:sculpture.edit/edit-entity entity-id]))}])
      [entity-view entity]]))
 
 (defn new-entity-button-view []

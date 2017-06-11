@@ -8,7 +8,7 @@
 (def entity-styles
   [:>.active-entity
 
-   [:>a.edit
+   [:>button.edit
     (side-button \uf040 :right)]
 
    [:>.entity

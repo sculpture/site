@@ -10,7 +10,4 @@
   (dispatch! [:set-page {:type :entity
                          :id (UUID. id nil)}]))
 
-(defroute entity-edit-path "/entity/:id/edit" [id]
-  (dispatch! [:set-page {:type :entity
-                         :edit? true
-                         :id (UUID. id nil)}]))
+
