@@ -74,7 +74,7 @@
 
 (defn message-event-handler [e]
   (let [token (.-data e)]
-    (dispatch [:oauth/-remote-auth token])))
+    (dispatch [:sculpture.user/-remote-auth token])))
 
 (defn attach-message-listener! []
   (js/window.addEventListener "message" message-event-handler))
