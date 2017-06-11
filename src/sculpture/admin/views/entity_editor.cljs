@@ -170,14 +170,14 @@
            [:tr {:class (when (contains? invalid-fields k)
                           "invalid")}
             [:td [:button {:on-click (fn []
-                                       (dispatch! [:sculpture.edit/remove-entity-key (entity :id) k]))} "X"]]
+                                       (dispatch! [:sculpture.edit/remove-draft-key k]))} "X"]]
             [:td (str k)]
             [:td
              [field (merge
                       (field-opts k (entity :type))
                       {:value v
                        :on-change (fn [v]
-                                    (dispatch! [:sculpture.edit/update-entity (entity :id) k v]))})]]]))]]
+                                    (dispatch! [:sculpture.edit/update-draft k v]))})]]]))]]
      [:button {:disabled (not (empty? invalid-fields))
                :on-click
                (fn [_]

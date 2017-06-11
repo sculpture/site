@@ -188,13 +188,13 @@
               (js/alert "There was an error saving."))}}))
 
 (reg-event-fx
-  :sculpture.edit/update-entity
-  (fn [{db :db} [_ id k v]]
+  :sculpture.edit/update-draft
+  (fn [{db :db} [_ k v]]
     {:db (assoc-in db [:entity-draft k] v)}))
 
 (reg-event-fx
-  :sculpture.edit/remove-entity-key
-  (fn [{db :db} [_ id k]]
+  :sculpture.edit/remove-draft-key
+  (fn [{db :db} [_ k]]
     {:db (update-in db [:entity-draft] (fn [e] (dissoc e k)))}))
 
 (reg-event-fx
