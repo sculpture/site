@@ -116,6 +116,7 @@
               :length :long}
         :birth-date {:type :date}
         :birth-date-precision {:type :integer}
+        :captured-at {:type :date}
         :death-date {:type :date}
         :death-date-precision {:type :integer}
         :slug {:type :string}
@@ -132,6 +133,12 @@
                          :options #{"" "year" "year-month" "year-month-day"}}
         :commissioned-by {:type :string}
         :location {:type :location}
+        :user-id {:type :single-lookup
+                  :on-find (lookup-on-find)
+                  :on-search (lookup-on-search "user")}
+        :sculpture-id {:type :single-lookup
+                       :on-find (lookup-on-find)
+                       :on-search (lookup-on-search "sculpture")}
         :material-ids {:type :multi-lookup
                        :on-find (lookup-on-find)
                        :on-search (lookup-on-search "material")}
@@ -142,6 +149,7 @@
                   :on-find (lookup-on-find)
                   :on-search (lookup-on-search
                                (case type
+                                 "photo" "photo-tag"
                                  "sculpture" "sculpture-tag"
                                  "region" "region-tag"
                                  "artist" "artist-tag"))}}
