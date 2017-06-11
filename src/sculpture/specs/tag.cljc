@@ -1,6 +1,6 @@
 (ns sculpture.specs.tag
   (:require
-    [clojure.spec :as s]
+    [clojure.spec.alpha :as s]
     [sculpture.specs.types]
     [sculpture.specs.entity :refer [entity-type]]))
 

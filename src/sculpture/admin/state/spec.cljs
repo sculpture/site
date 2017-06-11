@@ -1,6 +1,6 @@
 (ns sculpture.admin.state.spec
   (:require
-    [clojure.spec :as s]
+    [clojure.spec.alpha :as s]
     [sculpture.specs.entity]
     [sculpture.specs.types]))
 
@@ -50,14 +50,12 @@
 
 ; -- ::user
 
-(s/def ::token (s/nilable string?))
 (s/def ::email (s/nilable string?))
 (s/def ::name (s/nilable string?))
 (s/def ::avatar (s/nilable string?))
 
 (s/def ::user
-  (s/keys :req-un [::token
-                   ::email
+  (s/keys :req-un [::email
                    ::avatar
                    ::name]))
 

@@ -1,16 +1,16 @@
 (ns sculpture.specs.artist
   (:require
-    [clojure.spec :as s]
+    [clojure.spec.alpha :as s]
     [sculpture.specs.types]
     [sculpture.specs.entity :refer [entity-type]]))
 
 (s/def ::gender #{"male"
                   "female"
                   "other"})
-(s/def ::link-website (s/nilable :sculpture.specs.types/link-type))
+(s/def ::link-website (s/nilable :sculpture.specs.types/url-type))
 (s/def ::link-wikipedia (s/nilable
                           (s/and
-                          :sculpture.specs.types/link-type
+                          :sculpture.specs.types/url-type
                           ; TODO regex wikipedia
                           )))
 (s/def ::name string?)
@@ -28,16 +28,16 @@
 (s/def ::artist
   (s/merge :sculpture.specs.entity/common
            (s/keys :req-un [::name
-                            ::gender
-                            ::link-website
-                            ::link-wikipedia
-                            ::bio
-                            ::birth-date
-                            ::birth-date-precision
-                            ::death-date
-                            ::death-date-precision
-                            ::slug
-                            ::tag-ids])))
+                            ::slug]
+                   :req-opt [::gender
+                             ::link-website
+                             ::link-wikipedia
+                             ::bio
+                             ::birth-date
+                             ::birth-date-precision
+                             ::death-date
+                             ::death-date-precision
+                             ::tag-ids])))
 
 (defmethod entity-type "artist"
   [_]

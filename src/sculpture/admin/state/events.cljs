@@ -1,14 +1,17 @@
 (ns sculpture.admin.state.events
   (:require
-    [re-frame.core :refer [dispatch] :as reframe]
+    [re-frame.core :refer [dispatch reg-fx] :as reframe]
     [cljs-uuid-utils.core :as uuid]
-    [sculpture.admin.state.events.oauth]
-    [sculpture.admin.state.fx.dispatch-debounce]
-    [sculpture.admin.state.fx.ajax]
-    [sculpture.admin.state.fx.redirect]
+    [sculpture.admin.state.fx.dispatch-debounce :refer [dispatch-debounce-fx]]
+    [sculpture.admin.state.fx.ajax :refer [ajax-fx]]
+    [sculpture.admin.state.fx.redirect :refer [redirect-to-fx]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.state.spec :refer [check-state!]]
     [sculpture.admin.state.search :as search]))
+
+(reg-fx :ajax ajax-fx)
+(reg-fx :redirect-to redirect-to-fx)
+(reg-fx :dispatch-debounce dispatch-debounce-fx)
 
 (defn key-by-id [arr]
   (reduce (fn [memo a]
@@ -38,7 +41,7 @@
 
 (reg-event-fx
   :init
-  (fn [{db :db} _]
+  (fn [_ _]
     {:db {:search {:query ""
                    :results nil
                    :focused? false
@@ -51,15 +54,61 @@
           :page nil
           :data nil
           :mega-map {:dirty? false}}
-     :dispatch [:init-oauth]
-     :ajax {:method :get
-            :uri "http://localhost:2468/all"
-            :on-success
-            (fn [data]
-              (dispatch [:sculpture.data/set-data data]))}}))
+     :dispatch-n [[:sculpture.user/-remote-auth]
+                  [:sculpture.data/-remote-get-data]]}))
+
 
 (reg-event-fx
-  :sculpture.data/set-data
+  :sculpture.user/-remote-auth
+  (fn [_ _]
+    {:ajax {:method :get
+            :uri "/api/session"
+            :on-success
+            (fn [data]
+              (dispatch [:sculpture.user/-handle-user-info data]))}}))
+
+(reg-event-fx
+  :sculpture.user/-handle-user-info
+  (fn [{db :db} [_ user]]
+    {:db (assoc db :user user)}))
+
+(defn message-event-handler [e]
+  (let [token (.-data e)]
+    (dispatch [:sculpture.user/-remote-auth token])))
+
+(defn attach-message-listener! []
+  (js/window.addEventListener "message" message-event-handler))
+
+(reg-event-fx
+  :sculpture.user/authenticate
+  (fn [_ _]
+    (attach-message-listener!)
+    (js/window.open "/api/oauth/google/request-token"
+      "Log In to Sculpture"
+      "width=500,height=700")
+    {}))
+
+(reg-event-fx
+  :sculpture.user/-remote-auth
+  (fn [_ [_ token]]
+    {:ajax {:method :put
+            :uri "/api/oauth/google/authenticate"
+            :params {:token token}
+            :on-success
+            (fn [data]
+              (dispatch [:sculpture.user/-handle-user-info data]))}}))
+
+(reg-event-fx
+  :sculpture.data/-remote-get-data
+  (fn [_ _]
+   {:ajax {:method :get
+           :uri "/api/entities"
+           :on-success
+           (fn [data]
+             (dispatch [:sculpture.data/-set-data data]))}}))
+
+(reg-event-fx
+  :sculpture.data/-set-data
   (fn [{db :db} [_ data]]
     {:db (-> db
              (assoc :data (key-by-id data))
@@ -95,14 +144,34 @@
      :dispatch [:sculpture.search/set-query-focused false]}))
 
 (reg-event-fx
+  :sculpture.edit/-remote-persist-entity
+  (fn [{db :db} [_ id]]
+    {:ajax {:method :put
+            :uri "/api/entities"
+            :params {:entity (get-in db [:data id])}
+            :on-success
+            (fn [data]
+
+              )
+            :on-error
+            (fn [_]
+              (js/alert "There was an error saving."))}}))
+
+(reg-event-fx
   :sculpture.edit/update-entity
   (fn [{db :db} [_ id k v]]
-    {:db (assoc-in db [:data id k] v)}))
+    {:db (assoc-in db [:data id k] v)
+     :dispatch-debounce {:id :update-entity
+                         :timeout 750
+                         :dispatch [:sculpture.edit/-remote-persist-entity id]}}))
 
 (reg-event-fx
   :sculpture.edit/remove-entity-key
   (fn [{db :db} [_ id k]]
-    {:db (update-in db [:data id] (fn [e] (dissoc e k)))}))
+    {:db (update-in db [:data id] (fn [e] (dissoc e k)))
+     :dispatch-debounce {:id :update-entity
+                         :timeout 750
+                         :dispatch [:sculpture.edit/-remote-persist-entity id]}}))
 
 (reg-event-fx
   :sculpture.edit/create-entity

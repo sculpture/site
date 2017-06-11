@@ -3,7 +3,9 @@
     [cljsjs.fuse]))
 
 (defn init [data]
-  (js/Fuse. (clj->js data)
+  (js/Fuse. (->> data
+                 (map (fn [e] (update e :id str)) data)
+                 clj->js)
             (clj->js {:keys [:title :name]
                       :shouldSort true
                       :minMatchCharLength 3
@@ -14,4 +16,5 @@
   (if (= 0 (count query))
     []
     (->> (.slice (.search fuse query) 0 limit)
-         js->clj)))
+         js->clj
+         (map (fn [id] (UUID. id nil))))))

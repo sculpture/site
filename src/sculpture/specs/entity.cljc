@@ -1,6 +1,6 @@
 (ns sculpture.specs.entity
   (:require
-    [clojure.spec :as s]
+    [clojure.spec.alpha :as s]
     [sculpture.specs.types]))
 
 (s/def ::id :sculpture.specs.types/uuid-type)

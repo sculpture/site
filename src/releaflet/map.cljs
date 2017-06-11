@@ -44,7 +44,7 @@
                                                               :zoomControl (config :zoom-controls)
                                                               :attributionControl false})))
                       (.. (js/L.tileLayer
-                            mapbox/tilelayer-url
+                            (mapbox/tilelayer-url)
                             (clj->js {:maxZoom 18}))
                           (addTo @leaflet-map))
 

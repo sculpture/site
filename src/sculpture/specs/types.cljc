@@ -1,6 +1,6 @@
 (ns sculpture.specs.types
   (:require
-    [clojure.spec :as s]))
+    [clojure.spec.alpha :as s]))
 
 (def email-regex #"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$")
 
@@ -8,21 +8,17 @@
                       string?
                       #(re-matches email-regex %)))
 
-(def uuid-regex #"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
-
-(s/def ::uuid-type (s/and
-                     string?
-                     #(re-matches uuid-regex %)))
+(s/def ::uuid-type uuid?)
 
 (s/def ::related-ids-type (s/coll-of ::uuid-type
                                      :distinct true
                                      :kind vector?))
 
-(s/def ::link-type (s/and
-                     string?
-                     ; TODO regex http(s)
+(s/def ::url-type (s/and
+                    string?
+                    ; TODO regex http(s)
 
-                     ))
+                    ))
 
 
 (s/def ::longitude (s/and

@@ -1,6 +1,6 @@
 (ns sculpture.specs.photo
   (:require
-    [clojure.spec :as s]
+    [clojure.spec.alpha :as s]
     [sculpture.specs.entity :refer [entity-type]]
     [sculpture.specs.types]))
 

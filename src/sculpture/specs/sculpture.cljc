@@ -1,6 +1,6 @@
 (ns sculpture.specs.sculpture
   (:require
-    [clojure.spec :as s]
+    [clojure.spec.alpha :as s]
     [sculpture.specs.entity :refer [entity-type]]
     [sculpture.specs.types]))
 
@@ -18,17 +18,17 @@
 
 (s/def ::sculpture
   (s/merge :sculpture.specs.entity/common
-           (s/keys :req-un [::artist-ids
+           (s/keys :req-un [::title
+                            ::slug]
+                   :opt-un [::size
+                            ::note
+                            ::date
+                            ::date-precision
+                            ::artist-ids
                             ::commissioned-by
                             ::material-ids
                             ::location
-                            ::size
-                            ::note
-                            ::tag-ids
-                            ::title
-                            ::slug
-                            ::date
-                            ::date-precision])))
+                            ::tag-ids])))
 
 (defmethod entity-type "sculpture"
   [_]

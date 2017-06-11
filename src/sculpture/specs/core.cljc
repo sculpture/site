@@ -1,6 +1,6 @@
 (ns sculpture.specs.core
   (:require
-    [clojure.spec :as s]
+    [clojure.spec.alpha :as s]
     [sculpture.specs.entity]
     [sculpture.specs.sculpture]
     [sculpture.specs.artist]
@@ -11,6 +11,7 @@
     [sculpture.specs.region]))
 
 (s/def :sculpture/entity :sculpture.specs.entity/entity)
+(s/def :sculpture/entity-type :sculpture.specs.entity/type)
 (s/def :sculpture/user :sculpture.specs.user/user)
 (s/def :sculpture/artist :sculpture.specs.artist/artist)
 (s/def :sculpture/sculpture :sculpture.specs.sculpture/sculpture)
