@@ -71,7 +71,7 @@
 
 (defn message-event-handler [e]
   (let [token (.-data e)]
-    (dispatch [:sculpture.user/-remote-auth token])))
+    (dispatch [:sculpture.user/-remote-oauth token])))
 
 (defn attach-message-listener! []
   (js/window.addEventListener "message" message-event-handler))
@@ -86,7 +86,7 @@
     {}))
 
 (reg-event-fx
-  :sculpture.user/-remote-auth
+  :sculpture.user/-remote-oauth
   (fn [_ [_ token]]
     {:ajax {:method :put
             :uri "/api/oauth/google/authenticate"
