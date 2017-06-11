@@ -3,4 +3,9 @@
 *.log
 /target
 /lib
-/resources/public/js/dev
+/resources/public/js/
+/notes
+.lein-env
+.lein-repl-history
+.nrepl-port
+profiles.clj
