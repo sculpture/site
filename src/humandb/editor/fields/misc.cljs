@@ -12,9 +12,10 @@
 (defmethod field :date
   [{:keys [value on-change]}]
   [:input {:type "date"
-           :value (f/unparse
-                    (f/formatter "yyyy-MM-dd")
-                    (c/from-date value))
+           :value (when value
+                    (f/unparse
+                      (f/formatter "yyyy-MM-dd")
+                      (c/from-date value)))
            :on-change (fn [e]
                         (on-change (c/to-date
                                      (f/parse
