@@ -55,9 +55,9 @@
 (s/def ::avatar (s/nilable string?))
 
 (s/def ::user
-  (s/keys :req-un [::email
-                   ::avatar
-                   ::name]))
+  (s/nilable (s/keys :req-un [::email
+                              ::avatar
+                              ::name])))
 
 ; -- ::app-state
 

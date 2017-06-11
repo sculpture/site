@@ -46,10 +46,7 @@
                    :results nil
                    :focused? false
                    :fuse nil}
-          :user {:token nil
-                 :email nil
-                 :name nil
-                 :avatar nil}
+          :user nil
           :active-entity-id nil
           :page nil
           :data nil

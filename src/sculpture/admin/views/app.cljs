@@ -19,26 +19,25 @@
      [entity-editor-view @entity]]))
 
 (defn active-entity-view [entity-id]
-  (let [entity (subscribe [:get-entity entity-id])]
-    (when @entity
-      [:div.active-entity
-       [:a.edit.button {:href (routes/entity-edit-path {:id (@entity :id)})}]
-       [entity-view @entity]])))
+  (when-let [entity @(subscribe [:get-entity entity-id])]
+    [:div.active-entity
+     (when @(subscribe [:user])
+       [:a.edit.button {:href (routes/entity-edit-path {:id (entity :id)})}])
+     [entity-view entity]]))
 
 (defn new-entity-button-view []
   [:button.new {:on-click (fn [_]
                             (dispatch! [:sculpture.edit/create-entity]))}])
 
 (defn toolbar-view []
-  (let [user @(subscribe [:user])]
-    (if (user :name)
-      [:div.toolbar
-       [new-entity-button-view]
-       [:img.avatar {:src (user :avatar)}]]
-      [:div.toolbar
-       [:button.auth
-        {:on-click (fn []
-                     (dispatch-sync! [:sculpture.user/authenticate]))}]])))
+  (if-let [user @(subscribe [:user])]
+    [:div.toolbar
+     [new-entity-button-view]
+     [:img.avatar {:src (user :avatar)}]]
+    [:div.toolbar
+     [:button.auth
+      {:on-click (fn []
+                   (dispatch-sync! [:sculpture.user/authenticate]))}]]))
 
 (defn sidebar-view []
   (let [page @(subscribe [:page])
