@@ -165,14 +165,6 @@
                                    nil))}))
 
 (reg-event-fx
-  :sculpture.edit/-validate-draft
-  (fn [{db :db} _]
-    (println "validating..." )
-    {:db (assoc db :errors)}
-
-    ))
-
-(reg-event-fx
   :sculpture.edit/save
   (fn [{db :db} _]
     (let [entity (db :entity-draft)]
