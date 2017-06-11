@@ -144,14 +144,34 @@
      :dispatch [:sculpture.search/set-query-focused false]}))
 
 (reg-event-fx
+  :sculpture.edit/-remote-persist-entity
+  (fn [{db :db} [_ id]]
+    {:ajax {:method :put
+            :uri "/api/entities"
+            :params {:entity (get-in db [:data id])}
+            :on-success
+            (fn [data]
+
+              )
+            :on-error
+            (fn [_]
+              (js/alert "There was an error saving."))}}))
+
+(reg-event-fx
   :sculpture.edit/update-entity
   (fn [{db :db} [_ id k v]]
-    {:db (assoc-in db [:data id k] v)}))
+    {:db (assoc-in db [:data id k] v)
+     :dispatch-debounce {:id :update-entity
+                         :timeout 750
+                         :dispatch [:sculpture.edit/-remote-persist-entity id]}}))
 
 (reg-event-fx
   :sculpture.edit/remove-entity-key
   (fn [{db :db} [_ id k]]
-    {:db (update-in db [:data id] (fn [e] (dissoc e k)))}))
+    {:db (update-in db [:data id] (fn [e] (dissoc e k)))
+     :dispatch-debounce {:id :update-entity
+                         :timeout 750
+                         :dispatch [:sculpture.edit/-remote-persist-entity id]}}))
 
 (reg-event-fx
   :sculpture.edit/create-entity

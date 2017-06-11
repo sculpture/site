@@ -66,7 +66,10 @@
 
     (PUT "/entities" [entity :as req]
       (if-let [user-id (get-in req [:session :user-id])]
-        (db/update! entity user-id)
+        (do
+          (db/update! entity user-id)
+          {:status 200
+           :body {:status "OK"}})
         {:status 401
          :body {:error "You must be logged in to perform this action."}}))
 
