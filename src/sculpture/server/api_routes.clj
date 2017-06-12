@@ -50,15 +50,8 @@
             {:status 200
              :body user
              :session {:user-id (user :id)}}
-            (let [user {:type "user"
-                        :id (java.util.UUID/randomUUID)
-                        :name (user-info :name)
-                        :email (user-info :email)
-                        :avatar (user-info :avatar)}
-                  _ (db/insert! user)]
-              {:status 200
-               :body user
-               :session {:user-id (user :id)}})))
+            {:status 401
+             :body {:error "User has not been approved"}}))
         {:status 401
          :body {:error "User could not be authenticated"}}))
 
