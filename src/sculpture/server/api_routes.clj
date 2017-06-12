@@ -67,7 +67,7 @@
     (PUT "/entities" [entity :as req]
       (if-let [user-id (get-in req [:session :user-id])]
         (do
-          (db/update! entity user-id)
+          (db/upsert! entity user-id)
           {:status 200
            :body {:status "OK"}})
         {:status 401

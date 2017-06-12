@@ -92,20 +92,8 @@
   (reset! records (key-by-id (fetch-data)))
   true)
 
-(defn update! [entity user-id]
+(defn upsert! [entity user-id]
   {:pre [(s/valid? :sculpture/entity entity)
-         (exists? (entity :id))
-         (uuid? user-id)
-         (user-exists? user-id)]}
-  (swap! records assoc (entity :id) entity)
-  (push! (entity :type)
-         (str "Update " (entity :type) " " (or (entity :slug) (entity :id)))
-         (get-by-id user-id))
-  true)
-
-(defn insert! [entity user-id]
-  {:pre [(s/valid? :sculpture/entity entity)
-         (not (exists? (entity :id)))
          (uuid? user-id)
          (user-exists? user-id)]}
   (swap! records assoc (entity :id) entity)
