@@ -179,8 +179,10 @@
                       {:value v
                        :on-change (fn [v]
                                     (dispatch! [:sculpture.edit/update-draft k v]))})]]]))]]
-     [:button {:disabled (not (empty? invalid-fields))
-               :on-click
-               (fn [_]
-                 (dispatch! [:sculpture.edit/save]))}
-      "Save"]]))
+     (if @(subscribe [:sculpture.edit/saving?])
+       [:div "Saving..."]
+       [:button {:disabled (not (empty? invalid-fields))
+                 :on-click
+                 (fn [_]
+                   (dispatch! [:sculpture.edit/save]))}
+        "Save"])]))

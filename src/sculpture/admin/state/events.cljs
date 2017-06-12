@@ -52,6 +52,7 @@
           :user nil
           :active-entity-id nil
           :entity-draft nil
+          :saving? false
           :page nil
           :data nil
           :mega-map {:dirty? false}}
@@ -174,17 +175,23 @@
         {}))))
 
 (reg-event-fx
+  :sculpture.edit/-set-saving
+  (fn [{db :db} [_ saving?]]
+    {:db (assoc db :saving? saving?)}))
+
+(reg-event-fx
   :sculpture.edit/-remote-persist-entity
   (fn [{db :db} [_ id]]
-    {:ajax {:method :put
+    {:dispatch [:sculpture.edit/-set-saving true]
+     :ajax {:method :put
             :uri "/api/entities"
             :params {:entity (get-in db [:data id])}
             :on-success
             (fn [data]
-
-              )
+              (dispatch [:sculpture.edit/-set-saving false]))
             :on-error
             (fn [_]
+              (dispatch [:sculpture.edit/-set-saving false])
               (js/alert "There was an error saving."))}}))
 
 (reg-event-fx

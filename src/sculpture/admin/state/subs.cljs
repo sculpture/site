@@ -60,6 +60,11 @@
          set)))
 
 (reg-sub
+  :sculpture.edit/saving?
+  (fn [db _]
+    (db :saving?)))
+
+(reg-sub
   :related-entity-search
   (fn [db [_ type query]]
     (->> (search/search (get-in db [:search :fuse]) query 20)

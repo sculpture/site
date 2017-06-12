@@ -64,6 +64,8 @@
 (s/def ::entity-draft
   (s/nilable map?))
 
+(s/def ::saving?  ::boolean)
+
 ; -- ::app-state
 
 (s/def ::app-state
@@ -72,6 +74,7 @@
                    ::user
                    ::page
                    ::data
+                   ::saving?
                    ::entity-draft]))
 
 ; -- helpers
