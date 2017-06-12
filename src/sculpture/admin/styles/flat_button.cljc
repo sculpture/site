@@ -11,7 +11,9 @@
     :text-align "center"
     :border "none"
     :cursor "pointer"
-    :color "white"}
+    :color "white"
+    :font-size "1em"
+    :padding 0}
 
    [:&:before
     (fontawesome icon)]
