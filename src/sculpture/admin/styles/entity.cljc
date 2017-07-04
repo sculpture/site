@@ -38,13 +38,15 @@
      {:padding "1.5em"}
 
      [:>.row
-      {:margin-bottom "0.75em"}
+      {:margin-bottom "0.75em"
+       :color colors/text-color}
 
       [:&:last-child
        {:margin-bottom 0}]
 
       [:&:before
-       {:width "1em"
+       {:width "1.5em"
+        :color "#000"
         :text-align "center"
         :display "inline-block"
         :margin-right "0.75em"}]
