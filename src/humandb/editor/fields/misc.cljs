@@ -64,7 +64,7 @@
      [:option {:value option} (str option)])])
 
 (defn related-object-view [object]
-  [:div
+  [:div.related
    (or (object :name)
        (object :title)
        (object :id))])
@@ -86,62 +86,61 @@
     (fn [{:keys [value on-change on-search on-find]}]
       (let [ids (set value)
             on-search (or on-search (fn [query cb] (cb [])))]
-        [:div
+        [:div.multi.lookup
          (doall
            (for [id ids]
              ^{:key id}
-             [:div
+             [:div.value
               [related-object-existing-view id on-find]
-              [:button {:on-click
-                        (fn [_]
-                          (on-change (disj ids id)))} "×"]]))
+              [:button.remove {:on-click
+                               (fn [_]
+                                 (on-change (disj ids id)))}]]))
          (if @show-search?
-           [:div
+           [:div.search
             [:input {:placeholder "Search"
                      :on-change (fn [e]
                                   (on-search (.. e -target -value)
                                              (fn [rs]
                                                (reset! results rs))))}]
-            [:div
+            [:div.results
              (when @results
                (for [result (->> @results
                                  (remove (fn [r]
                                            (contains? ids (r :id)))))]
                  ^{:key (result :id)}
-                 [:div {:on-click (fn []
-                                    (on-change (conj value (result :id)))
-                                    (reset! results [])
-                                    (reset! show-search? false))}
+                 [:div.result {:on-click (fn []
+                                           (on-change (conj value (result :id)))
+                                           (reset! results [])
+                                           (reset! show-search? false))}
                   [related-object-view result]]))]
-            [:button {:on-click (fn [_]
-                                  (reset! show-search? false))}
-             "Cancel"]]
-           [:button {:on-click (fn [_]
-                                 (reset! show-search? true))}
-            "+"])]))))
+            [:button.cancel {:on-click (fn [_]
+                                         (reset! show-search? false))}]]
+           [:button.plus {:on-click (fn [_]
+                                      (reset! show-search? true))}])]))))
 
 
 (defmethod field :single-lookup
   [_]
   (let [results (r/atom [])]
     (fn [{:keys [value on-change on-find on-search]}]
-      (if value
-        [:div
-         [related-object-existing-view value on-find]
-         [:button {:on-click
-                   (fn [_]
-                     (on-change nil))} "×"]]
-        [:div
-         [:input {:placeholder "Search"
-                  :on-change (fn [e]
-                               (on-search (.. e -target -value)
-                                          (fn [rs]
-                                            (reset! results rs))))}]
-         [:div
-          (when @results
-            (for [result @results]
-              ^{:key (result :id)}
-              [:div {:on-click (fn []
-                                 (on-change (result :id))
-                                 (reset! results []))}
-               [related-object-view result]]))]]))))
+      [:div.single.lookup
+       (if value
+         [:div.value
+          [related-object-existing-view value on-find]
+          [:button.remove {:on-click
+                           (fn [_]
+                             (on-change nil))}]]
+         [:div.search
+          [:input {:placeholder "Search"
+                   :on-change (fn [e]
+                                (on-search (.. e -target -value)
+                                           (fn [rs]
+                                             (reset! results rs))))}]
+          [:div.results
+           (when @results
+             (for [result @results]
+               ^{:key (result :id)}
+               [:div.result {:on-click (fn []
+                                         (on-change (result :id))
+                                         (reset! results []))}
+                [related-object-view result]]))]])])))

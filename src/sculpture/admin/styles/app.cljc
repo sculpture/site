@@ -48,9 +48,10 @@
    [:>.main
     {:position "absolute"
      :top 0
-     :right "1.5em"
+     :left "30%"
+     :margin-left "6em"
+     :right "8em"
      :z-index 1000
-     :padding "2em"
      :max-height "100vh"
      :overflow-y "scroll"
      :box-sizing "border-box"}

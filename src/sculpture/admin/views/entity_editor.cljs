@@ -1,5 +1,6 @@
 (ns sculpture.admin.views.entity-editor
   (:require
+    [clojure.string :as string]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.routes :as routes]
     [humandb.editor.field :refer [field]]))
@@ -102,6 +103,14 @@
 
     {:type nil}))
 
+(defn key->title [k]
+  (-> k
+      name
+      (string/split #"-")
+      (->> (map string/capitalize)
+           (string/join " "))
+      (string/replace #"Id" "ID")))
+
 (defn field-opts [field type]
   (get {:id {:type :string
              :disabled true}
@@ -160,8 +169,30 @@
   (let [invalid-fields @(subscribe [:sculpture.edit/invalid-fields])
         default-entity (entity-defaults (:type entity))]
     [:div.entity.edit
-     [:button {:on-click (fn [_]
-                           (dispatch! [:sculpture.edit/stop-editing]))} "×"]
+     [:div.header
+      [:h1 "Editing " (or (entity :name)
+                          (entity :title)
+                          (entity :slug)
+                          (entity :id))]
+      [:button.close
+       {:on-click (fn [_]
+                    (dispatch! [:sculpture.edit/stop-editing]))} "Cancel"]
+
+      (let [saving? @(subscribe [:sculpture.edit/saving?])
+            invalid? (not (empty? invalid-fields))]
+        [:button.save {:disabled (or saving? invalid?)
+                       :class (when invalid? "invalid")
+                       :on-click
+                       (fn [_]
+                         (dispatch! [:sculpture.edit/save]))}
+         (cond
+           invalid?
+           "Invalid"
+           saving?
+           "Saving..."
+           :else
+           "Save")])]
+
      [:table
       [:tbody
        (for [k (keys default-entity)]
@@ -170,19 +201,14 @@
            ^{:key k}
            [:tr {:class (when (contains? invalid-fields k)
                           "invalid")}
-            [:td [:button {:on-click (fn []
-                                       (dispatch! [:sculpture.edit/remove-draft-key k]))} "X"]]
-            [:td (str k)]
+
+            [:td.key (key->title k)]
             [:td
              [field (merge
                       (field-opts k (entity :type))
                       {:value v
                        :on-change (fn [v]
-                                    (dispatch! [:sculpture.edit/update-draft k v]))})]]]))]]
-     (if @(subscribe [:sculpture.edit/saving?])
-       [:div "Saving..."]
-       [:button {:disabled (not (empty? invalid-fields))
-                 :on-click
-                 (fn [_]
-                   (dispatch! [:sculpture.edit/save]))}
-        "Save"])]))
+                                    (dispatch! [:sculpture.edit/update-draft k v]))})]]
+            [:td [:button.delete
+                  {:on-click (fn []
+                               (dispatch! [:sculpture.edit/remove-draft-key k]))}]]]))]]]))
