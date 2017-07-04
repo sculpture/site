@@ -3,7 +3,7 @@
     [garden.units :refer [px em rem]]
     [sculpture.admin.styles.side-button :refer [side-button]]
     [sculpture.admin.styles.fontawesome :refer [fontawesome]]
-    [sculpture.admin.styles.colors :refer [accent-color secondary-color]]))
+    [sculpture.admin.styles.colors :as colors]))
 
 (def entity-styles
   [:>.active-entity
@@ -15,10 +15,10 @@
 
     [:>.info
      {:padding "1.5em"
-      :background accent-color
+      :background colors/accent-color
       :color "white"}
 
-     [:>a
+     [:a
       {:color "white"
        :text-decoration "none"}
 
@@ -48,6 +48,13 @@
         :text-align "center"
         :display "inline-block"
         :margin-right "0.75em"}]
+
+      [:a
+       {:color colors/text-color
+        :text-decoration "none"}
+
+       [:&:hover
+        {:text-decoration "underline"}]]
 
       [:&.tags:before (fontawesome \uf02c)]
       [:&.materials:before (fontawesome \uf0e3)]
