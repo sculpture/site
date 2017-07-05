@@ -65,4 +65,4 @@
                                    [clj-webdriver "0.7.2"]]}
 
              :uberjar {:aot :all
-                       :prep-tasks ["compile" ["cljsbuild" "once" "release"]]}})
+                       :prep-tasks ["compile" ["cljsbuild" "once" "prod"]]}})
