@@ -72,17 +72,10 @@
     (route/not-found "Page not found")))
 
 
-(defn cookie-secret []
-  (or (env :cookie-secret)
-      (throw (Exception. "Must set cookie secret"))))
-
-(defn cookie-secure? []
-  (or (env :cookie-secure?)
-      false))
-
-(defn cookie-max-age []
-  (or (env :cookie-max-age)
-      (* 60 60 24 365)))
+(def cookie-secret (or (env :cookie-secret)
+                       (println "WARNING: COOKIE SECRET NOT SET")))
+(def cookie-secure? (or (env :cookie-secure?) false))
+(def cookie-max-age (or (env :cookie-max-age) (* 60 60 24 365)))
 
 (def handler
   (-> routes
@@ -90,10 +83,10 @@
       api
       (wrap-cors :access-control-allow-origin [#".*"]
                  :access-control-allow-methods [:get :put :post :delete])
-      (wrap-session {:store (cookie-store {:key (cookie-secret)})
+      (wrap-session {:store (cookie-store {:key cookie-secret})
                      :cookie-name "sculpture"
-                     :cookie-attrs {:secure (cookie-secure?)
-                                    :max-age (cookie-max-age)}})))
+                     :cookie-attrs {:secure cookie-secure?
+                                    :max-age cookie-max-age}})))
 
 
 
