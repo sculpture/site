@@ -14,7 +14,7 @@
 (defn render []
   (r/render-component [app-view] (.. js/document (getElementById "app"))))
 
-(defn init []
+(defn ^:export init []
   (dispatch-sync! [:init])
   (init-router!)
   (render))
