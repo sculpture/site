@@ -46,6 +46,7 @@
                         :figwheel     {:on-jsload "sculpture.admin.core/reload"}
                         :compiler     {:main       "sculpture.admin.core"
                                        :asset-path "/js/dev/out"
+                                       :source-map true
                                        :output-to  "resources/public/js/sculpture.js"
                                        :output-dir "resources/public/js/dev/out"}}
 
@@ -58,6 +59,10 @@
                                        :output-dir "resources/public/js/prod/out"
                                        :externs ["resources/externs/leaflet.js"
                                                  "resources/externs/stackblur.js"]
+                                       ; to debug advanced compilation issues, enable these options:
+                                       ; :source-map "resources/public/js/sculpture.js.map"
+                                       ; :pseudo-names true
+                                       ; :pretty-print true
                                        }}]}
 
   :profiles {:test {:dependencies [[com.codeborne/phantomjsdriver "1.3.0"
