@@ -91,7 +91,6 @@
       :type "photo"
       :sculpture-id nil
       :captured-at nil
-      :url ""
       :user-id nil)
 
     "user"
