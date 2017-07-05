@@ -66,6 +66,33 @@
 
 (s/def ::saving?  ::boolean)
 
+; -- ::marker
+
+(s/def ::bound? ::boolean)
+(s/def ::geojson any?)
+(s/def ::shapes seq?)
+
+(s/def ::marker
+  (s/keys :req-un [::type
+                   ::bound?
+                   ::geojson
+                   ::shapes]))
+
+; -- ::mega-map
+
+(s/def ::dirty? ::boolean)
+(s/def ::center
+  (s/keys :req-un [:sculpture.specs.types/longitude
+                  :sculpture.specs.types/latitude]))
+(s/def ::zoom-level int?)
+(s/def ::current-marker ::marker)
+
+(s/def ::mega-map
+  (s/keys :req-un [::dirty?]
+          :opt-un [::center
+                   ::zoom-level
+                   ::current-marker]))
+
 ; -- ::app-state
 
 (s/def ::app-state
@@ -75,7 +102,8 @@
                    ::page
                    ::data
                    ::saving?
-                   ::entity-draft]))
+                   ::entity-draft
+                   ::mega-map]))
 
 ; -- helpers
 
