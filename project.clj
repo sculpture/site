@@ -55,7 +55,10 @@
                                        :main       "sculpture.admin.core"
                                        :asset-path "/js/prod/out"
                                        :output-to  "resources/public/js/sculpture.js"
-                                       :output-dir "resources/public/js/prod/out"}}]}
+                                       :output-dir "resources/public/js/prod/out"
+                                       :externs ["resources/externs/leaflet.js"
+                                                 "resources/externs/stackblur.js"]
+                                       }}]}
 
   :profiles {:test {:dependencies [[com.codeborne/phantomjsdriver "1.3.0"
                                     :exclusions [org.seleniumhq.selenium/selenium-java

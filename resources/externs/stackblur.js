@@ -1,0 +1,3 @@
+var StackBlur = {
+  "canvasRGB": function() {}
+}
