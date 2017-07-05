@@ -33,7 +33,8 @@
   :main sculpture.server.core
 
   :plugins [[lein-figwheel "0.5.10"]
-            [lein-environ "1.1.0"]]
+            [lein-environ "1.1.0"]
+            [lein-cljsbuild "1.1.6"]]
 
   :figwheel {:server-port 3939
              :reload-clj-files {:clj false
