@@ -10,7 +10,7 @@
                  [cljs-ajax "0.5.8"]
                  [cljsjs/fuse "2.5.0-0"]
                  [garden "1.3.2"]
-                 [com.andrewmcveigh/cljs-time "0.4.0"]
+                 [com.andrewmcveigh/cljs-time "0.5.0"]
                  [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]
                  [re-frame "0.9.1"]
                  [secretary "1.2.3"]
