@@ -19,6 +19,7 @@
                  ; SERVER
                  [environ "1.1.0"]
                  [hiccup "1.0.5"]
+                 [commons-codec "1.10"]
 
                  ; API
                  [base64-clj "0.1.1"]

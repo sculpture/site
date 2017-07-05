@@ -1,7 +1,8 @@
 (ns sculpture.server.pages.index
   (:require
     [environ.core :refer [env]]
-    [hiccup.core :as hiccup]))
+    [hiccup.core :as hiccup]
+    [sculpture.server.digest :as digest]))
 
 (defn html []
   (hiccup/html
@@ -31,7 +32,10 @@
        (for [k [:mapbox-token]]
          (str "window.env['" (name k) "'] = '" (env k) "';"))]
 
-      [:script {:type "text/javascript"
-                :src "/js/sculpture.js"}]
+      (let [digest (digest/from-file "public/js/sculpture.js")]
+        [:script {:type "text/javascript"
+                  :src (str "/js/sculpture.js?v=" digest)
+                  :crossorigin "anonymous"
+                  :integrity (str "sha256" "-" digest)}])
       [:script {:type "text/javascript"}
        "sculpture.admin.core.init();"]]]))
