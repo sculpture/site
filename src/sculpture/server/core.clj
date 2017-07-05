@@ -1,4 +1,5 @@
 (ns sculpture.server.core
+  (:gen-class)
   (:require
     [compojure.core :refer [routes]]
     [org.httpkit.server :refer [run-server]]
