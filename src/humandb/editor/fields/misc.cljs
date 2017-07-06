@@ -48,8 +48,9 @@
                         (on-change (.. e -target -value)))}])
 
 (defmethod field :integer
-  [{:keys [value on-change]}]
+  [{:keys [value disabled on-change]}]
   [:input {:type "number"
+           :disabled disabled
            :value value
            :on-change (fn [e]
 (on-change (.. e -target -value)))}])
