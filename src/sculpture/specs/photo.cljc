@@ -6,10 +6,6 @@
 
 (s/def ::captured-at :sculpture.specs.types/timestamp-type)
 (s/def ::sculpture-id :sculpture.specs.types/uuid-type)
-(s/def ::url (s/and
-               string?
-               ; TODO
-               ))
 (s/def ::user-id :sculpture.specs.types/uuid-type)
 
 (s/def ::color #(re-matches #"^#[0-9A-F]{6}$" %1))
@@ -20,7 +16,6 @@
 (s/def ::photo
   (s/merge :sculpture.specs.entity/common
            (s/keys :req-un [::captured-at
-                            ::url
                             ::user-id
                             ::colors
                             ::width
