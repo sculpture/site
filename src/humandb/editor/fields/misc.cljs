@@ -53,7 +53,7 @@
            :disabled disabled
            :value value
            :on-change (fn [e]
-(on-change (.. e -target -value)))}])
+                        (on-change (js/parseInt (.. e -target -value) 10)))}])
 
 (defmethod field :enum
   [{:keys [value options on-change]}]
