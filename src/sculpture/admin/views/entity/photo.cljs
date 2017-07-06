@@ -29,7 +29,7 @@
      (helpers/format-date (photo :captured-at) "yyyy-MM-dd")]
 
     [:div.row.dimensions
-     (photo :width) "x" (photo :height)]
+     (photo :width) "px" " × " (photo :height) "px"]
 
     [:div.row.colors
      (for [color (photo :colors)]
