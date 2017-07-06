@@ -69,6 +69,8 @@
       [:&.gender:before (fontawesome \uf22d)]
       [:&.website:before (fontawesome \uf0c1)]
       [:&.wikipedia:before (fontawesome \uf266)]
+      [:&.dimensions:before (fontawesome \uf0b2)]
+      [:&.colors:before (fontawesome \uf1fb)]
 
       [:>div
        {:display "inline-block"}]]]
