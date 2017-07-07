@@ -96,10 +96,11 @@
   {:pre [(s/valid? :sculpture/entity entity)
          (uuid? user-id)
          (user-exists? user-id)]}
-  (swap! records assoc (entity :id) entity)
-  (push! (entity :type)
-         (str "Add " (entity :type) " " (or (entity :slug) (entity :id)))
-         (get-by-id user-id))
+  (let [action (if (@records (entity :id)) "Update" "Add")]
+    (swap! records assoc (entity :id) entity)
+    (push! (entity :type)
+           (str action " " (entity :type) " " (or (entity :slug) (entity :id)))
+           (get-by-id user-id)))
   true)
 
 (defn delete! [entity user-id]
