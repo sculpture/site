@@ -56,8 +56,9 @@
                         (on-change (js/parseInt (.. e -target -value) 10)))}])
 
 (defmethod field :enum
-  [{:keys [value options on-change]}]
+  [{:keys [value disabled options on-change]}]
   [:select {:value value
+            :disabled disabled
             :on-change (fn [e]
                          (on-change (.. e -target -value)))}
    (for [option options]

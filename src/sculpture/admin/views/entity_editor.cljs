@@ -116,7 +116,8 @@
         :type {:type :enum
                :options #{"" "artist" "sculpture"
                           "region" "material" "tag"
-                          "photo" "user"}}
+                          "photo" "user"}
+               :disabled true}
         :name {:type :string}
         :title {:type :string}
         :email {:type :email}
