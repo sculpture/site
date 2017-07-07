@@ -25,6 +25,11 @@
     (db :page)))
 
 (reg-sub
+  :main-page
+  (fn [db _]
+    (db :main-page)))
+
+(reg-sub
   :get-entity
   (fn [db [_ id]]
     (get-in db [:data id])))
@@ -54,10 +59,17 @@
 (reg-sub
   :sculpture.edit/invalid-fields
   (fn [db _]
-    (->> (validate (db :entity-draft))
-         (map :path)
-         (map last)
-         set)))
+    (let [validation-result (validate (db :entity-draft))
+          invalid-fields (->> validation-result
+                              (map :path)
+                              (map last))
+          missing-fields (->> validation-result
+                              (map (fn [field]
+                                     (last (re-find #".*cljs.core/contains\? % :([a-z\-]+)"
+                                                    (str (field :pred))))))
+                              (remove nil?)
+                              (map keyword))]
+      (set (concat invalid-fields missing-fields)))))
 
 (reg-sub
   :sculpture.edit/saving?
