@@ -117,10 +117,19 @@
 (reg-event-fx
   :sculpture.data/-set-data
   (fn [{db :db} [_ data]]
-    {:db (-> db
-             (assoc :data (key-by-id data))
-             (assoc-in [:search :fuse]
-               (search/init data)))}))
+    {:db (assoc db :data (key-by-id data))
+     :dispatch [:sculpture.data/-reset-search-index]}))
+
+(reg-event-fx
+  :sculpture.data/-add-entity
+  (fn [{db :db} [_ entity]]
+    {:db (assoc-in db [:data (entity :id)] entity)
+     :dispatch [:sculpture.data/-reset-search-index]}))
+
+(reg-event-fx
+  :sculpture.data/-reset-search-index
+  (fn [{db :db} _]
+    {:db (assoc-in db [:search :fuse] (search/init (vals (db :data))))}))
 
 ;; sculpture.search
 
@@ -180,8 +189,8 @@
   (fn [{db :db} _]
     (let [entity (db :entity-draft)]
       (if (nil? (validate entity))
-        {:db (assoc-in db [:data (entity :id)] entity)
-         :dispatch [:sculpture.edit/-remote-persist-entity (entity :id)]}
+        {:dispatch-n [[:sculpture.data/-add-entity entity]
+                      [:sculpture.edit/-remote-persist-entity (entity :id)]]}
         {}))))
 
 (reg-event-fx
