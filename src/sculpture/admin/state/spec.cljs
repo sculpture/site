@@ -93,6 +93,11 @@
                    ::zoom-level
                    ::current-marker]))
 
+; -- ::main-page
+
+(s/def ::main-page
+  (s/nilable #{:edit :actions}))
+
 ; -- ::app-state
 
 (s/def ::app-state
@@ -100,6 +105,7 @@
                    ::active-entity-id
                    ::user
                    ::page
+                   ::main-page
                    ::data
                    ::saving?
                    ::entity-draft

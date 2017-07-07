@@ -2,6 +2,7 @@
   (:require
     [sculpture.admin.state.core :refer [subscribe dispatch! dispatch-sync!]]
     [sculpture.admin.routes :as routes]
+    [sculpture.admin.views.actions :refer [actions-view]]
     [sculpture.admin.views.styles :refer [styles-view]]
     [sculpture.admin.views.search :refer [query-view results-view]]
     [sculpture.admin.views.mega-map :refer [mega-map-view]]
@@ -22,7 +23,7 @@
 
 (defn new-entity-button-view []
   [:button.new {:on-click (fn [_]
-                            (dispatch! [:sculpture.edit/create-entity]))}])
+                            (dispatch! [:set-main-page :actions]))}])
 
 (defn toolbar-view []
   (if-let [user @(subscribe [:user])]
@@ -64,6 +65,17 @@
      [toolbar-view]
      [sidebar-view]
 
-     (when-let [entity-draft @(subscribe [:entity-draft])]
+     (case @(subscribe [:main-page])
+       :edit
        [:div.main
-        [entity-editor-view entity-draft]])]))
+        [entity-editor-view @(subscribe [:entity-draft])]]
+
+       :actions
+       [:div.main
+        [actions-view page]]
+
+       :upload
+       [:div.main
+        [upload-view]]
+
+       nil)]))

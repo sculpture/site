@@ -54,6 +54,7 @@
           :entity-draft nil
           :saving? false
           :page nil
+          :main-page nil
           :data nil
           :mega-map {:dirty? false}}
      :dispatch-n [[:sculpture.user/-remote-auth]
@@ -153,17 +154,26 @@
     {:db (assoc db :page page)
      :dispatch [:sculpture.search/set-query-focused false]}))
 
+;; set-main-page
+
+(reg-event-fx
+  :set-main-page
+  (fn [{db :db} [_ page]]
+    {:db (assoc db :main-page page)}))
+
 ;; sculpture.edit
 
 (reg-event-fx
   :sculpture.edit/edit-entity
   (fn [{db :db} [_ id]]
-    {:db (assoc db :entity-draft (get-in db [:data id]))}))
+    {:db (assoc db :entity-draft (get-in db [:data id]))
+     :dispatch [:set-main-page :edit]}))
 
 (reg-event-fx
   :sculpture.edit/stop-editing
   (fn [{db :db} _]
-    {:db (assoc db :entity-draft nil)}))
+    {:db (assoc db :entity-draft nil)
+     :dispatch [:set-main-page nil]}))
 
 (reg-event-fx
   :sculpture.edit/save
@@ -206,10 +216,10 @@
 
 (reg-event-fx
   :sculpture.edit/create-entity
-  (fn [{db :db} _]
-    (let [id (uuid/make-random-uuid)]
-      {:db (assoc-in db [:entity-draft] {:id id
-                                         :type "sculpture"})})))
+  (fn [{db :db} [_ entity]]
+    {:db (assoc db :entity-draft (merge {:id (uuid/make-random-uuid)}
+                                         entity))
+     :dispatch [:set-main-page :edit]}))
 
 ;; sculpture.mega-map
 
