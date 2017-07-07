@@ -176,7 +176,7 @@
                           (entity :id))]
       [:button.close
        {:on-click (fn [_]
-                    (dispatch! [:sculpture.edit/stop-editing]))} "Cancel"]
+                    (dispatch! [:sculpture.edit/stop-editing]))} "Close"]
 
       (let [saving? @(subscribe [:sculpture.edit/saving?])
             invalid? (not (empty? invalid-fields))]
