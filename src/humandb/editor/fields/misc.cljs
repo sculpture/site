@@ -27,13 +27,11 @@
   [{:keys [value on-change]}]
   [:input {:type "datetime-local"
            :value (when value
-                    (println value)
                     (f/unparse
                       (f/formatter "YYYY-MM-dd'T'HH:mm:ss")
                       (c/from-date value)))
            :on-change (fn [e]
                         (let [value (.. e -target -value)]
-                          (println value)
                           (cond
                             (string/blank? value)
                             (on-change nil)

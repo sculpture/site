@@ -6,9 +6,6 @@
 
 ; TODO improve these using: http://williams.best.vwh.net/avform.htm#LL
 
-(defn tee [x]
-  (println x) x)
-
 (defn m->deg-lat [metres lat]
   (/ metres
      111111.0))
