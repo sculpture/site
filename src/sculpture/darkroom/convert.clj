@@ -1,0 +1,75 @@
+(ns sculpture.darkroom.convert
+  (:require
+    [clojure.string :as string]
+    [clj-time.format :as tf]
+    [clj-time.coerce :as tc]
+    [me.raynes.fs :as fs]
+    [me.raynes.conch :refer [with-programs]]))
+
+(defonce temp-dir (fs/temp-dir "sculpture-photos"))
+
+(defn convert!
+  "returns a temp file (file shrunk to fit within maxsize, using imagemagick)"
+  [file maxsize quality]
+  (let [in-path (.getPath file)
+        out-path (str (.getPath temp-dir) "/" maxsize "-" (.getName file))
+        temp-file-path (str out-path ".tmp.jpg")
+        out-file (java.io.File. out-path)]
+    (println "Converting..." (.getName file))
+    (with-programs [convert cjpeg]
+      (convert in-path
+               "-format" "JPG"
+               "-resize" (str maxsize "x" maxsize ">")
+               "-quality" 100
+               "-strip"
+               temp-file-path)
+      (cjpeg "-quality" quality "-baseline" temp-file-path
+             {:binary true
+              :out out-file})
+      out-file)))
+
+(defn extract-colors
+  "Given a file, returns list of top 3 colors in HEX"
+  [file]
+  (with-programs [convert]
+    (-> (convert (.getPath file)
+                 "-filter" "Spline"
+                 "-scale" "50x50"
+                 "-dither" "None"
+                 "-colorspace" "LAB"
+                 "-colors" 3
+                 "-format" "%c" "histogram:info:-")
+        ; returns list of colors in format:
+        ;    687: ( 23, 45, 18) #172D12 srgb(23,45,18)
+        (string/split #"\n")
+        sort
+        reverse
+        (->> (map (fn [result]
+                    (second (re-matches #".*(#[0-9A-F]{6}).*" result))))))))
+
+(defn extract-dimensions [file]
+  (with-programs [identify]
+    (let [[w h] (-> (identify "-ping" "-format" "%w %h" (.getPath file))
+        (string/split #" "))]
+      {:width (Integer. w)
+       :height (Integer. h)})))
+
+(defn extract-created-at [file]
+  (with-programs [identify]
+    (or
+      (try
+        (->> (identify "-ping" "-format" "%[EXIF:DateTimeOriginal]" (.getPath file))
+             (tf/parse (tf/formatter "YYYY:MM:dd HH:mm:ss"))
+             tc/to-date)
+        (catch java.lang.IllegalArgumentException e))
+      (try
+        (->> (identify "-ping" "-format" "%[EXIF:DateTime]" (.getPath file))
+             (tf/parse (tf/formatter "YYYY:MM:dd HH:mm:ss"))
+             tc/to-date)
+        (catch java.lang.IllegalArgumentException e))
+      (try
+        (->> (identify "-ping" "-format" "%[date:create]" (.getPath file))
+             (tf/parse (tf/formatter :date-time-no-ms))
+             tc/to-date)
+        (catch java.lang.IllegalArgumentException e))
+      (java.util.Date. (.lastModified file)))))

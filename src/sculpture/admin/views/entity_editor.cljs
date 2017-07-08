@@ -1,9 +1,10 @@
 (ns sculpture.admin.views.entity-editor
   (:require
     [clojure.string :as string]
+    [humandb.editor.field :refer [field]]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
-    [sculpture.admin.routes :as routes]
-    [humandb.editor.field :refer [field]]))
+    [sculpture.admin.cdn :as cdn]
+    [sculpture.admin.routes :as routes]))
 
 (defn lookup-on-search
   [type]
@@ -91,7 +92,10 @@
       :type "photo"
       :sculpture-id nil
       :captured-at nil
-      :user-id nil)
+      :user-id nil
+      :colors []
+      :width nil
+      :height nil)
 
     "user"
     (array-map
@@ -133,6 +137,10 @@
         :link-website {:type :url}
         :link-wikipedia {:type :url}
         :size {:type :integer}
+        :width {:type :integer
+                :disabled true}
+        :height {:type :integer
+                 :disabled true}
         :gender {:type :enum
                  :options #{"" "male" "female" "other"}}
         :note {:type :string
@@ -211,4 +219,11 @@
                                     (dispatch! [:sculpture.edit/update-draft k v]))})]]
             [:td [:button.delete
                   {:on-click (fn []
-                               (dispatch! [:sculpture.edit/remove-draft-key k]))}]]]))]]]))
+                               (dispatch! [:sculpture.edit/remove-draft-key k]))}]]]))
+
+       (when (= "photo" (:type entity))
+         [:tr
+          [:td]
+          [:td
+           [:img {:src (cdn/image-url entity :thumb)}]]
+          [:td]])]]]))

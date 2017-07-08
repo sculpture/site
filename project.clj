@@ -7,7 +7,7 @@
 
                  ; CLIENT
                  [org.clojure/clojurescript "1.9.562"]
-                 [cljs-ajax "0.5.8"]
+                 [cljs-ajax "0.5.8" :exclusions [cheshire]]
                  [cljsjs/fuse "2.5.0-0"]
                  [garden "1.3.2"]
                  [com.andrewmcveigh/cljs-time "0.5.0"]
@@ -29,7 +29,14 @@
                  [javax.servlet/servlet-api "2.5"]
                  [org.clojure/data.json "0.2.6"]
                  [ring-cors "0.1.8"]
-                 [ring-middleware-format "0.7.0"]]
+                 [ring-middleware-format "0.7.0" :exclusions [cheshire]]
+
+                 ; DARKROOM
+                 [me.raynes/conch "0.8.0"]
+                 [me.raynes/fs "1.4.6"]
+                 [clj-time "0.13.0"]
+                 [amazonica "0.3.106"]
+                 [cheshire "5.7.1"]]
 
   :main sculpture.server.core
 

@@ -4,11 +4,13 @@
     [compojure.handler :refer [api]]
     [compojure.route :as route]
     [environ.core :refer [env]]
+    [ring.middleware.multipart-params :refer [wrap-multipart-params]]
     [ring.middleware.format :refer [wrap-restful-format]]
     [ring.middleware.cors :refer [wrap-cors]]
     [ring.middleware.session :refer [wrap-session]]
     [ring.middleware.session.cookie :refer [cookie-store]]
     [ring.util.codec :refer [form-encode]]
+    [sculpture.darkroom.core :as darkroom]
     [sculpture.server.db :as db]
     [sculpture.server.oauth :as oauth]
     [sculpture.server.pages.oauth :as pages.oauth]))
@@ -66,8 +68,15 @@
         {:status 401
          :body {:error "You must be logged in to perform this action."}}))
 
-    ; TODO insert
-    ; TODO delete
+    (PUT "/upload" req
+      (if-let [user-id (get-in req [:session :user-id])]
+        (let [id (java.util.UUID/fromString (get-in req [:params "id"]))
+              {:keys [tempfile filename]} (get-in req [:params "file"])
+              image-data (darkroom/process-image! id tempfile user-id)]
+          {:status 200
+           :body image-data})
+        {:status 401
+         :body {:error "You must be logged in to perform this action."}}))
 
     (route/not-found "Page not found")))
 
@@ -80,6 +89,7 @@
 (def handler
   (-> routes
       wrap-restful-format
+      wrap-multipart-params
       api
       (wrap-cors :access-control-allow-origin [#".*"]
                  :access-control-allow-methods [:get :put :post :delete])

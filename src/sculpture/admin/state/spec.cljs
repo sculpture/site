@@ -96,7 +96,7 @@
 ; -- ::main-page
 
 (s/def ::main-page
-  (s/nilable #{:edit :actions}))
+  (s/nilable #{:edit :actions :upload}))
 
 ; -- ::app-state
 

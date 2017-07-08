@@ -17,4 +17,9 @@
    [:button
     {:on-click (fn [_]
                  (dispatch! [:sculpture.edit/create-entity {:type "region"}]))}
-    "Region"]])
+    "Region"]
+
+   [:button
+    {:on-click (fn [_]
+                 (dispatch! [:set-main-page :upload]))}
+    "Photo"]])

@@ -11,7 +11,8 @@
     [sculpture.admin.views.entity.region]
     [sculpture.admin.views.entity.artist]
     [sculpture.admin.views.entity.photo]
-    [sculpture.admin.views.entity-editor :refer [entity-editor-view]]))
+    [sculpture.admin.views.entity-editor :refer [entity-editor-view]]
+    [sculpture.admin.views.upload :refer [upload-view]]))
 
 (defn active-entity-view [entity-id]
   (when-let [entity @(subscribe [:get-entity entity-id])]

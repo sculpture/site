@@ -5,11 +5,13 @@
     [sculpture.admin.state.fx.dispatch-debounce :refer [dispatch-debounce-fx]]
     [sculpture.admin.state.fx.ajax :refer [ajax-fx]]
     [sculpture.admin.state.fx.redirect :refer [redirect-to-fx]]
+    [sculpture.admin.state.fx.upload :refer [upload-fx]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.state.spec :refer [check-state! validate]]
     [sculpture.admin.state.search :as search]))
 
 (reg-fx :ajax ajax-fx)
+(reg-fx :upload upload-fx)
 (reg-fx :redirect-to redirect-to-fx)
 (reg-fx :dispatch-debounce dispatch-debounce-fx)
 
@@ -169,6 +171,20 @@
   :set-main-page
   (fn [{db :db} [_ page]]
     {:db (assoc db :main-page page)}))
+
+; sculpture.photo
+
+(reg-event-fx
+  :sculpture.photo/upload
+  (fn [{} [_ file {:keys [on-progress on-success on-error]}]]
+    (let [id (uuid/make-random-uuid)]
+      {:upload {:method :put
+                :uri "/api/upload"
+                :data {:id id
+                       :file file}
+                :on-progress on-progress
+                :on-success on-success
+                :on-error on-error}})))
 
 ;; sculpture.edit
 
