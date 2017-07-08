@@ -125,7 +125,7 @@
               :length :long}
         :birth-date {:type :date}
         :birth-date-precision {:type :integer}
-        :captured-at {:type :date}
+        :captured-at {:type :datetime}
         :death-date {:type :date}
         :death-date-precision {:type :integer}
         :slug {:type :string}
