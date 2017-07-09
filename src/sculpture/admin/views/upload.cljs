@@ -31,11 +31,16 @@
                    (reset! stage :error)
                    (reset! error e))]
     (fn []
-      [:div
-       [:div
+      [:div.upload
+       [:div.header
+        [:h1 "Upload Photo"]
+        [:button.close {:on-click (fn [_]
+                                    (dispatch! [:set-main-page nil]))}
+         "Close"]]
+       [:div.content
         (case @stage
           :waiting
-          [:div
+          [:div.waiting
            [:label
             [:input {:type "file"
                      :accept "image/*"
@@ -47,14 +52,20 @@
                                                 {:on-progress on-progress
                                                  :on-success on-success
                                                  :on-error on-error}])))}]]]
+
           :uploading
-          [:div
-           "Uploading..." @progress "%"
-           [preview-image-view @data-url]]
+          [:div.uploading
+           [preview-image-view @data-url]
+           [:div "Uploading... " (int (* 100 @progress)) "%"]
+           [:div.progress
+            [:div.bar {:style {:width (str (int (* 100 @progress)) "%")}}]]]
+
           :processing
-          [:div
-           "Processing..."
-           [preview-image-view @data-url]]
+          [:div.processing
+           [preview-image-view @data-url]
+           [:div "Processing..."]]
+
           :error
-          [:div "Error"
-           @error])]])))
+          [:div.error
+           [:div "Error"]
+           [:div @error]])]])))

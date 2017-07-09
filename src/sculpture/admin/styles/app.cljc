@@ -77,9 +77,8 @@
 
       [:>button.save
        {:margin-left "1em"}
-       (button :primary)]]]
+       (button :primary)]]
 
-    [:>.actions
      [:>.content
       {:display "flex"
        :flex-direction "column"
@@ -90,5 +89,21 @@
        (button :secondary)
        {:width "10em"
         :margin "1em"}]]]
+
+    [:>.actions]
+
+    [:>.upload
+
+     [:>.content
+
+      [:>.uploading
+
+       [:>.progress
+        {:width "100px"}
+
+        [:>.bar
+         {:height "5px"
+          :background colors/accent-color
+          :transition "width 1s ease-in-out"}]]]]]
 
     editor-styles]])
