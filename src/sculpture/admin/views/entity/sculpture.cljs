@@ -8,8 +8,7 @@
     [sculpture.admin.views.entity.partials.photo-mosaic :refer [photo-mosaic-view]]
     [sculpture.admin.views.entity.partials.map :refer [map-view]]
     [sculpture.admin.views.entity.partials.related-tags :refer [related-tags-view]]
-    [sculpture.admin.views.entity.partials.related-materials :refer [related-materials-view]]
-    [sculpture.admin.views.entity.partials.related-artists :refer [related-artists-view]]))
+    [sculpture.admin.views.entity.partials.related-materials :refer [related-materials-view]]))
 
 (defmethod entity-view "sculpture"
   [sculpture]
