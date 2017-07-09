@@ -8,7 +8,7 @@
 
 (defn mega-map-view []
   (let [config @(subscribe [:sculpture.mega-map/config])
-        sculptures @(subscribe [:sculptures])
+        sculptures @(subscribe [:sculpture.mega-map/sculptures])
         sculpture-markers (->> sculptures
                                (map (fn [sculpture]
                                       (when (sculpture :location)

@@ -9,7 +9,7 @@
 (defn lookup-on-search
   [type]
   (fn [query callback]
-    (callback @(subscribe [:related-entity-search type query]))))
+    (callback @(subscribe [:sculpture.edit/related-entity-search type query]))))
 
 (defn lookup-on-find
   []

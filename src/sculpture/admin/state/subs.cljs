@@ -77,7 +77,7 @@
     (db :saving?)))
 
 (reg-sub
-  :related-entity-search
+  :sculpture.edit/related-entity-search
   (fn [db [_ type query]]
     (->> (search/search (get-in db [:search :fuse]) query 20)
          (map (fn [id]
@@ -117,7 +117,7 @@
       photos)))
 
 (reg-sub
-  :sculptures
+  :sculpture.mega-map/sculptures
   (fn [db _]
     (->> db
          :data
