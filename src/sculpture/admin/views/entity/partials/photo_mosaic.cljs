@@ -14,23 +14,24 @@
                                 (/ (:width p) (:height p)))
                               row-photos))]
          ^{:key index}
-         [:div.row {:style {:width "100%"
-                            :position "relative"
-                            :padding-bottom (str (/ 100 row-ratio) "%")}}
-          [:div {:style {:position "absolute"
-                         :height "100%"
-                         :width "100%"}}
-           (for [photo row-photos]
-             ^{:key (photo :id)}
-             [:a {:href (routes/entity-path {:id (photo :id)})
-                  :style {:width (str (* 100 (/ (/ (photo :width)
-                                                   (photo :height))
-                                                row-ratio)) "%")
-                          :height "100%"
-                          :display "inline-block"
-                          :vertical-align "top"}}
-              [image-view {:photo photo
-                           :size :medium}]])]]))
+         (when (seq row-photos)
+           [:div.row {:style {:width "100%"
+                              :position "relative"
+                              :padding-bottom (str (/ 100 row-ratio) "%")}}
+            [:div {:style {:position "absolute"
+                           :height "100%"
+                           :width "100%"}}
+             (for [photo row-photos]
+               ^{:key (photo :id)}
+               [:a {:href (routes/entity-path {:id (photo :id)})
+                    :style {:width (str (* 100 (/ (/ (photo :width)
+                                                     (photo :height))
+                                                  row-ratio)) "%")
+                            :height "100%"
+                            :display "inline-block"
+                            :vertical-align "top"}}
+                [image-view {:photo photo
+                             :size :medium}]])]])))
      [(take 2 photos)
       (take 4 (drop 2 photos))])])
 
