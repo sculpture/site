@@ -23,7 +23,9 @@
       (merge
         {:width "100%"
          :height "100%"
-         :zoom-level 1
+         :zoom-level 3
+         :center {:latitude 51
+                  :longitude -37.8}
          :on-view-change (fn []
                            (dispatch! [:sculpture.mega-map/mark-as-dirty]))
          :shapes (if (config :current-marker)
