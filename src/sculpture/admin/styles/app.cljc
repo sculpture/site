@@ -2,6 +2,8 @@
   (:require
     [garden.arithmetic :as m]
     [garden.units :refer [px em rem]]
+    [sculpture.admin.styles.colors :as colors]
+    [sculpture.admin.styles.button :refer [button]]
     [sculpture.admin.styles.editor :refer [editor-styles]]
     [sculpture.admin.styles.entity :refer [entity-styles]]
     [sculpture.admin.styles.entity-list :refer [entity-list-styles]]
@@ -56,5 +58,37 @@
      :overflow-y "scroll"
      :box-sizing "border-box"}
     (floating-box)
+
+    [:>div
+     [:>.header
+      {:display "flex"
+       :padding "0.75rem"
+       :background colors/accent-color
+       :color "white"
+       :align-items "center"
+       :height "2rem"}
+
+      [:>h1
+       {:font-size "1.2em"
+        :flex-grow 2}]
+
+      [:>button.close
+       (button :secondary)]
+
+      [:>button.save
+       {:margin-left "1em"}
+       (button :primary)]]]
+
+    [:>.actions
+     [:>.content
+      {:display "flex"
+       :flex-direction "column"
+       :align-items "center"
+       :padding "1em"}
+
+      [:>button
+       (button :secondary)
+       {:width "10em"
+        :margin "1em"}]]]
 
     editor-styles]])

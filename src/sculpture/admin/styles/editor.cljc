@@ -7,25 +7,6 @@
   [:>.edit
    {:position "relative"}
 
-   [:>.header
-    {:display "flex"
-     :padding "0.75rem"
-     :background colors/accent-color
-     :color "white"
-     :align-items "center"
-     :height "2rem"}
-
-    [:>h1
-     {:font-size "1.2em"
-      :flex-grow 2}]
-
-    [:>button.close
-     (button :secondary)]
-
-    [:>button.save
-     {:margin-left "1em"}
-     (button :primary)]]
-
    [:>table
     {:width "100%"
      :border-collapse "collapse"}
