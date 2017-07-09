@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.entity.artist
  (:require
-   [re-frame.core :refer [subscribe]]
+   [sculpture.admin.state.core :refer [subscribe]]
    [sculpture.admin.views.entity :refer [entity-view]]
    [sculpture.admin.views.entity.partials.related-sculptures :refer [related-sculptures-view]]
    [sculpture.admin.views.entity.partials.related-tags :refer [related-tags-view]]
@@ -9,7 +9,10 @@
 (defmethod entity-view "artist"
   [artist]
   [:div.artist.entity
-   [photo-mosaic-view @(subscribe [:sculpture-photos-for-artist (artist :id)])]
+   [photo-mosaic-view @(subscribe [:sculpture-photos-for
+                                   (fn [sculpture]
+                                     (contains? (set (sculpture :artist-ids))
+                                                (artist :id)))])]
    [:div.info
     [:h1 (artist :name)]]
    [:div.meta
@@ -27,6 +30,9 @@
        (artist :gender)])]
    [:div.related
     [:h2 "Sculptures"]
-    [related-sculptures-view @(subscribe [:sculptures-for-artist (artist :id)])]]])
+    [related-sculptures-view @(subscribe [:sculptures-for
+                                          (fn [sculpture]
+                                            (contains? (set (sculpture :artist-ids))
+                                                       (artist :id)))])]]])
 
 

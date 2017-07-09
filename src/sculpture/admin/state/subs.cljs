@@ -86,19 +86,19 @@
                    (= (entity :type) type))))))
 
 (reg-sub
-  :sculptures-for-artist
-  (fn [db [_ artist-id]]
+  :sculptures-for
+  (fn [db [_ filter-fn]]
     (->> db
          :data
          vals
          (filter (fn [entity]
                    (and
                      (= "sculpture" (entity :type))
-                     (contains? (set (entity :artist-ids)) artist-id)))))))
+                     (filter-fn entity)))))))
 
 (reg-sub
-  :sculpture-photos-for-artist
-  (fn [db [_ artist-id]]
+  :sculpture-photos-for
+  (fn [db [_ filter-fn]]
     (let [entities (->> db
                         :data
                         vals)
@@ -106,7 +106,7 @@
                              (filter (fn [entity]
                                        (and
                                          (= "sculpture" (entity :type))
-                                         (contains? (set (entity :artist-ids)) artist-id))))
+                                         (filter-fn entity))))
                              (map :id)
                              set)
           photos (->> entities

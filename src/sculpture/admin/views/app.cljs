@@ -11,6 +11,8 @@
     [sculpture.admin.views.entity.region]
     [sculpture.admin.views.entity.artist]
     [sculpture.admin.views.entity.photo]
+    [sculpture.admin.views.entity.sculpture-tag]
+    [sculpture.admin.views.entity.material]
     [sculpture.admin.views.entity-editor :refer [entity-editor-view]]
     [sculpture.admin.views.upload :refer [upload-view]]))
 
