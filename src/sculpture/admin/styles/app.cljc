@@ -87,7 +87,7 @@
 
       [:>button
        (button :secondary)
-       {:width "10em"
+       {:width "13em"
         :margin "1em"}]]]
 
     [:>.actions]

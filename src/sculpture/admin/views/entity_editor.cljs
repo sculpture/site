@@ -118,8 +118,10 @@
   (get {:id {:type :string
              :disabled true}
         :type {:type :enum
-               :options #{"" "artist" "sculpture"
-                          "region" "material" "tag"
+               :options #{"" "material"
+                          "artist" "artist-tag"
+                          "sculpture" "sculpture-tag"
+                          "region" "region-tag"
                           "photo" "user"}
                :disabled true}
         :name {:type :string}
@@ -169,7 +171,8 @@
                                  "photo" "photo-tag"
                                  "sculpture" "sculpture-tag"
                                  "region" "region-tag"
-                                 "artist" "artist-tag"))}}
+                                 "artist" "artist-tag"
+                                 nil))}}
     field
     {}))
 

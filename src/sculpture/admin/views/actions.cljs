@@ -28,4 +28,24 @@
     [:button
      {:on-click (fn [_]
                   (dispatch! [:set-main-page :upload]))}
-     "+ Photo"]]])
+     "+ Photo"]
+
+    [:button
+     {:on-click (fn [_]
+                  (dispatch! [:sculpture.edit/create-entity {:type "material"}]))}
+     "+ Material"]
+
+    [:button
+     {:on-click (fn [_]
+                  (dispatch! [:sculpture.edit/create-entity {:type "sculpture-tag"}]))}
+     "+ Sculpture Tag"]
+
+    [:button
+     {:on-click (fn [_]
+                  (dispatch! [:sculpture.edit/create-entity {:type "artist-tag"}]))}
+     "+ Artist Tag"]
+
+    [:button
+     {:on-click (fn [_]
+                  (dispatch! [:sculpture.edit/create-entity {:type "region-tag"}]))}
+     "+ Region Tag"]]])
