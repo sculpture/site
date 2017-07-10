@@ -1,11 +1,10 @@
-(ns sculpture.admin.views.entity.photo
+(ns sculpture.admin.views.sidebar.entity.photo
   (:require
     [sculpture.admin.helpers :as helpers]
     [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]
-    [sculpture.admin.views.entity :refer [entity-view]]
-    [sculpture.admin.views.object :refer [object-view]]
-    [sculpture.admin.views.entity.partials.photos :refer [photo-view]]))
+    [sculpture.admin.views.sidebar.entity :refer [entity-view]]
+    [sculpture.admin.views.sidebar.entity.partials.photos :refer [photo-view]]))
 
 (defmethod entity-view "photo"
   [photo]

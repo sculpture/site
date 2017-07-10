@@ -1,4 +1,4 @@
-(ns sculpture.admin.views.actions
+(ns sculpture.admin.views.pages.actions
   (:require
     [sculpture.admin.state.core :refer [dispatch!]]))
 
@@ -9,7 +9,9 @@
     [:button.close {:on-click (fn [_]
                                 (dispatch! [:set-main-page nil]))}
      "Close"]]
+
    [:div.content
+
     [:button
      {:on-click (fn [_]
                   (dispatch! [:sculpture.edit/create-entity {:type "sculpture"}]))}

@@ -2,7 +2,7 @@
   (:require
     [clojure.string :as string]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
-    [sculpture.admin.views.entity.partials.list :refer [entity-list-view]]))
+    [sculpture.admin.views.sidebar.entity.partials.list :refer [entity-list-view]]))
 
 (defn query-view []
   (let [query @(subscribe [:sculpture.search/query])]

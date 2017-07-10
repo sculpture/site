@@ -1,9 +1,9 @@
-(ns sculpture.admin.views.entity.sculpture-tag
+(ns sculpture.admin.views.sidebar.entity.sculpture-tag
   (:require
     [sculpture.admin.state.core :refer [subscribe]]
-    [sculpture.admin.views.entity :refer [entity-view]]
-    [sculpture.admin.views.entity.partials.photo-mosaic :refer [photo-mosaic-view]]
-    [sculpture.admin.views.entity.partials.related-sculptures :refer [related-sculptures-view]]))
+    [sculpture.admin.views.sidebar.entity :refer [entity-view]]
+    [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [photo-mosaic-view]]
+    [sculpture.admin.views.sidebar.entity.partials.related-sculptures :refer [related-sculptures-view]]))
 
 (defmethod entity-view "sculpture-tag"
   [tag]

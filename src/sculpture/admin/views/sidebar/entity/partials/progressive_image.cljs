@@ -1,4 +1,4 @@
-(ns sculpture.admin.views.entity.partials.progressive-image
+(ns sculpture.admin.views.sidebar.entity.partials.progressive-image
   (:require
     [reagent.core :as r]))
 

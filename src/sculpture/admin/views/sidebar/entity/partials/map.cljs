@@ -1,4 +1,4 @@
-(ns sculpture.admin.views.entity.partials.map
+(ns sculpture.admin.views.sidebar.entity.partials.map
   (:require
     [releaflet.map :as leaflet]))
 

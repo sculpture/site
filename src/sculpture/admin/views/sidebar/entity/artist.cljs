@@ -1,10 +1,10 @@
-(ns sculpture.admin.views.entity.artist
+(ns sculpture.admin.views.sidebar.entity.artist
  (:require
    [sculpture.admin.state.core :refer [subscribe]]
-   [sculpture.admin.views.entity :refer [entity-view]]
-   [sculpture.admin.views.entity.partials.related-sculptures :refer [related-sculptures-view]]
-   [sculpture.admin.views.entity.partials.related-tags :refer [related-tags-view]]
-   [sculpture.admin.views.entity.partials.photo-mosaic :refer [photo-mosaic-view]]))
+   [sculpture.admin.views.sidebar.entity :refer [entity-view]]
+   [sculpture.admin.views.sidebar.entity.partials.related-sculptures :refer [related-sculptures-view]]
+   [sculpture.admin.views.sidebar.entity.partials.related-tags :refer [related-tags-view]]
+   [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [photo-mosaic-view]]))
 
 (defmethod entity-view "artist"
   [artist]

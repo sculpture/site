@@ -1,9 +1,9 @@
-(ns sculpture.admin.views.entity.partials.list
+(ns sculpture.admin.views.sidebar.entity.partials.list
   (:require
     [clojure.string :as string]
     [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]
-    [sculpture.admin.views.entity.partials.photos :refer [photo-view]]))
+    [sculpture.admin.views.sidebar.entity.partials.photos :refer [photo-view]]))
 
 (defmulti entity-row-data :type)
 

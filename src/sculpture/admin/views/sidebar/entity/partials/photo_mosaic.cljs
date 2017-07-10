@@ -1,7 +1,7 @@
-(ns sculpture.admin.views.entity.partials.photo-mosaic
+(ns sculpture.admin.views.sidebar.entity.partials.photo-mosaic
   (:require
     [sculpture.admin.routes :as routes]
-    [sculpture.admin.views.entity.partials.photos :refer [image-view]]))
+    [sculpture.admin.views.sidebar.entity.partials.photos :refer [image-view]]))
 
 (defn photo-mosaic-view [photos]
   [:div.mosaic {:style {:width "100%"

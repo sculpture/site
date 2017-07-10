@@ -1,4 +1,4 @@
-(ns sculpture.admin.views.upload
+(ns sculpture.admin.views.pages.upload
   (:require
     [reagent.core :as r]
     [sculpture.admin.state.core :refer [dispatch!]]

@@ -1,4 +1,4 @@
-(ns sculpture.admin.views.entity-editor
+(ns sculpture.admin.views.pages.entity-editor
   (:require
     [clojure.string :as string]
     [humandb.editor.field :refer [field]]

@@ -1,4 +1,4 @@
-(ns sculpture.admin.views.entity.partials.related-materials
+(ns sculpture.admin.views.sidebar.entity.partials.related-materials
   (:require
     [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]))

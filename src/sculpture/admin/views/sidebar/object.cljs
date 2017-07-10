@@ -1,4 +1,4 @@
-(ns sculpture.admin.views.object
+(ns sculpture.admin.views.sidebar.object
   (:require
     [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]))

@@ -1,14 +1,14 @@
-(ns sculpture.admin.views.entity.sculpture
+(ns sculpture.admin.views.sidebar.entity.sculpture
   (:require
     [clojure.string :as string]
     [sculpture.admin.helpers :as helpers]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
-    [sculpture.admin.views.entity :refer [entity-view]]
-    [sculpture.admin.views.entity.partials.photo-mosaic :refer [photo-mosaic-view]]
-    [sculpture.admin.views.entity.partials.map :refer [map-view]]
-    [sculpture.admin.views.entity.partials.related-tags :refer [related-tags-view]]
-    [sculpture.admin.views.entity.partials.related-materials :refer [related-materials-view]]))
+    [sculpture.admin.views.sidebar.entity :refer [entity-view]]
+    [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [photo-mosaic-view]]
+    [sculpture.admin.views.sidebar.entity.partials.map :refer [map-view]]
+    [sculpture.admin.views.sidebar.entity.partials.related-tags :refer [related-tags-view]]
+    [sculpture.admin.views.sidebar.entity.partials.related-materials :refer [related-materials-view]]))
 
 (defmethod entity-view "sculpture"
   [sculpture]

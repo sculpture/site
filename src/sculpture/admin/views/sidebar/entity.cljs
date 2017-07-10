@@ -1,6 +1,6 @@
-(ns sculpture.admin.views.entity
+(ns sculpture.admin.views.sidebar.entity
   (:require
-    [sculpture.admin.views.object :refer [object-view]]))
+    [sculpture.admin.views.sidebar.object :refer [object-view]]))
 
 (defmulti entity-view :type)
 

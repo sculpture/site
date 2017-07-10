@@ -1,7 +1,7 @@
-(ns sculpture.admin.views.entity.partials.photos
+(ns sculpture.admin.views.sidebar.entity.partials.photos
   (:require
     [sculpture.admin.cdn :as cdn]
-    [sculpture.admin.views.entity.partials.progressive-image :refer [progressive-image-view]]))
+    [sculpture.admin.views.sidebar.entity.partials.progressive-image :refer [progressive-image-view]]))
 
 (defn image-view [{:keys [photo size] :as args}]
   (if (= size :thumb)

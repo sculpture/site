@@ -1,4 +1,4 @@
-(ns sculpture.admin.views.entity.partials.related-tags
+(ns sculpture.admin.views.sidebar.entity.partials.related-tags
   (:require
     [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]))

@@ -1,9 +1,8 @@
-(ns sculpture.admin.views.entity.region
+(ns sculpture.admin.views.sidebar.entity.region
   (:require
     [sculpture.admin.state.core :refer [dispatch!]]
-    [sculpture.admin.views.entity :refer [entity-view]]
-    [sculpture.admin.views.object :refer [object-view]]
-    [sculpture.admin.views.entity.partials.map :refer [map-view]]))
+    [sculpture.admin.views.sidebar.entity :refer [entity-view]]
+    [sculpture.admin.views.sidebar.entity.partials.map :refer [map-view]]))
 
 (defmethod entity-view "region"
   [region]
