@@ -13,8 +13,8 @@
                          (map (fn [p]
                                 (/ (:width p) (:height p)))
                               row-photos))]
-         ^{:key index}
          (when (seq row-photos)
+           ^{:key index}
            [:div.row {:style {:width "100%"
                               :position "relative"
                               :padding-bottom (str (/ 100 row-ratio) "%")}}
