@@ -96,7 +96,7 @@
 ; -- ::main-page
 
 (s/def ::main-page
-  (s/nilable #{:edit :actions :upload}))
+  (s/nilable #{:edit :actions :upload :advanced-search}))
 
 ; -- ::app-state
 

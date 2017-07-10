@@ -11,6 +11,10 @@
      "Close"]]
 
    [:div.content
+    [:button
+     {:on-click (fn [_]
+                  (dispatch! [:set-main-page :advanced-search]))}
+     "Advanced Search"]
 
     [:button
      {:on-click (fn [_]

@@ -2,6 +2,7 @@
   (:require
     [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.views.pages.actions :refer [actions-view]]
+    [sculpture.admin.views.pages.advanced-search :refer [advanced-search-view]]
     [sculpture.admin.views.pages.entity-editor :refer [entity-editor-view]]
     [sculpture.admin.views.pages.upload :refer [upload-view]]))
 
@@ -18,5 +19,9 @@
     :upload
     [:div.main
      [upload-view]]
+
+    :advanced-search
+    [:div.main
+     [advanced-search-view]]
 
     nil))
