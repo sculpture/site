@@ -10,6 +10,7 @@
 
 (defn related-tags-view [tag-ids]
   [:div.tags
-   (for [tag-id tag-ids]
-     ^{:key tag-id}
-     [related-tag-view tag-id])])
+   (interpose ", "
+              (for [tag-id tag-ids]
+                ^{:key tag-id}
+                [related-tag-view tag-id]))])

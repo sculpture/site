@@ -10,6 +10,7 @@
 
 (defn related-materials-view [material-ids]
   [:div.materials
-   (for [material-id material-ids]
-     ^{:key material-id}
-     [related-material-view material-id])])
+   (interpose ", "
+              (for [material-id material-ids]
+                ^{:key material-id}
+                [related-material-view material-id]))])
