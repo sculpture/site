@@ -49,11 +49,13 @@
         :color "#000"
         :text-align "center"
         :display "inline-block"
+        :vertical-align "middle"
         :margin-right "0.75em"}]
 
       [:a
        {:color colors/text-color
-        :text-decoration "none"}
+        :text-decoration "none"
+        :vertical-align "middle"}
 
        [:&:hover
         {:text-decoration "underline"}]]
@@ -72,8 +74,22 @@
       [:&.dimensions:before (fontawesome \uf0b2)]
       [:&.colors:before (fontawesome \uf1fb)]
 
+      [:&.colors
+       [:>.color
+        {:margin-right "0.5em"}
+
+        [:>.swatch
+         {:border-radius "2px"
+          :margin-right "2px"
+          :vertical-align "middle"}]
+
+        [:>.name
+         {:display "inline-block"
+          :vertical-align "middle"}]]]
+
       [:>div
-       {:display "inline-block"}]]]
+       {:display "inline-block"
+        :vertical-align "middle"}]]]
 
     [:>.related
      [:>h2
