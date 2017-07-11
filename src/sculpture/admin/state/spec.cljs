@@ -75,8 +75,8 @@
 (s/def ::marker
   (s/keys :req-un [::type
                    ::bound?
-                   ::geojson
-                   ::shapes]))
+                   ::geojson]
+          :opt-un [::shapes]))
 
 ; -- ::mega-map
 
