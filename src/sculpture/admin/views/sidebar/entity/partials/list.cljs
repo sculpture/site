@@ -1,11 +1,20 @@
 (ns sculpture.admin.views.sidebar.entity.partials.list
   (:require
     [clojure.string :as string]
+    [sculpture.admin.helpers :as helpers]
     [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.views.sidebar.entity.partials.photos :refer [photo-view]]))
 
 (defmulti entity-row-data :type)
+
+(defmethod entity-row-data "photo"
+  [photo]
+  {:h1 "Photo"
+   :h2 (helpers/format-date (photo :captured-at) "yyyy-MM-dd")
+   :id (photo :id)
+   :image photo
+   :type "photo"})
 
 (defmethod entity-row-data "sculpture"
   [sculpture]

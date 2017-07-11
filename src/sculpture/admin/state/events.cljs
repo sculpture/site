@@ -8,7 +8,8 @@
     [sculpture.admin.state.fx.upload :refer [upload-fx]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.state.spec :refer [check-state! validate]]
-    [sculpture.admin.state.search :as search]))
+    [sculpture.admin.state.search :as search]
+    [sculpture.admin.state.advanced-search :as advanced-search]))
 
 (reg-fx :ajax ajax-fx)
 (reg-fx :upload upload-fx)
@@ -58,6 +59,7 @@
           :page nil
           :main-page nil
           :data nil
+          :advanced-search {:conditions []}
           :mega-map {:dirty? false}}
      :dispatch-n [[:sculpture.user/-remote-auth]
                   [:sculpture.data/-remote-get-data]]}))
@@ -267,3 +269,33 @@
   :sculpture.mega-map/mark-as-dirty
   (fn [{db :db} _]
     {:db (assoc-in db [:mega-map :dirty?] true)}))
+
+(reg-event-fx
+  :sculpture.advanced-search/add-condition
+  (fn [{db :db} _]
+    {:db (update-in db [:advanced-search :conditions]
+                    conj {:key nil
+                          :option nil
+                          :value nil})}))
+(defn vec-remove
+  "remove elem in coll"
+  [coll pos]
+  (vec (concat (subvec coll 0 pos) (subvec coll (inc pos)))))
+
+(reg-event-fx
+  :sculpture.advanced-search/remove-condition
+  (fn [{db :db} [_ index]]
+    {:db (update-in db [:advanced-search :conditions]
+                    vec-remove index)}))
+
+(reg-event-fx
+  :sculpture.advanced-search/update-condition
+  (fn [{db :db} [_ index k v]]
+    {:db (assoc-in db [:advanced-search :conditions index k] v)}))
+
+(reg-event-fx
+  :sculpture.advanced-search/search
+  (fn [{db :db} [_ index k v]]
+    {:db (assoc-in db [:advanced-search :results] (advanced-search/get-results db))}))
+
+
