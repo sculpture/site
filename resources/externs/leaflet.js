@@ -8,10 +8,16 @@ var L = {
     "openPopup": function () {},
     "closePopup": function () {}
   },
+  "geoJSON": {
+    "getLayers": function() {}
+  },
   "map": {
+    "panTo": function() {},
     "setZoom": function() {},
     "on": function() {},
     "removeLayer": function() {},
+    "fitBounds": function() {},
+    "getBounds": function() {},
     "dragging": {
       "enable": function() {}
     },
@@ -30,6 +36,15 @@ var L = {
     "keyboard": {
       "enable": function() {}
     }
+  },
+  "polyline": {
+    "getBounds": function() {}
+  },
+  "polygon": {
+    "getBounds": function() {}
+  },
+  "latLngBounds": {
+    "pad": function() {}
   }
 };
 
