@@ -18,6 +18,20 @@
 
     [:button
      {:on-click (fn [_]
+                  (dispatch! [:sculpture.advanced-search/go [{:key :type
+                                                              :option :equals?
+                                                              :value "photo"}
+                                                             {:key :sculpture-id
+                                                              :option :nil?
+                                                              :value nil}]]))}
+     "Photos w/ no Sculpture"]
+
+
+
+    [:h2 "Create New"]
+
+    [:button
+     {:on-click (fn [_]
                   (dispatch! [:sculpture.edit/create-entity {:type "sculpture"}]))}
      "+ Sculpture"]
 

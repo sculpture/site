@@ -277,6 +277,7 @@
                     conj {:key nil
                           :option nil
                           :value nil})}))
+
 (defn vec-remove
   "remove elem in coll"
   [coll pos]
@@ -295,7 +296,14 @@
 
 (reg-event-fx
   :sculpture.advanced-search/search
-  (fn [{db :db} [_ index k v]]
+  (fn [{db :db} _]
     {:db (assoc-in db [:advanced-search :results] (advanced-search/get-results db))}))
+
+(reg-event-fx
+  :sculpture.advanced-search/go
+  (fn [{db :db} [_ conditions]]
+    {:db (assoc-in db [:advanced-search :conditions] conditions)
+     :dispatch-n [[:sculpture.advanced-search/search]
+                  [:set-main-page :advanced-search]]}))
 
 
