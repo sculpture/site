@@ -90,9 +90,9 @@
        {:width "13em"
         :margin "1em"}]]]
 
-    [:>.actions]
+    [:>.page.actions]
 
-    [:>.upload
+    [:>.page.upload
 
      [:>.content
 
@@ -105,5 +105,18 @@
          {:height "5px"
           :background colors/accent-color
           :transition "width 1s ease-in-out"}]]]]]
+
+    [:>.page.advanced-search
+     [:>.content
+      [:>.conditions
+       [:>.condition
+        {:display "flex"}
+        [:>.key]
+        [:>.option]
+        [:>.value]]]
+
+      [:>.results
+       {:width "100%"}
+       entity-list-styles]]]
 
     editor-styles]])

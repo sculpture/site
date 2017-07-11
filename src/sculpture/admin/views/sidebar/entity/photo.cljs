@@ -19,10 +19,10 @@
        [:a {:href (routes/entity-path {:id (user :id)})}
         (user :name)])]
 
-    [:div.row.sculpture
-     (let [sculpture @(subscribe [:get-entity (photo :sculpture-id)])]
+    (when-let [sculpture @(subscribe [:get-entity (photo :sculpture-id)])]
+      [:div.row.sculpture
        [:a {:href (routes/entity-path {:id (sculpture :id)})}
-        (sculpture :title)])]
+        (sculpture :title)]])
 
     [:div.row.captured-at
      (helpers/format-date (photo :captured-at) "yyyy-MM-dd")]

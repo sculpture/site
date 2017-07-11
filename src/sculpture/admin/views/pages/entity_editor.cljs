@@ -114,65 +114,72 @@
            (string/join " "))
       (string/replace #"Id" "ID")))
 
+(def schema
+  {:id {:type :string
+        :disabled true}
+   :type {:type :enum
+          :options #{"" "material"
+                     "artist" "artist-tag"
+                     "sculpture" "sculpture-tag"
+                     "region" "region-tag"
+                     "photo" "user"}
+          :disabled true}
+   :name {:type :string}
+   :title {:type :string}
+   :email {:type :email}
+   :bio {:type :string
+         :length :long}
+   :birth-date {:type :date}
+   :birth-date-precision {:type :integer}
+   :captured-at {:type :datetime}
+   :death-date {:type :date}
+   :death-date-precision {:type :integer}
+   :slug {:type :string}
+   :geojson {:type :geojson}
+   :link-website {:type :url}
+   :link-wikipedia {:type :url}
+   :size {:type :integer}
+   :width {:type :integer
+           :disabled true}
+   :height {:type :integer
+            :disabled true}
+   :gender {:type :enum
+            :options #{"" "male" "female" "other"}}
+   :note {:type :string
+          :length :long}
+   :date {:type :date}
+   :date-precision {:type :enum
+                    :options #{"" "year" "year-month" "year-month-day"}}
+   :commissioned-by {:type :string}
+   :location {:type :location}
+   :user-id {:type :single-lookup
+             :on-find (lookup-on-find)
+             :on-search (lookup-on-search "user")}
+   :sculpture-id {:type :single-lookup
+                  :on-find (lookup-on-find)
+                  :on-search (lookup-on-search "sculpture")}
+   :material-ids {:type :multi-lookup
+                  :on-find (lookup-on-find)
+                  :on-search (lookup-on-search "material")}
+   :artist-ids {:type :multi-lookup
+                :on-find (lookup-on-find)
+                :on-search (lookup-on-search "artist")}
+   :tag-ids {:type :multi-lookup
+             :on-find (lookup-on-find)
+             :on-search (lookup-on-search "sculpture-tag")}
+   })
+
 (defn field-opts [field type]
-  (get {:id {:type :string
-             :disabled true}
-        :type {:type :enum
-               :options #{"" "material"
-                          "artist" "artist-tag"
-                          "sculpture" "sculpture-tag"
-                          "region" "region-tag"
-                          "photo" "user"}
-               :disabled true}
-        :name {:type :string}
-        :title {:type :string}
-        :email {:type :email}
-        :bio {:type :string
-              :length :long}
-        :birth-date {:type :date}
-        :birth-date-precision {:type :integer}
-        :captured-at {:type :datetime}
-        :death-date {:type :date}
-        :death-date-precision {:type :integer}
-        :slug {:type :string}
-        :geojson {:type :geojson}
-        :link-website {:type :url}
-        :link-wikipedia {:type :url}
-        :size {:type :integer}
-        :width {:type :integer
-                :disabled true}
-        :height {:type :integer
-                 :disabled true}
-        :gender {:type :enum
-                 :options #{"" "male" "female" "other"}}
-        :note {:type :string
-               :length :long}
-        :date {:type :date}
-        :date-precision {:type :enum
-                         :options #{"" "year" "year-month" "year-month-day"}}
-        :commissioned-by {:type :string}
-        :location {:type :location}
-        :user-id {:type :single-lookup
-                  :on-find (lookup-on-find)
-                  :on-search (lookup-on-search "user")}
-        :sculpture-id {:type :single-lookup
-                       :on-find (lookup-on-find)
-                       :on-search (lookup-on-search "sculpture")}
-        :material-ids {:type :multi-lookup
-                       :on-find (lookup-on-find)
-                       :on-search (lookup-on-search "material")}
-        :artist-ids {:type :multi-lookup
-                     :on-find (lookup-on-find)
-                     :on-search (lookup-on-search "artist")}
-        :tag-ids {:type :multi-lookup
-                  :on-find (lookup-on-find)
-                  :on-search (lookup-on-search
-                               (case type
-                                 "photo" "photo-tag"
-                                 "sculpture" "sculpture-tag"
-                                 "region" "region-tag"
-                                 "artist" "artist-tag"
-                                 nil))}}
+  (get (merge schema
+              {:tag-ids {:type :multi-lookup
+                         :on-find (lookup-on-find)
+                         :on-search (lookup-on-search
+                                      (case type
+                                        "photo" "photo-tag"
+                                        "sculpture" "sculpture-tag"
+                                        "region" "region-tag"
+                                        "artist" "artist-tag"
+                                        nil))}})
     field
     {}))
 

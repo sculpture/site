@@ -135,3 +135,13 @@
   :sculpture.search/query-focused?
   (fn [db _]
     (get-in db [:search :focused?])))
+
+(reg-sub
+  :sculpture.advanced-search/conditions
+  (fn [db _]
+    (get-in db [:advanced-search :conditions])))
+
+(reg-sub
+  :sculpture.advanced-search/results
+  (fn [db _]
+    (get-in db [:advanced-search :results])))
