@@ -1,4 +1,4 @@
-(ns sculpture.admin.views.search
+(ns sculpture.admin.views.sidebar.search
   (:require
     [clojure.string :as string]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]

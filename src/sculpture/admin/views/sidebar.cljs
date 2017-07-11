@@ -2,7 +2,7 @@
   (:require
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.routes :as routes]
-    [sculpture.admin.views.search :refer [query-view results-view]]
+    [sculpture.admin.views.sidebar.search :refer [query-view results-view]]
     [sculpture.admin.views.sidebar.entity :refer [entity-view]]
     [sculpture.admin.views.sidebar.entity.sculpture]
     [sculpture.admin.views.sidebar.entity.region]
