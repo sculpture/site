@@ -65,8 +65,8 @@
   {:pre [(uuid? id)]}
   (= "user" (:type (get-by-id id))))
 
-(defn select
-  "Given a map, return entity matching all values in map"
+(defn search
+  "Given a map, return all entities matching all values in map"
   [kvs]
   {:pre [(map? kvs)]}
   (->> @records
@@ -74,7 +74,16 @@
        (filter (fn [e]
                  (every? true?
                          (map (fn [[k v]]
-                                (= v (get e k))) kvs))))
+                                (if (vector? (get e k))
+                                  (contains? (set (get e k)) v)
+                                  (= v (get e k))))
+                              kvs))))))
+
+(defn select
+  "Given a map, return entity matching all values in map"
+  [kvs]
+  {:pre [(map? kvs)]}
+  (->> (search kvs)
        first))
 
 (defn all []
