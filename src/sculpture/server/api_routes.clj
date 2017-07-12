@@ -1,7 +1,5 @@
 (ns sculpture.server.api-routes
   (:require
-    [clj-time.core :as t]
-    [clj-time.coerce :as tc]
     [compojure.core :refer [GET POST PUT DELETE defroutes context]]
     [compojure.handler :refer [api]]
     [compojure.route :as route]
@@ -13,106 +11,53 @@
     [ring.middleware.session.cookie :refer [cookie-store]]
     [ring.util.codec :refer [form-encode]]
     [sculpture.darkroom.core :as darkroom]
+    [sculpture.server.query :as query]
     [sculpture.server.db :as db]
     [sculpture.server.oauth :as oauth]
     [sculpture.server.pages.oauth :as pages.oauth]))
-
-(defn extend-sculpture [sculpture]
-  (-> sculpture
-      (assoc :photos (db/search {:type "photo"
-                                 :sculpture-id (:id sculpture)}))
-      (assoc :artists (map (fn [id]
-                             (db/select {:type "artist"
-                                         :id id}))
-                           (sculpture :artist-ids)))
-      (assoc :materials (map (fn [id]
-                               (db/select {:type "material"
-                                           :id id}))
-                             (sculpture :material-ids)))
-      (assoc :tags (map (fn [id]
-                          (db/select {:type "sculpture-tag"
-                                      :id id}))
-                        (sculpture :tag-ids)))))
-
-(defn extend-artist [artist]
-  (-> artist
-      (assoc :tags (map (fn [id]
-                          (db/select {:type "artist-tag"
-                                      :id id}))
-                        (artist :tag-ids)))))
 
 (defroutes routes
   (context "/api" _
 
     (GET "/entities" req
       {:status 200
-       :body (db/all)})
+       :body (query/entities-all)})
 
     (GET "/artists/" _
       {:status 200
-       :body (db/search {:type "artist"})})
+       :body (query/artists-all)})
 
     (GET "/artists/:slug" [slug]
       {:status 200
-       :body (extend-artist (db/select {:type "artist"
-                                        :slug slug}))})
+       :body (query/artist-with-slug slug)})
 
     (GET "/artists/:slug/sculptures" [slug]
-      (let [artist (db/select {:type "artist"
-                               :slug slug})]
-        {:status 200
-         :body (map extend-sculpture
-                    (db/search {:type "sculpture"
-                                :artist-ids (artist :id)}))}))
+      {:status 200
+       :body (query/sculptures-for-artist slug)})
 
     (GET "/sculptures/" [decade artist-gender artist-tag sculpture-tag]
       (cond
         decade
-        (let [sculptures (->> (db/search {:type "sculpture"})
-                              (filter (fn [sculpture]
-                                        (when (sculpture :date)
-                                          (t/within? (t/interval (t/date-time (Integer. decade))
-                                                                 (t/date-time (+ (Integer. decade) 10)))
-                                            (tc/from-date (sculpture :date)))))))]
-          {:status 200
-           :body (map extend-sculpture sculptures)})
+        {:status 200
+         :body (query/sculptures-in-decade (Integer. decade))}
 
         artist-tag
-        (let [tag (db/select {:type "artist-tag"
-                              :slug artist-tag})
-              artists (db/search {:type "artist"
-                                  :tag-ids (tag :id)})]
-          {:status 200
-           :body (->> artists
-                      (mapcat (fn [artist]
-                             (db/search {:type "sculpture"
-                                         :artist-ids (artist :id)})))
-                      set
-                      (map extend-sculpture))})
+        {:status 200
+         :body (query/sculptures-with-artist-tag artist-tag)}
 
         sculpture-tag
-        (let [tag (db/select {:type "sculpture-tag"
-                              :slug sculpture-tag})]
-          {:status 200
-           :body (map extend-sculpture
-                      (db/search {:type "sculpture"
-                                  :tag-ids (tag :id)}))})
+        {:status 200
+         :body (query/sculptures-with-sculpture-tag sculpture-tag)}
 
         artist-gender
-        (let [artists (db/search {:type "artist"
-                                  :gender artist-gender})]
-          {:status 200
-           :body (->> artists
-                      (mapcat (fn [artist]
-                                (db/search {:type "sculpture"
-                                            :artist-ids (artist :id)})))
-                      set
-                      (map extend-sculpture))})))
+        {:status 200
+         :body (query/sculptures-with-artist-gender artist-gender)}))
 
     (GET "/sculptures/:slug" [slug]
       {:status 200
-       :body (extend-sculpture (db/select {:type "sculpture"
-                                           :slug slug}))})
+       :body (query/sculpture-with-slug slug)})
+
+    ; SESSION
 
     (GET "/session" req
       (if-let [user-id (get-in req [:session :user-id])]
