@@ -41,7 +41,10 @@ var L = {
     "getBounds": function() {}
   },
   "polygon": {
-    "getBounds": function() {}
+    "getBounds": function() {},
+    "editing": {
+      "enable": function() {}
+    }
   },
   "latLngBounds": {
     "pad": function() {}
