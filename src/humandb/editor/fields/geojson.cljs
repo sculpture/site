@@ -13,7 +13,7 @@
                                                                       [-10 -10]]]})))]
     [:div
      [leaflet/map-view
-      {:width "300px"
+      {:width "500px"
        :height "500px"
        :shapes [{:type :geojson
                  :geojson (js/JSON.parse geojson)
@@ -25,5 +25,8 @@
                                 clj->js
                                 js/JSON.stringify
                                 on-change))}]
-       :zoom-controls true}]]))
+       :zoom-controls true}]
+     [:textarea {:value geojson
+                 :on-change (fn [e]
+                              (on-change (js/JSON.stringify (js/JSON.parse (.. e -target -value)))))}]]))
 
