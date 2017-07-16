@@ -85,18 +85,18 @@
   (s/keys :req-un [:sculpture.specs.types/longitude
                   :sculpture.specs.types/latitude]))
 (s/def ::zoom-level int?)
-(s/def ::current-marker ::marker)
+(s/def ::markers (s/coll-of ::marker))
 
 (s/def ::mega-map
   (s/keys :req-un [::dirty?]
           :opt-un [::center
                    ::zoom-level
-                   ::current-marker]))
+                   ::markers]))
 
 ; -- ::main-page
 
 (s/def ::main-page
-  (s/nilable #{:edit :actions :upload :advanced-search}))
+  (s/nilable keyword?))
 
 ; -- ::app-state
 

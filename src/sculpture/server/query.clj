@@ -1,13 +1,40 @@
 (ns sculpture.server.query
   (:require
+    [clojure.string :as string]
+    [clojure.data.json :as json]
     [clj-time.core :as t]
     [clj-time.coerce :as tc]
+    [sculpture.geo :as geo]
     [sculpture.server.db :as db]))
 
 ; HELPERS
 
+(defn geojson->points [geojson]
+  (when (string? geojson)
+    (->> (json/read-str geojson :key-fn keyword)
+         :coordinates
+         first)))
+
+(defn ->point [{:keys [longitude latitude]}]
+  [longitude latitude])
+
+
+; HELPERS - EXTEND
+
 (defn extend-sculpture [sculpture]
   (-> sculpture
+      (assoc :regions (->> (db/search {:type "region"})
+                           (map (fn [region]
+                                  (assoc region :points (geojson->points (region :geojson)))))
+                           (filter (fn [region]
+                                     (geo/polygon-contains? (->point (sculpture :location))
+                                                            (region :points))))
+                           (sort-by (fn [region]
+                                      (-> region
+                                          :points
+                                          geo/bounding-area)))
+                           (map (fn [region]
+                                  (dissoc region :geojson :points)))))
       (assoc :photos (db/search {:type "photo"
                                  :sculpture-id (:id sculpture)}))
       (assoc :artists (map (fn [id]
@@ -98,3 +125,29 @@
                              :artist-ids (artist :id)})))
        set
        (map extend-sculpture)))
+
+; QUERIES - REGIONS
+
+(defn regions-all []
+  (let [sculptures (->> (db/search {:type "sculpture"})
+                        (filter (fn [sculpture] (sculpture :location))))
+        regions (db/search {:type "region"})]
+    (->> regions
+         (map (fn [region]
+                (assoc region :sculpture-count (when (region :geojson)
+                                                 (let [points (geojson->points (region :geojson))]
+                                                   (->> sculptures
+                                                        (filter (fn [sculpture]
+                                                                  (geo/polygon-contains? (->point (sculpture :location)) points)))
+                                                        count)))))))))
+
+(defn sculptures-for-region [region-slug]
+  (let [sculptures (db/search {:type "sculpture"})
+        region (db/select {:type "region"
+                           :slug region-slug})
+        points (geojson->points (region :geojson))]
+    (->> sculptures
+         (filter (fn [sculpture]
+                   (when (and points (sculpture :location))
+                     (geo/polygon-contains? (->point (sculpture :location)) points))))
+         (map extend-sculpture))))

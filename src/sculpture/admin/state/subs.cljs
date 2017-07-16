@@ -145,3 +145,12 @@
   :sculpture.advanced-search/results
   (fn [db _]
     (get-in db [:advanced-search :results])))
+
+(reg-sub
+  :sculpture.regions/all
+  (fn [db _]
+    (->> db
+         :data
+         vals
+         (filter (fn [entity]
+                   (= "region" (entity :type)))))))

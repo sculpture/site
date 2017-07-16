@@ -26,6 +26,11 @@
                                                               :value nil}]]))}
      "Photos w/ no Sculpture"]
 
+    [:button
+     {:on-click (fn [_]
+                  (dispatch! [:set-main-page :regions]))}
+     "Regions"]
+
 
 
     [:h2 "Create New"]

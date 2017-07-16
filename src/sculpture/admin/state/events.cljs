@@ -260,10 +260,10 @@
 
 (reg-event-fx
   :sculpture.mega-map/show
-  (fn [{db :db} [_ marker]]
+  (fn [{db :db} [_ markers]]
     {:db (-> db
              (assoc-in [:mega-map :dirty?] false)
-             (assoc-in [:mega-map :current-marker] marker))}))
+             (assoc-in [:mega-map :markers] markers))}))
 
 (reg-event-fx
   :sculpture.mega-map/mark-as-dirty

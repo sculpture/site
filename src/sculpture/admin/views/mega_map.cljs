@@ -28,7 +28,7 @@
                   :longitude -37.8}
          :on-view-change (fn []
                            (dispatch! [:sculpture.mega-map/mark-as-dirty]))
-         :shapes (if (config :current-marker)
-                   (conj sculpture-markers (config :current-marker))
+         :shapes (if (config :markers)
+                   (concat sculpture-markers (config :markers))
                    sculpture-markers)}
         config)]]))

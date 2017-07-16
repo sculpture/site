@@ -57,6 +57,14 @@
       {:status 200
        :body (query/sculpture-with-slug slug)})
 
+    (GET "/regions/" _
+      {:status 200
+       :body (query/regions-all)})
+
+    (GET "/regions/:slug/sculptures" [slug]
+      {:status 200
+       :body (query/sculptures-for-region slug)})
+
     ; SESSION
 
     (GET "/session" req
