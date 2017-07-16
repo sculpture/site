@@ -35,6 +35,10 @@
       {:status 200
        :body (query/sculptures-for-artist slug)})
 
+    (GET "/sculptures/random" []
+      {:status 302
+       :headers {"Location" (str "./" (query/random-sculpture-slug))}})
+
     (GET "/sculptures/" [decade artist-gender artist-tag sculpture-tag]
       (cond
         decade

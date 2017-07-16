@@ -82,6 +82,11 @@
                    :slug slug})
        extend-sculpture))
 
+(defn random-sculpture-slug []
+  (->> (db/search {:type "sculpture"})
+       rand-nth
+       :slug))
+
 (defn sculptures-for-artist [artist-slug]
   (let [artist (db/select {:type "artist"
                            :slug artist-slug})]
