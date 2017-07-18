@@ -145,3 +145,14 @@ FROM
   extended_sculptures
 WHERE
   extended_sculptures.slug = lower(:slug);
+
+-- name:-select-random-sculpture-slug
+--
+SELECT
+  slug
+FROM
+  sculptures
+OFFSET
+  floor(random() * (SELECT COUNT(*) FROM sculptures))
+LIMIT
+  1;

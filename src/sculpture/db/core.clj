@@ -331,3 +331,9 @@
      :result-set-fn first
      :row-fn db->extended-sculpture}))
 
+(defn select-random-sculpture-slug []
+  (-select-random-sculpture-slug
+    {}
+    {:connection db-spec
+     :result-set-fn first
+     :row-fn :slug}))
