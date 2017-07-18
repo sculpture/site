@@ -14,7 +14,8 @@
     [sculpture.server.query :as query]
     [sculpture.server.db :as db]
     [sculpture.server.oauth :as oauth]
-    [sculpture.server.pages.oauth :as pages.oauth]))
+    [sculpture.server.pages.oauth :as pages.oauth]
+    [sculpture.db.core :as pg]))
 
 (defroutes routes
   (context "/api" _
@@ -25,45 +26,45 @@
 
     (GET "/artists/" _
       {:status 200
-       :body (query/artists-all)})
+       :body (pg/select-artists)})
 
     (GET "/artists/:slug" [slug]
       {:status 200
-       :body (query/artist-with-slug slug)})
+       :body (pg/select-artist-with-slug slug)})
 
     (GET "/artists/:slug/sculptures" [slug]
       {:status 200
-       :body (query/sculptures-for-artist slug)})
+       :body (pg/select-sculptures-for-artist slug)})
 
     (GET "/sculptures/" [decade artist-gender artist-tag sculpture-tag]
       (cond
         decade
         {:status 200
-         :body (query/sculptures-in-decade (Integer. decade))}
+         :body (pg/select-sculptures-for-decade (Integer. decade))}
 
         artist-tag
         {:status 200
-         :body (query/sculptures-with-artist-tag artist-tag)}
+         :body (pg/select-sculptures-for-artist-tag-slug artist-tag)}
 
         sculpture-tag
         {:status 200
-         :body (query/sculptures-with-sculpture-tag sculpture-tag)}
+         :body (pg/select-sculptures-for-sculpture-tag-slug sculpture-tag)}
 
         artist-gender
         {:status 200
-         :body (query/sculptures-with-artist-gender artist-gender)}))
+         :body (pg/select-sculptures-for-artist-gender artist-gender)}))
 
     (GET "/sculptures/:slug" [slug]
       {:status 200
-       :body (query/sculpture-with-slug slug)})
+       :body (pg/select-sculpture-with-slug slug)})
 
     (GET "/regions/" _
       {:status 200
-       :body (query/regions-all)})
+       :body (pg/select-regions)})
 
     (GET "/regions/:slug/sculptures" [slug]
       {:status 200
-       :body (query/sculptures-for-region slug)})
+       :body (pg/select-sculptures-for-region slug)})
 
     ; SESSION
 

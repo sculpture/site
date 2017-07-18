@@ -30,6 +30,9 @@
                  [org.clojure/data.json "0.2.6"]
                  [ring-cors "0.1.8"]
                  [ring-middleware-format "0.7.0" :exclusions [cheshire]]
+                 [yesql "0.5.3"]
+                 [net.postgis/postgis-jdbc "2.2.1" :exclusions [org.postgresql/postgresql]]
+                 [org.postgresql/postgresql "9.4.1208"]
 
                  ; DARKROOM
                  [me.raynes/conch "0.8.0"]
