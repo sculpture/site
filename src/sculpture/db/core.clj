@@ -4,8 +4,8 @@
     [clojure.data :refer [diff]]
     [environ.core :refer [env]]
     [sculpture.specs.core]
-    [sculpture.server.github :as github]
-    [sculpture.server.yaml :as yaml]
+    [sculpture.db.github :as github]
+    [sculpture.db.yaml :as yaml]
     [sculpture.db.pg.core :as db]
     [sculpture.db.pg.select :as db.select]
     [sculpture.db.pg.upsert :as db.upsert]))

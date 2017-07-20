@@ -1,4 +1,4 @@
-(ns sculpture.server.yaml
+(ns sculpture.db.yaml
   (:require
     [yaml.writer]
     [yaml.reader]))
