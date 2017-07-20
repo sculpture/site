@@ -32,8 +32,8 @@
 (s/def ::precision number?)
 (s/def ::location-type
   (s/keys :req-un [::longitude
-                   ::latitude
-                   ::precision]))
+                   ::latitude]
+          :opt-un [::precision]))
 
 (s/def ::timestamp-type inst?)
 

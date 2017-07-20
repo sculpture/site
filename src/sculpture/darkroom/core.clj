@@ -3,7 +3,8 @@
     [clojure.string :as string]
     [sculpture.darkroom.convert :as convert]
     [sculpture.darkroom.s3 :as s3]
-    [sculpture.server.db :as db]))
+    [sculpture.db.core :as db]
+    [sculpture.db.pg.select :as db.select]))
 
 (defn upload-image! [id file]
   (let [file-name (str id ".jpg")]
@@ -37,7 +38,7 @@
                  :width (get-in image-data [:dimensions :width])
                  :height (get-in image-data [:dimensions :height])}
                 user-id))
-  (db/select {:id id}))
+  (db.select/select-entity-with-id "photo" id))
 
 (defn delete! [id]
   (doseq [folder ["preload/" "thumb/" "medium/" "large/" "original/"]]

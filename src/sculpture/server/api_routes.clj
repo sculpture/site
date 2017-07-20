@@ -11,71 +11,94 @@
     [ring.middleware.session.cookie :refer [cookie-store]]
     [ring.util.codec :refer [form-encode]]
     [sculpture.darkroom.core :as darkroom]
-    [sculpture.server.query :as query]
-    [sculpture.server.db :as db]
+    [sculpture.db.core :as db]
     [sculpture.server.oauth :as oauth]
     [sculpture.server.pages.oauth :as pages.oauth]
-    [sculpture.db.core :as pg]))
+    [sculpture.db.pg.select :as select]))
 
 (defroutes routes
   (context "/api" _
 
     (GET "/entities" req
       {:status 200
-       :body (query/entities-all)})
+       :body (select/select-all)})
+
+    (GET "/materials/" _
+      {:status 200
+       :body (select/select-all-with-type "material")})
+
+    (GET "/artist-tags/" _
+      {:status 200
+       :body (select/select-all-with-type "artist-tag")})
+
+    (GET "/sculpture-tags/" _
+      {:status 200
+       :body (select/select-all-with-type "sculpture-tag")})
+
+    (GET "/region-tags/" _
+      {:status 200
+       :body (select/select-all-with-type "region-tags")})
+
+    (GET "/users/" _
+      {:status 200
+       :body (select/select-all-with-type "user")})
+
+    (GET "/photos/" _
+      {:status 200
+       :body (select/select-all-with-type "photo")})
 
     (GET "/artists/" _
       {:status 200
-       :body (pg/select-artists)})
+       :body (select/select-all-with-type "artist")})
 
     (GET "/artists/:slug" [slug]
       {:status 200
-       :body (pg/select-artist-with-slug slug)})
+       :body (select/select-artist-with-slug slug)})
 
     (GET "/artists/:slug/sculptures" [slug]
       {:status 200
-       :body (pg/select-sculptures-for-artist slug)})
+       :body (select/select-sculptures-for-artist slug)})
 
     (GET "/sculptures/random" []
       {:status 302
-       :headers {"Location" (str "./" (pg/select-random-sculpture-slug))}})
+       :headers {"Location" (str "./" (select/select-random-sculpture-slug))}})
 
     (GET "/sculptures/" [decade artist-gender artist-tag sculpture-tag]
       (cond
         decade
         {:status 200
-         :body (pg/select-sculptures-for-decade (Integer. decade))}
+         :body (select/select-sculptures-for-decade (Integer. decade))}
 
         artist-tag
         {:status 200
-         :body (pg/select-sculptures-for-artist-tag-slug artist-tag)}
+         :body (select/select-sculptures-for-artist-tag-slug artist-tag)}
 
         sculpture-tag
         {:status 200
-         :body (pg/select-sculptures-for-sculpture-tag-slug sculpture-tag)}
+         :body (select/select-sculptures-for-sculpture-tag-slug sculpture-tag)}
 
         artist-gender
         {:status 200
-         :body (pg/select-sculptures-for-artist-gender artist-gender)}))
+         :body (select/select-sculptures-for-artist-gender artist-gender)}))
 
     (GET "/sculptures/:slug" [slug]
       {:status 200
-       :body (pg/select-sculpture-with-slug slug)})
+       :body (select/select-sculpture-with-slug slug)})
 
     (GET "/regions/" _
       {:status 200
-       :body (pg/select-regions)})
+       :body (select/select-regions)})
 
     (GET "/regions/:slug/sculptures" [slug]
       {:status 200
-       :body (pg/select-sculptures-for-region slug)})
+       :body (select/select-sculptures-for-region slug)})
 
     ; SESSION
 
     (GET "/session" req
       (if-let [user-id (get-in req [:session :user-id])]
         {:status 200
-         :body (db/get-by-id user-id)}
+         :body (select/select-entity-with-id "user" user-id)}
         {:status 401
          :body {:error "You are not logged in"}}))
 
@@ -99,8 +122,7 @@
     (PUT "/oauth/:provider/authenticate" [provider token]
       (if-let [user-info (oauth/get-user-info (keyword provider) token)]
         (do
-          (if-let [user (db/select {:type "user"
-                                    :email (user-info :email)})]
+          (if-let [user (select/select-user-with-email (user-info :email))]
             {:status 200
              :body user
              :session {:user-id (user :id)}}

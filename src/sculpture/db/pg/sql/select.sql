@@ -1,5 +1,23 @@
--- name:-select-sculptures-for-region
---
+-- :name -exists?
+-- :result :one
+SELECT EXISTS (
+  SELECT
+    1
+  FROM
+    :i:entity-type
+  WHERE
+    id = :id
+);
+
+-- :name -select-all-with-type
+-- :result :many
+SELECT
+  *
+FROM
+  :i:type;
+
+-- :name -select-sculptures-for-region
+-- :result :many
 WITH target_sculptures AS (
   SELECT
     sculptures.id
@@ -8,7 +26,7 @@ WITH target_sculptures AS (
     regions
   WHERE
     ST_Covers(regions.shape, sculptures.location) AND
-    regions.slug = lower(:region_slug)
+    regions.slug = lower(:region-slug)
 )
 SELECT
   extended_sculptures.*
@@ -18,8 +36,8 @@ FROM
 WHERE
   extended_sculptures.id = target_sculptures.id;
 
--- name:-select-sculptures-for-artist
---
+-- :name -select-sculptures-for-artist
+-- :result :many
 WITH target_sculptures AS (
   SELECT
     artists_sculptures."sculpture-id" AS id
@@ -28,7 +46,7 @@ WITH target_sculptures AS (
     artists
   WHERE
     artists.id = artists_sculptures."artist-id" AND
-    artists.slug = lower(:artist_slug)
+    artists.slug = lower(:artist-slug)
 )
 SELECT
   extended_sculptures.*
@@ -38,17 +56,17 @@ FROM
 WHERE
     extended_sculptures.id = target_sculptures.id;
 
--- name:-select-sculptures-for-decade
---
+-- :name -select-sculptures-for-decade
+-- :result :many
 SELECT
   extended_sculptures.*
 FROM
   extended_sculptures
 WHERE
-  extended_sculptures.date BETWEEN :date_start AND :date_end;
+  extended_sculptures.date BETWEEN :date-start AND :date-end;
 
--- name:-select-sculptures-for-artist-tag-slug
---
+-- :name -select-sculptures-for-artist-tag-slug
+-- :result :many
 SELECT
   extended_sculptures.*
 FROM
@@ -62,10 +80,10 @@ WHERE
   artists_sculptures."artist-id" = artists.id AND
   "artists_artist-tags"."artist-id" = artists.id AND
   "artists_artist-tags"."artist-tag-id" = "artist-tags".id AND
-  "artist-tags".slug = lower(:artist_tag_slug);
+  "artist-tags".slug = lower(:artist-tag-slug);
 
--- name:-select-sculptures-for-artist-gender
---
+-- :name -select-sculptures-for-artist-gender
+-- :result :many
 WITH target_sculptures AS (
   SELECT
     artists_sculptures."sculpture-id" AS id
@@ -74,7 +92,7 @@ WITH target_sculptures AS (
     artists
   WHERE
     artists_sculptures."artist-id" = artists.id AND
-    artists.gender = :artist_gender
+    artists.gender = :artist-gender
 )
 SELECT
   extended_sculptures.*
@@ -84,8 +102,8 @@ FROM
 WHERE
   extended_sculptures.id = target_sculptures.id;
 
--- name:-select-sculptures-for-sculpture-tag-slug
---
+-- :name -select-sculptures-for-sculpture-tag-slug
+-- :result :many
 WITH target_sculptures AS (
   SELECT
     sculptures.id
@@ -96,7 +114,7 @@ WITH target_sculptures AS (
   WHERE
     sculptures.id = "sculptures_sculpture-tags"."sculpture-id" AND
     "sculptures_sculpture-tags"."sculpture-tag-id" = "sculpture-tags".id AND
-    "sculpture-tags".slug = lower(:sculpture_tag_slug)
+    "sculpture-tags".slug = lower(:sculpture-tag-slug)
 )
 SELECT
   extended_sculptures.*
@@ -106,8 +124,8 @@ FROM
 WHERE
   extended_sculptures.id = target_sculptures.id;
 
--- name:-select-regions
---
+-- :name -select-regions
+-- :result :many
 SELECT
   regions.id,
   regions.name,
@@ -121,15 +139,8 @@ WHERE
 GROUP BY
   regions.id;
 
--- name:-select-artists
---
-SELECT
-  *
-FROM
-  artists;
-
--- name:-select-artist-with-slug
---
+-- :name -select-artist-with-slug
+-- :result :one
 SELECT
   *
 FROM
@@ -137,8 +148,8 @@ FROM
 WHERE
   artists.slug = lower(:slug);
 
--- name:-select-sculpture-with-slug
---
+-- :name -select-sculpture-with-slug
+-- :result :one
 SELECT
   *
 FROM
@@ -146,8 +157,8 @@ FROM
 WHERE
   extended_sculptures.slug = lower(:slug);
 
--- name:-select-random-sculpture-slug
---
+-- :name -select-random-sculpture-slug
+-- :result :one
 SELECT
   slug
 FROM
@@ -156,3 +167,21 @@ OFFSET
   floor(random() * (SELECT COUNT(*) FROM sculptures))
 LIMIT
   1;
+
+-- :name -select-user-with-email
+-- :result :one
+SELECT
+  *
+FROM
+  users
+WHERE
+  email = lower(:email);
+
+-- :name -select-entity-with-id
+-- :result :one
+SELECT
+  *
+FROM
+  :i:entity-type
+WHERE
+  id = :id;

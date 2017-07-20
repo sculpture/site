@@ -5,7 +5,7 @@
     [sculpture.specs.types]))
 
 (s/def ::captured-at :sculpture.specs.types/timestamp-type)
-(s/def ::sculpture-id :sculpture.specs.types/uuid-type)
+(s/def ::sculpture-id (s/nilable :sculpture.specs.types/uuid-type))
 (s/def ::user-id :sculpture.specs.types/uuid-type)
 
 (s/def ::color #(re-matches #"^#[0-9A-F]{6}$" %1))
@@ -19,9 +19,8 @@
                             ::user-id
                             ::colors
                             ::width
-                            ::height]
-                   ; TODO shouldn't be optional
-                   :opt-un [::sculpture-id])))
+                            ::height
+                            ::sculpture-id])))
 
 (defmethod entity-type "photo"
   [_]
