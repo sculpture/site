@@ -40,6 +40,12 @@
                       github/parse-file-content
                       yaml/from-string)))))
 
+(defn export! []
+  (doseq [[entity-type entities] (->> (db.select/select-all)
+                                      (group-by :type))]
+    (let [path (type->path entity-type)]
+      (spit path (yaml/to-string entities)))))
+
 (defn import! [entities]
   (let [grouped-entities (group-by :type entities)]
     (doseq [entity-type ["artist-tag"
