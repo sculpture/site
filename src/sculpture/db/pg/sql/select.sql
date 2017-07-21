@@ -126,6 +126,17 @@ FROM
 WHERE
   extended_sculptures.id = target_sculptures.id;
 
+-- :name -select-sculptures-for-material-slug
+-- :result :many
+SELECT
+  extended_sculptures.*
+FROM
+  extended_sculptures
+JOIN materials_sculptures ON materials_sculptures."sculpture-id" = extended_sculptures.id
+JOIN materials ON materials_sculptures."material-id" = materials.id
+WHERE
+  materials.slug = :material-slug;
+
 -- :name -select-regions
 -- :result :many
 SELECT

@@ -214,4 +214,15 @@ CREATE VIEW regions_with_related_ids AS (
     regions.id
 );
 
+CREATE VIEW materials_with_related_ids AS (
+  SELECT
+    materials.*,
+    array_agg(distinct "materials_sculptures"."sculpture-id") AS "sculpture-ids"
+  FROM
+    materials
+  LEFT JOIN "materials_sculptures" ON "materials_sculptures"."material-id" = "materials".id
+  GROUP BY
+    materials.id
+);
+
 COMMIT;

@@ -36,6 +36,10 @@
     (GET "/materials/:id-or-slug" [id-or-slug]
       (single-entity-response "material" id-or-slug))
 
+    (GET "/materials/:slug/sculptures" [slug]
+      {:status 200
+       :body (db.select/select-sculptures-for-material-slug slug)})
+
     (GET "/artist-tags/" _
       {:status 200
        :body (db.select/select-all-with-type "artist-tag")})

@@ -10,7 +10,7 @@
 
 (def entity-type->db-table
   {"user" "users"
-   "material" "materials"
+   "material" "materials_with_related_ids"
    "artist-tag" "artist-tags"
    "sculpture-tag" "sculpture-tags"
    "region-tag" "region-tags"
@@ -56,6 +56,12 @@
   (->> (-select-sculptures-for-sculpture-tag-slug
          db-spec
          {:sculpture-tag-slug sculpture-tag-slug})
+       (map db->)))
+
+(defn select-sculptures-for-material-slug [slug]
+  (->> (-select-sculptures-for-material-slug
+         db-spec
+         {:material-slug slug})
        (map db->)))
 
 ; regions
