@@ -11,7 +11,7 @@
     [ring.middleware.session.cookie :refer [cookie-store]]
     [sculpture.darkroom.core :as darkroom]
     [sculpture.db.core :as db.core]
-    [sculpture.db.pg.select :as select]
+    [sculpture.db.pg.select :as db.select]
     [sculpture.server.oauth :as oauth]
     [sculpture.server.pages.oauth :as pages.oauth]))
 
@@ -20,84 +20,84 @@
 
     (GET "/entities" req
       {:status 200
-       :body (select/select-all)})
+       :body (db.select/select-all)})
 
     (GET "/materials/" _
       {:status 200
-       :body (select/select-all-with-type "material")})
+       :body (db.select/select-all-with-type "material")})
 
     (GET "/artist-tags/" _
       {:status 200
-       :body (select/select-all-with-type "artist-tag")})
+       :body (db.select/select-all-with-type "artist-tag")})
 
     (GET "/sculpture-tags/" _
       {:status 200
-       :body (select/select-all-with-type "sculpture-tag")})
+       :body (db.select/select-all-with-type "sculpture-tag")})
 
     (GET "/region-tags/" _
       {:status 200
-       :body (select/select-all-with-type "region-tags")})
+       :body (db.select/select-all-with-type "region-tags")})
 
     (GET "/users/" _
       {:status 200
-       :body (select/select-all-with-type "user")})
+       :body (db.select/select-all-with-type "user")})
 
     (GET "/photos/" _
       {:status 200
-       :body (select/select-all-with-type "photo")})
+       :body (db.select/select-all-with-type "photo")})
 
     (GET "/artists/" _
       {:status 200
-       :body (select/select-all-with-type "artist")})
+       :body (db.select/select-all-with-type "artist")})
 
     (GET "/artists/:slug" [slug]
       {:status 200
-       :body (select/select-artist-with-slug slug)})
+       :body (db.select/select-artist-with-slug slug)})
 
     (GET "/artists/:slug/sculptures" [slug]
       {:status 200
-       :body (select/select-sculptures-for-artist slug)})
+       :body (db.select/select-sculptures-for-artist slug)})
 
     (GET "/sculptures/random" []
       {:status 302
-       :headers {"Location" (str "./" (select/select-random-sculpture-slug))}})
+       :headers {"Location" (str "./" (db.select/select-random-sculpture-slug))}})
 
     (GET "/sculptures/" [decade artist-gender artist-tag sculpture-tag]
       (cond
         decade
         {:status 200
-         :body (select/select-sculptures-for-decade (Integer. decade))}
+         :body (db.select/select-sculptures-for-decade (Integer. decade))}
 
         artist-tag
         {:status 200
-         :body (select/select-sculptures-for-artist-tag-slug artist-tag)}
+         :body (db.select/select-sculptures-for-artist-tag-slug artist-tag)}
 
         sculpture-tag
         {:status 200
-         :body (select/select-sculptures-for-sculpture-tag-slug sculpture-tag)}
+         :body (db.select/select-sculptures-for-sculpture-tag-slug sculpture-tag)}
 
         artist-gender
         {:status 200
-         :body (select/select-sculptures-for-artist-gender artist-gender)}))
+         :body (db.select/select-sculptures-for-artist-gender artist-gender)}))
 
     (GET "/sculptures/:slug" [slug]
       {:status 200
-       :body (select/select-sculpture-with-slug slug)})
+       :body (db.select/select-sculpture-with-slug slug)})
 
     (GET "/regions/" _
       {:status 200
-       :body (select/select-regions)})
+       :body (db.select/select-regions)})
 
     (GET "/regions/:slug/sculptures" [slug]
       {:status 200
-       :body (select/select-sculptures-for-region slug)})
+       :body (db.select/select-sculptures-for-region slug)})
 
     ; SESSION
 
     (GET "/session" req
       (if-let [user-id (get-in req [:session :user-id])]
         {:status 200
-         :body (select/select-entity-with-id "user" user-id)}
+         :body (db.select/select-entity-with-id "user" user-id)}
         {:status 401
          :body {:error "You are not logged in"}}))
 
@@ -118,7 +118,7 @@
 
     (PUT "/oauth/:provider/authenticate" [provider token]
       (if-let [oauth-user-info (oauth/get-user-info (keyword provider) token)]
-        (if-let [user (select/select-user-with-email (oauth-user-info :email))]
+        (if-let [user (db.select/select-user-with-email (oauth-user-info :email))]
           (do
             (when (or (not= (:name oauth-user-info) (:name user))
                       (not= (:avatar oauth-user-info) (:avatar user)))
