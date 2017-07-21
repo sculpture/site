@@ -21,8 +21,8 @@
        :vertical-align "top"
        :-webkit-font-smoothing "antialiased"}]
 
-     [:>button.new
-      (flat-button \uf067)
+     [:>button.menu
+      (flat-button \uf0c9)
       {:height height
        :width height
        :vertical-align "top"}]

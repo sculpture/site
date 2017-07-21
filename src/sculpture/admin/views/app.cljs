@@ -7,8 +7,8 @@
     [sculpture.admin.views.page :refer [page-view]]))
 
 (defn new-entity-button-view []
-  [:button.new {:on-click (fn [_]
-                            (dispatch! [:set-main-page :actions]))}])
+  [:button.menu {:on-click (fn [_]
+                             (dispatch! [:set-main-page :actions]))}])
 
 (defn toolbar-view []
   (if-let [user @(subscribe [:user])]
