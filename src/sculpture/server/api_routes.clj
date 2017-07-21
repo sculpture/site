@@ -15,6 +15,13 @@
     [sculpture.server.oauth :as oauth]
     [sculpture.server.pages.oauth :as pages.oauth]))
 
+(defn single-entity-response [entity-type id-or-slug]
+  (if-let [entity (db.select/select-entity-with-id-or-slug entity-type id-or-slug)]
+    {:status 200
+     :body entity}
+    {:status 404
+     :body {:error "Not Found"}}))
+
 (defroutes routes
   (context "/api" _
 
@@ -26,33 +33,50 @@
       {:status 200
        :body (db.select/select-all-with-type "material")})
 
+    (GET "/materials/:id-or-slug" [id-or-slug]
+      (single-entity-response "material" id-or-slug))
+
     (GET "/artist-tags/" _
       {:status 200
        :body (db.select/select-all-with-type "artist-tag")})
+
+    (GET "/artist-tags/:id-or-slug" [id-or-slug]
+      (single-entity-response "artist-tag" id-or-slug))
 
     (GET "/sculpture-tags/" _
       {:status 200
        :body (db.select/select-all-with-type "sculpture-tag")})
 
+    (GET "/sculpture-tags/:id-or-slug" [id-or-slug]
+      (single-entity-response "sculpture-tag" id-or-slug))
+
     (GET "/region-tags/" _
       {:status 200
        :body (db.select/select-all-with-type "region-tags")})
+
+    (GET "/region-tags/:id-or-slug" [id-or-slug]
+      (single-entity-response "region-tag" id-or-slug))
 
     (GET "/users/" _
       {:status 200
        :body (db.select/select-all-with-type "user")})
 
+    (GET "/users/:id-or-slug" [id-or-slug]
+      (single-entity-response "user" id-or-slug))
+
     (GET "/photos/" _
       {:status 200
        :body (db.select/select-all-with-type "photo")})
+
+    (GET "/photos/:id-or-slug" [id-or-slug]
+      (single-entity-response "photo" id-or-slug))
 
     (GET "/artists/" _
       {:status 200
        :body (db.select/select-all-with-type "artist")})
 
-    (GET "/artists/:slug" [slug]
-      {:status 200
-       :body (db.select/select-artist-with-slug slug)})
+    (GET "/artists/:id-or-slug" [id-or-slug]
+      (single-entity-response "artist" id-or-slug))
 
     (GET "/artists/:slug/sculptures" [slug]
       {:status 200
@@ -87,6 +111,9 @@
     (GET "/regions/" _
       {:status 200
        :body (db.select/select-regions)})
+
+    (GET "/regions/:id-or-slug" [id-or-slug]
+      (single-entity-response "region" id-or-slug))
 
     (GET "/regions/:slug/sculptures" [slug]
       {:status 200

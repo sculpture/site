@@ -139,15 +139,6 @@ WHERE
 GROUP BY
   regions.id;
 
--- :name -select-artist-with-slug
--- :result :one
-SELECT
-  *
-FROM
-  artists
-WHERE
-  artists.slug = lower(:slug);
-
 -- :name -select-sculpture-with-slug
 -- :result :one
 SELECT
@@ -185,3 +176,15 @@ FROM
   :i:entity-type
 WHERE
   id = :id;
+
+
+-- :name -select-entity-with-slug
+-- :result :one
+SELECT
+  *
+FROM
+  :i:entity-type
+WHERE
+  slug = lower(:slug)
+LIMIT
+  1;

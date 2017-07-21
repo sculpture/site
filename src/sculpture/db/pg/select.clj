@@ -64,14 +64,6 @@
   (->> (-select-regions db-spec)
        (map db->)))
 
-; artist
-
-(defn select-artist-with-slug [slug]
-  (->> (-select-artist-with-slug
-         db-spec
-         {:slug slug})
-       db->))
-
 ; sculpture
 
 (defn select-sculpture-with-slug [slug]
@@ -110,6 +102,21 @@
          :id id}
         {:quoting :ansi})
       db->))
+
+(defn select-entity-with-slug [entity-type slug]
+  (-> (-select-entity-with-slug
+        db-spec
+        {:entity-type (entity-type->db-table entity-type)
+         :slug slug}
+        {:quoting :ansi})
+      db->))
+
+(def uuid-regex #"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
+
+(defn select-entity-with-id-or-slug [entity-type id-or-slug]
+  (if (re-matches uuid-regex id-or-slug)
+    (select-entity-with-id entity-type (java.util.UUID/fromString id-or-slug))
+    (select-entity-with-slug entity-type id-or-slug)))
 
 (defn select-all []
   (->> ["user"
