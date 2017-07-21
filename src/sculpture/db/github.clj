@@ -1,4 +1,4 @@
-(ns sculpture.server.github
+(ns sculpture.db.github
   (:require
     [clojure.data.json :as json]
     [base64-clj.core :as base64]

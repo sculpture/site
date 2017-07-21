@@ -9,10 +9,9 @@
     [ring.middleware.cors :refer [wrap-cors]]
     [ring.middleware.session :refer [wrap-session]]
     [ring.middleware.session.cookie :refer [cookie-store]]
-    [ring.util.codec :refer [form-encode]]
     [sculpture.darkroom.core :as darkroom]
-    [sculpture.server.query :as query]
-    [sculpture.server.db :as db]
+    [sculpture.db.core :as db.core]
+    [sculpture.db.pg.select :as db.select]
     [sculpture.server.oauth :as oauth]
     [sculpture.server.pages.oauth :as pages.oauth]))
 
@@ -21,90 +20,114 @@
 
     (GET "/entities" req
       {:status 200
-       :body (query/entities-all)})
+       :body (db.select/select-all)})
+
+    (GET "/materials/" _
+      {:status 200
+       :body (db.select/select-all-with-type "material")})
+
+    (GET "/artist-tags/" _
+      {:status 200
+       :body (db.select/select-all-with-type "artist-tag")})
+
+    (GET "/sculpture-tags/" _
+      {:status 200
+       :body (db.select/select-all-with-type "sculpture-tag")})
+
+    (GET "/region-tags/" _
+      {:status 200
+       :body (db.select/select-all-with-type "region-tags")})
+
+    (GET "/users/" _
+      {:status 200
+       :body (db.select/select-all-with-type "user")})
+
+    (GET "/photos/" _
+      {:status 200
+       :body (db.select/select-all-with-type "photo")})
 
     (GET "/artists/" _
       {:status 200
-       :body (query/artists-all)})
+       :body (db.select/select-all-with-type "artist")})
 
     (GET "/artists/:slug" [slug]
       {:status 200
-       :body (query/artist-with-slug slug)})
+       :body (db.select/select-artist-with-slug slug)})
 
     (GET "/artists/:slug/sculptures" [slug]
       {:status 200
-       :body (query/sculptures-for-artist slug)})
+       :body (db.select/select-sculptures-for-artist slug)})
 
     (GET "/sculptures/random" []
       {:status 302
-       :headers {"Location" (str "./" (query/random-sculpture-slug))}})
+       :headers {"Location" (str "./" (db.select/select-random-sculpture-slug))}})
 
     (GET "/sculptures/" [decade artist-gender artist-tag sculpture-tag]
       (cond
         decade
         {:status 200
-         :body (query/sculptures-in-decade (Integer. decade))}
+         :body (db.select/select-sculptures-for-decade (Integer. decade))}
 
         artist-tag
         {:status 200
-         :body (query/sculptures-with-artist-tag artist-tag)}
+         :body (db.select/select-sculptures-for-artist-tag-slug artist-tag)}
 
         sculpture-tag
         {:status 200
-         :body (query/sculptures-with-sculpture-tag sculpture-tag)}
+         :body (db.select/select-sculptures-for-sculpture-tag-slug sculpture-tag)}
 
         artist-gender
         {:status 200
-         :body (query/sculptures-with-artist-gender artist-gender)}))
+         :body (db.select/select-sculptures-for-artist-gender artist-gender)}))
 
     (GET "/sculptures/:slug" [slug]
       {:status 200
-       :body (query/sculpture-with-slug slug)})
+       :body (db.select/select-sculpture-with-slug slug)})
 
     (GET "/regions/" _
       {:status 200
-       :body (query/regions-all)})
+       :body (db.select/select-regions)})
 
     (GET "/regions/:slug/sculptures" [slug]
       {:status 200
-       :body (query/sculptures-for-region slug)})
+       :body (db.select/select-sculptures-for-region slug)})
 
     ; SESSION
 
     (GET "/session" req
       (if-let [user-id (get-in req [:session :user-id])]
         {:status 200
-         :body (db/get-by-id user-id)}
+         :body (db.select/select-entity-with-id "user" user-id)}
         {:status 401
          :body {:error "You are not logged in"}}))
 
     ; OAUTH
 
     (GET "/oauth/:provider/request-token" [provider]
-      (case provider
-        "google"
+      (if-let [request-token-url (oauth/request-token-url (keyword provider))]
         {:status 302
          :body {:ok true}
-         :headers {"Location" (str "https://accounts.google.com/o/oauth2/v2/auth?"
-                                   (form-encode {:response_type "token"
-                                                 :client_id (env :google-client-id)
-                                                 :redirect_uri (env :oauth-redirect-uri)
-                                                 :scope "email profile"}))}}))
+         :headers {"Location" request-token-url}}
+        {:status 400
+         :body {:error "Unsupported oauth provider"}}))
+
     (GET "/oauth/:provider/post-auth" _
       {:status 200
        :headers {"Content-Type" "text/html"}
        :body (pages.oauth/html)})
 
     (PUT "/oauth/:provider/authenticate" [provider token]
-      (if-let [user-info (oauth/get-user-info (keyword provider) token)]
-        (do
-          (if-let [user (db/select {:type "user"
-                                    :email (user-info :email)})]
+      (if-let [oauth-user-info (oauth/get-user-info (keyword provider) token)]
+        (if-let [user (db.select/select-user-with-email (oauth-user-info :email))]
+          (do
+            (when (or (not= (:name oauth-user-info) (:name user))
+                      (not= (:avatar oauth-user-info) (:avatar user)))
+              (db.core/upsert! (merge user oauth-user-info) (:id user)))
             {:status 200
-             :body user
-             :session {:user-id (user :id)}}
-            {:status 401
-             :body {:error "User has not been approved"}}))
+             :body (merge user oauth-user-info)
+             :session {:user-id (user :id)}})
+          {:status 401
+           :body {:error "User has not been approved"}})
         {:status 401
          :body {:error "User could not be authenticated"}}))
 
@@ -113,7 +136,7 @@
     (PUT "/entities" [entity :as req]
       (if-let [user-id (get-in req [:session :user-id])]
         (do
-          (db/upsert! entity user-id)
+          (db.core/upsert! entity user-id)
           {:status 200
            :body {:status "OK"}})
         {:status 401
