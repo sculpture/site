@@ -7,6 +7,8 @@ SELECT EXISTS (
     :i:entity-type
   WHERE
     id = :id
+  LIMIT
+    1
 );
 
 -- :name -select-all-with-type
@@ -146,7 +148,9 @@ SELECT
 FROM
   extended_sculptures
 WHERE
-  extended_sculptures.slug = lower(:slug);
+  extended_sculptures.slug = lower(:slug)
+LIMIT
+  1;
 
 -- :name -select-random-sculpture-slug
 -- :result :one
@@ -166,7 +170,9 @@ SELECT
 FROM
   users
 WHERE
-  email = lower(:email);
+  email = lower(:email)
+LIMIT
+  1;
 
 -- :name -select-entity-with-id
 -- :result :one
@@ -175,7 +181,9 @@ SELECT
 FROM
   :i:entity-type
 WHERE
-  id = :id;
+  id = :id
+LIMIT
+  1;
 
 
 -- :name -select-entity-with-slug
