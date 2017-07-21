@@ -2,7 +2,18 @@
   (:require
     [clojure.data.json :as json]
     [environ.core :refer [env]]
-    [org.httpkit.client :as http]))
+    [org.httpkit.client :as http]
+    [ring.util.codec :refer [form-encode]]))
+
+(defn request-token-url [provider]
+  (case provider
+    :google
+    (str "https://accounts.google.com/o/oauth2/v2/auth?"
+         (form-encode {:response_type "token"
+                       :client_id (env :google-client-id)
+                       :redirect_uri (env :oauth-redirect-uri)
+                       :scope "email profile"}))
+    nil))
 
 (defn valid-token? [provider token]
   (case provider

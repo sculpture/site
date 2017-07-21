@@ -9,7 +9,6 @@
     [ring.middleware.cors :refer [wrap-cors]]
     [ring.middleware.session :refer [wrap-session]]
     [ring.middleware.session.cookie :refer [cookie-store]]
-    [ring.util.codec :refer [form-encode]]
     [sculpture.darkroom.core :as darkroom]
     [sculpture.db.core :as db]
     [sculpture.server.oauth :as oauth]
@@ -105,15 +104,13 @@
     ; OAUTH
 
     (GET "/oauth/:provider/request-token" [provider]
-      (case provider
-        "google"
+      (if-let [request-token-url (oauth/request-token-url (keyword provider))]
         {:status 302
          :body {:ok true}
-         :headers {"Location" (str "https://accounts.google.com/o/oauth2/v2/auth?"
-                                   (form-encode {:response_type "token"
-                                                 :client_id (env :google-client-id)
-                                                 :redirect_uri (env :oauth-redirect-uri)
-                                                 :scope "email profile"}))}}))
+         :headers {"Location" request-token-url}}
+        {:status 400
+         :body {:error "Unsupported oauth provider"}}))
+
     (GET "/oauth/:provider/post-auth" _
       {:status 200
        :headers {"Content-Type" "text/html"}
