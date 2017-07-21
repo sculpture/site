@@ -10,19 +10,24 @@
 
 (defn convert!
   "returns a temp file (file shrunk to fit within maxsize, using imagemagick)"
-  [file maxsize quality]
+  [file {:keys [maxsize quality sharpen]}]
   (let [in-path (.getPath file)
         out-path (str (.getPath temp-dir) "/" maxsize "-" (.getName file))
         temp-file-path (str out-path ".tmp.jpg")
         out-file (java.io.File. out-path)]
     (println "Converting..." (.getName file))
     (with-programs [convert cjpeg]
-      (convert in-path
-               "-format" "JPG"
-               "-resize" (str maxsize "x" maxsize ">")
-               "-quality" 100
-               "-strip"
-               temp-file-path)
+      (let [convert-args (->> [in-path
+                               "-format" "JPG"
+                               "-resize" (str maxsize "x" maxsize ">")
+                               "-quality" 100
+                               "-strip"
+                               (when sharpen
+                                 ["-adaptive-sharpen" "0x0.6"])
+                               temp-file-path]
+                              flatten
+                              (remove nil?))]
+        (apply convert convert-args))
       (cjpeg "-quality" quality "-baseline" temp-file-path
              {:binary true
               :out out-file})

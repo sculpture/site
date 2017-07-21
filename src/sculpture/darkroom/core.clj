@@ -8,17 +8,19 @@
 
 (defn upload-image! [id file]
   (let [file-name (str id ".jpg")]
-    (doseq [[size quality folder] [[40 5 "preload/"]
-                                   [100 75 "thumb/"]
-                                   [512 75 "medium/"]
-                                   [1024 95 "large/"]
-                                   [99999 100 "original/"]]]
+    (doseq [[folder convert-opts] [["preload/" {:maxsize 40 :quality 5}]
+                                   ["thumb/" {:maxsize 100 :quality 75 :sharpen true}]
+                                   ["medium/" {:maxsize 512 :quality 75 :sharpen true}]
+                                   ["large/" {:maxsize 1024 :quality 95}]
+                                   ["original/" nil]]]
       (let [path (str folder file-name)]
         (println folder)
         (if (s3/object-exists? path)
           (println "Exists. Skipping.")
-          (-> (convert/convert! file size quality)
-              (s3/upload! path)))))))
+          (if convert-opts
+            (-> (convert/convert! file convert-opts)
+                (s3/upload! path))
+            (s3/upload! file path)))))))
 
 (defn extract-data [file]
   {:colors (convert/extract-colors file)
