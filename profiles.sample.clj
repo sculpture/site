@@ -1,6 +1,7 @@
 {:sculpture
  {:env
-  {:mapbox-token ""
+  {:database-url ""
+   :mapbox-token ""
    :google-client-id ""
    :oauth-redirect-uri ""
    :github-api-user ""
