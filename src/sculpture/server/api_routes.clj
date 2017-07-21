@@ -10,10 +10,10 @@
     [ring.middleware.session :refer [wrap-session]]
     [ring.middleware.session.cookie :refer [cookie-store]]
     [sculpture.darkroom.core :as darkroom]
-    [sculpture.db.core :as db]
+    [sculpture.db.core :as db.core]
+    [sculpture.db.pg.select :as select]
     [sculpture.server.oauth :as oauth]
-    [sculpture.server.pages.oauth :as pages.oauth]
-    [sculpture.db.pg.select :as select]))
+    [sculpture.server.pages.oauth :as pages.oauth]))
 
 (defroutes routes
   (context "/api" _
@@ -117,14 +117,17 @@
        :body (pages.oauth/html)})
 
     (PUT "/oauth/:provider/authenticate" [provider token]
-      (if-let [user-info (oauth/get-user-info (keyword provider) token)]
-        (do
-          (if-let [user (select/select-user-with-email (user-info :email))]
+      (if-let [oauth-user-info (oauth/get-user-info (keyword provider) token)]
+        (if-let [user (select/select-user-with-email (oauth-user-info :email))]
+          (do
+            (when (or (not= (:name oauth-user-info) (:name user))
+                      (not= (:avatar oauth-user-info) (:avatar user)))
+              (db.core/upsert! (merge user oauth-user-info) (:id user)))
             {:status 200
-             :body user
-             :session {:user-id (user :id)}}
-            {:status 401
-             :body {:error "User has not been approved"}}))
+             :body (merge user oauth-user-info)
+             :session {:user-id (user :id)}})
+          {:status 401
+           :body {:error "User has not been approved"}})
         {:status 401
          :body {:error "User could not be authenticated"}}))
 
@@ -133,7 +136,7 @@
     (PUT "/entities" [entity :as req]
       (if-let [user-id (get-in req [:session :user-id])]
         (do
-          (db/upsert! entity user-id)
+          (db.core/upsert! entity user-id)
           {:status 200
            :body {:status "OK"}})
         {:status 401
