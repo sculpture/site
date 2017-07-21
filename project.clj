@@ -20,16 +20,16 @@
                  [environ "1.1.0"]
                  [hiccup "1.0.5"]
                  [commons-codec "1.10"]
-
-                 ; API
-                 [base64-clj "0.1.1"]
                  [compojure "1.5.1"]
                  [http-kit "2.2.0"]
-                 [io.forward/yaml "1.0.6"]
                  [javax.servlet/servlet-api "2.5"]
-                 [org.clojure/data.json "0.2.6"]
                  [ring-cors "0.1.8"]
                  [ring-middleware-format "0.7.0" :exclusions [cheshire]]
+
+                 ; DB
+                 [base64-clj "0.1.1"]
+                 [org.clojure/data.json "0.2.6"]
+                 [io.forward/yaml "1.0.6"]
                  [com.layerware/hugsql "0.4.7"]
                  [net.postgis/postgis-jdbc "2.2.1" :exclusions [org.postgresql/postgresql]]
                  [org.postgresql/postgresql "9.4.1208"]
