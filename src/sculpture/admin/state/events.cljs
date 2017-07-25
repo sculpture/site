@@ -248,6 +248,17 @@
                                          entity))
      :dispatch [:set-main-page :edit]}))
 
+(reg-event-fx
+  :sculpture.edit/geocode
+  (fn [_ [_ query callback]]
+    {:ajax {:method :get
+            :uri "/api/util/geocode"
+            :params {:query query}
+            :on-success callback
+            :on-error
+            (fn [_]
+              (js/alert "Geocoding Error"))}}))
+
 ;; sculpture.mega-map
 
 (reg-event-fx
@@ -269,6 +280,8 @@
   :sculpture.mega-map/mark-as-dirty
   (fn [{db :db} _]
     {:db (assoc-in db [:mega-map :dirty?] true)}))
+
+; sculpture.advanced-search
 
 (reg-event-fx
   :sculpture.advanced-search/add-condition

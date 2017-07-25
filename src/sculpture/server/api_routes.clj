@@ -12,6 +12,7 @@
     [sculpture.darkroom.core :as darkroom]
     [sculpture.db.core :as db.core]
     [sculpture.db.pg.select :as db.select]
+    [sculpture.server.geocode :as geocode]
     [sculpture.server.oauth :as oauth]
     [sculpture.server.pages.oauth :as pages.oauth]))
 
@@ -122,6 +123,16 @@
     (GET "/regions/:slug/sculptures" [slug]
       {:status 200
        :body (db.select/select-sculptures-for-region slug)})
+
+    ; UTIL
+
+    (GET "/util/geocode" [query]
+      (if-let [result (geocode/google-geocode query)]
+        {:status 200
+         :body result}
+        {:status 404
+         :body {:error "Not Found"}}))
+
 
     ; SESSION
 

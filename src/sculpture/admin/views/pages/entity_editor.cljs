@@ -151,7 +151,9 @@
    :date-precision {:type :enum
                     :options #{"" "year" "year-month" "year-month-day"}}
    :commissioned-by {:type :string}
-   :location {:type :location}
+   :location {:type :location
+              :geocode (fn [query callback]
+                         (dispatch! [:sculpture.edit/geocode query callback]))}
    :user-id {:type :single-lookup
              :on-find (lookup-on-find)
              :on-search (lookup-on-search "user")}
