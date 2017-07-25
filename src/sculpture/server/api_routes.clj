@@ -133,6 +133,13 @@
         {:status 404
          :body {:error "Not Found"}}))
 
+    (GET "/util/shape" [query]
+      (if-let [result (geocode/shape query)]
+        {:status 200
+         :body {:geojson result}}
+        {:status 404
+         :body {:error "Not Found"}}))
+
 
     ; SESSION
 

@@ -84,8 +84,17 @@
                       (doseq [shape-opts shapes]
                         (let [shape (make-shape shape-opts)]
                           (.. shape (addTo @leaflet-shape-layer))
+                          ; markers must be on map before editing is enabled
+                          (when (shape-opts :editable?)
+                            (.. shape -editing enable))
+
                           (when (shape-opts :bound?)
-                            (.. @leaflet-map (fitBounds (.pad (.getBounds shape) 0.1)))))))]
+                            (when-let [bounds (cond
+                                                (.-getBounds shape)
+                                                (.pad (.getBounds shape) 0.1)
+                                                (.-getLatLng shape)
+                                                (.toBounds (.getLatLng shape) 100))]
+                              (.. @leaflet-map (fitBounds bounds)))))))]
 
     (r/create-class
       {:display-name "leaflet-map"

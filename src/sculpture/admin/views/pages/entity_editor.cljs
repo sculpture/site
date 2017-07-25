@@ -135,7 +135,9 @@
    :death-date {:type :date}
    :death-date-precision {:type :integer}
    :slug {:type :string}
-   :geojson {:type :geojson}
+   :geojson {:type :geojson
+             :get-shape (fn [query callback]
+                          (dispatch! [:sculpture.edit/get-shape query callback]))}
    :link-website {:type :url}
    :link-wikipedia {:type :url}
    :size {:type :integer}

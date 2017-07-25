@@ -259,6 +259,17 @@
             (fn [_]
               (js/alert "Geocoding Error"))}}))
 
+(reg-event-fx
+  :sculpture.edit/get-shape
+  (fn [_ [_ query callback]]
+    {:ajax {:method :get
+            :uri "/api/util/shape"
+            :params {:query query}
+            :on-success callback
+            :on-error
+            (fn [_]
+              (js/alert "Fetching Shape Error"))}}))
+
 ;; sculpture.mega-map
 
 (reg-event-fx

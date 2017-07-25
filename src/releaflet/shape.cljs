@@ -37,19 +37,13 @@
            (fn [e]
              ((opts :on-click) (.-target e)))))
 
-    (when (opts :editable?)
-      (.. shape -editing enable))
-
     (when (opts :on-edit)
-      (.. shape (on "edit" (fn [e]
-                             (case (opts :type)
-                               :geojson
-                               ((opts :on-edit) (.toGeoJSON shape))
-                               ((opts :on-edit) shape))))))
-
-    (when (opts :on-drag-end)
-      (.on shape "dragend"
-           (fn [e]
-             ((opts :on-drag-end) (.-target e)))))
+      (let [on-edit (fn [_]
+                      (case (opts :type)
+                        :geojson
+                        ((opts :on-edit) (.toGeoJSON shape))
+                        ((opts :on-edit) shape)))]
+        (.. shape (on "edit" on-edit))
+        (.. shape (on "dragend" on-edit))))
 
     shape))
