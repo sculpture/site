@@ -27,7 +27,7 @@ WITH target_sculptures AS (
     sculptures,
     regions
   WHERE
-    ST_Covers(regions.shape, sculptures.location) AND
+    ST_DWithin(regions.shape, sculptures.location, 250) AND
     regions.slug = lower(:region-slug)
 )
 SELECT
@@ -148,7 +148,7 @@ FROM
   regions,
   sculptures
 WHERE
-  ST_Covers(regions.shape, sculptures.location)
+  ST_DWithin(regions.shape, sculptures.location, 250)
 GROUP BY
   regions.id;
 
