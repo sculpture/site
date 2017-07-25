@@ -133,8 +133,15 @@
       (update-if-exists :regions (fn [json]
                                    (->> json
                                         distinct ; dedupe, wasn't able to do it in SQL
+                                        (remove nil?)
                                         (map #(select-keys % [:slug :name]))
                                         (map db->))))
+      (update-if-exists :regions-nearby (fn [json]
+                                          (->> json
+                                               distinct ; dedupe, wasn't able to do it in SQL
+                                               (remove nil?)
+                                               (map #(select-keys % [:slug :name]))
+                                               (map db->))))
       (update-if-exists :photos (fn [json]
                                   (->> json
                                        (map #(select-keys % [:id]))
