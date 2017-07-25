@@ -6,13 +6,18 @@
     [sculpture.admin.router :as router]
     [sculpture.admin.state.core :refer [subscribe]]))
 
+(defn fudge [n]
+  (+ n
+     (- (* 0.001 (rand)) 0.0005)))
+
 (defn mega-map-view []
   (let [config @(subscribe [:sculpture.mega-map/config])
         sculptures @(subscribe [:sculpture.mega-map/sculptures])
         sculpture-markers (->> sculptures
                                (map (fn [sculpture]
                                       (when (sculpture :location)
-                                        {:location (sculpture :location)
+                                        {:location {:longitude (fudge (:longitude (sculpture :location)))
+                                                    :latitude (fudge (:latitude (sculpture :location)))}
                                          :type :icon
                                          :popup (sculpture :title)
                                          :on-click (fn []
