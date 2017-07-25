@@ -47,7 +47,7 @@
             (select-keys [:longitude :latitude])
             vals
             (->>
-              (map (fn [c] (/ (js/Math.round (* c 1000)) 1000)))
+              (map (fn [c] (/ (js/Math.round (* c 100000)) 100000)))
               (string/join ", " )))]])
 
     (when (seq (sculpture :commissioned-by))
