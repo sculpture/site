@@ -63,6 +63,8 @@
       [:&.tags:before (fontawesome \uf02c)]
       [:&.materials:before (fontawesome \uf12e)]
       [:&.location:before (fontawesome \uf041)]
+      [:&.regions:before (fontawesome \uf041)]
+      [:&.nearby:before (fontawesome \uf041)]
       [:&.commission:before (fontawesome \uf0e3)]
       [:&.note:before (fontawesome \uf249)]
       [:&.captured-at:before (fontawesome \uf133)]

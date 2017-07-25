@@ -50,6 +50,24 @@
               (map (fn [c] (/ (js/Math.round (* c 100000)) 100000)))
               (string/join ", " )))]])
 
+    (let [regions @(subscribe [:get-entities (sculpture :region-ids)])]
+      [:div.row.regions
+       (interpose ", "
+                  (for [region (sort-by :area regions)]
+                    ^{:key (region :id)}
+                    [:a
+                     {:href (routes/entity-path {:id (region :id)})}
+                     (region :name)]))])
+
+    (let [regions @(subscribe [:get-entities (sculpture :nearby-region-ids)])]
+      [:div.row.nearby
+       (interpose ", "
+                  (for [region (sort-by :area regions)]
+                    ^{:key (region :id)}
+                    [:a
+                     {:href (routes/entity-path {:id (region :id)})}
+                     (region :name)]))])
+
     (when (seq (sculpture :commissioned-by))
       [:div.row.commission
        (sculpture :commissioned-by)])
