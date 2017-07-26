@@ -34,7 +34,7 @@
       :geojson))
 
 (defn osm-geocode [query]
-  (-> (-osm-search query)
+  (-> (mapquest-osm-search query)
       (select-keys [:lat :lon])
       (rename-keys {:lat :latitude :lon :longitude})))
 
