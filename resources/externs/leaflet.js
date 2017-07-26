@@ -3,10 +3,18 @@ var L = {
     "addTo": function() {},
   },
   "featureGroup": function () {},
+  "layerGroup": {
+    "toGeoJSON": function () {}
+  },
+  "circle": {
+    "getRadius": function () {},
+    "getLatLng": function () {}
+  },
   "marker": {
     "bindPopup": function () {},
     "openPopup": function () {},
-    "closePopup": function () {}
+    "closePopup": function () {},
+    "toGeoJSON": function () {},
   },
   "geoJSON": {
     "getLayers": function() {}
@@ -38,16 +46,22 @@ var L = {
     }
   },
   "polyline": {
-    "getBounds": function() {}
+    "getBounds": function() {},
+    "toGeoJSON": function () {}
   },
   "polygon": {
     "getBounds": function() {},
+    "toGeoJSON": function () {},
     "editing": {
       "enable": function() {}
     }
   },
   "latLngBounds": {
     "pad": function() {}
+  },
+  "LatLng": {
+    "lat": {},
+    "lng": {}
   }
 };
 
