@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS regions (
   "name" text NOT NULL,
   "slug" text NOT NULL,
   -- optional:
-  "shape" geography(polygon,4326)
+  "shape" geography(Geometry,4326)
 );
 
 CREATE INDEX regions_slug ON regions(lower(slug));
