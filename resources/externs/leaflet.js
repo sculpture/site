@@ -15,6 +15,7 @@ var L = {
     "openPopup": function () {},
     "closePopup": function () {},
     "toGeoJSON": function () {},
+    "getLatLng": function () {}
   },
   "geoJSON": {
     "getLayers": function() {}
@@ -61,7 +62,8 @@ var L = {
   },
   "LatLng": {
     "lat": {},
-    "lng": {}
+    "lng": {},
+    "toBounds": function() {}
   }
 };
 
