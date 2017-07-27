@@ -32,7 +32,7 @@
             location (or value {:longitude 0
                                 :latitude 0
                                 :precision 50})]
-        [:div
+        [:div.field.location
          {:ref (fn [node]
                  (when node
                    (reset! on-change-fn on-change)))}
@@ -61,32 +61,39 @@
                               :editable? true
                               :bound? false
                               :on-edit on-edit}]}]
-         [:div
-          "Longitude:"
-          [:input {:value (location :longitude)
-                   :type "number"
-                   :step 0.01
-                   :on-change (fn [e]
-                                (on-change
-                                  (assoc location
-                                    :longitude
-                                    (js/parseFloat (.. e -target -value)))))}]]
-         [:div
-          "Latitude:"
-          [:input {:value (location :latitude)
-                   :type "number"
-                   :step 0.01
-                   :on-change (fn [e]
-                                (on-change
-                                  (assoc location
-                                    :latitude
-                                    (js/parseFloat (.. e -target -value)))))}]]
-         [:div
-          "Precision:"
-          [:input {:value (location :precision)
-                   :type "integer"
-                   :on-change (fn [e]
-                                (on-change
-                                  (assoc location
-                                    :precision
-                                    (js/parseFloat (.. e -target -value)))))}]]]))))
+
+         [:table
+          [:tbody
+           [:tr
+            [:td "Longitude:"]
+            [:td
+             [:input {:value (location :longitude)
+                      :type "number"
+                      :step 0.01
+                      :on-change (fn [e]
+                                   (on-change
+                                     (assoc location
+                                       :longitude
+                                       (js/parseFloat (.. e -target -value)))))}]
+]]
+           [:tr
+            [:td "Latitude:"]
+            [:td
+             [:input {:value (location :latitude)
+                      :type "number"
+                      :step 0.01
+                      :on-change (fn [e]
+                                   (on-change
+                                     (assoc location
+                                       :latitude
+                                       (js/parseFloat (.. e -target -value)))))}]]]
+           [:tr
+            [:td "Precision:"]
+            [:td
+             [:input {:value (location :precision)
+                      :type "integer"
+                      :on-change (fn [e]
+                                   (on-change
+                                     (assoc location
+                                       :precision
+                                       (js/parseFloat (.. e -target -value)))))}]]]]]]))))

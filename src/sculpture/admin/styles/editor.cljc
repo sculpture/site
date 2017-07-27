@@ -23,15 +23,27 @@
       [:>td
        {:padding "0.5em"}
 
+
+       [:>.field
+
+        [:&.location
+
+         [:>table
+          [:>tbody
+           [:>tr
+            [:>td
+             {:padding "0.25em 0"}]]]]]]
+
        [:>button.delete
         (tiny-button :x)]
 
-       [:>textarea
-        :>input
+       [:textarea
+        :input
         {:padding "0.25em"
          :font-size "1em"
          :margin "-0.25em 0"
-         :min-width "20em"}]
+         :min-width "20em"
+         :border "1px solid #ccc"}]
 
        [:>select
         {:font-size "1em"}]
