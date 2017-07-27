@@ -124,7 +124,7 @@
               [related-object-existing-view id on-find]
               [:button.remove {:on-click
                                (fn [_]
-                                 (on-change (disj ids id)))}]]))
+                                 (on-change (vec (disj ids id))))}]]))
          (if @show-search?
            [:div.search
             [:input {:placeholder "Search"
