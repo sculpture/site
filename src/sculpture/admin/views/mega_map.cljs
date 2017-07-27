@@ -8,7 +8,7 @@
 
 (defn fudge [n]
   (+ n
-     (- (* 0.001 (rand)) 0.0005)))
+     (- (* 0.0001 (rand)) 0.00005)))
 
 (defn mega-map-view []
   (let [config @(subscribe [:sculpture.mega-map/config])
