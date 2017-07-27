@@ -66,6 +66,7 @@ CREATE VIEW regions_with_related_ids AS (
     regions.*,
     ST_AsGeoJSON(regions.shape) AS geojson,
     ROUND(ST_Area(regions.shape) / 1000) AS area,
+    ST_NPoints(regions.shape::geometry) AS "points-count",
     array_agg(distinct "regions_region-tags"."region-tag-id") AS "tag-ids",
     array_agg(distinct "sculptures".id) AS "sculpture-ids"
   FROM
