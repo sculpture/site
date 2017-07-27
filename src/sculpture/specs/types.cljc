@@ -22,11 +22,11 @@
 
 
 (s/def ::longitude (s/and
-                     float?
+                     number?
                      ; TODO bound min/max
                      ))
 (s/def ::latitude (s/and
-                    float?
+                    number?
                     ; TODO bound min/max
                     ))
 (s/def ::precision number?)

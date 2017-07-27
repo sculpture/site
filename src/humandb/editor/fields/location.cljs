@@ -70,7 +70,7 @@
                                 (on-change
                                   (assoc location
                                     :longitude
-                                    (.. e -target -value))))}]]
+                                    (js/parseFloat (.. e -target -value)))))}]]
          [:div
           "Latitude:"
           [:input {:value (location :latitude)
@@ -80,7 +80,7 @@
                                 (on-change
                                   (assoc location
                                     :latitude
-                                    (.. e -target -value))))}]]
+                                    (js/parseFloat (.. e -target -value)))))}]]
          [:div
           "Precision:"
           [:input {:value (location :precision)
@@ -89,4 +89,4 @@
                                 (on-change
                                   (assoc location
                                     :precision
-                                    (.. e -target -value))))}]]]))))
+                                    (js/parseFloat (.. e -target -value)))))}]]]))))
