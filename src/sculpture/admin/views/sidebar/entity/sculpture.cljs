@@ -30,15 +30,15 @@
 
    [:div.meta
     (when (seq (sculpture :tag-ids))
-      [:div.row.tags
+      [:div.row.tags {:title "Tags"}
        [related-tags-view (sculpture :tag-ids)]])
 
     (when (seq (sculpture :material-ids))
-      [:div.row.materials
+      [:div.row.materials {:title "Materials"}
        [related-materials-view (sculpture :material-ids)]])
 
     (when (sculpture :location)
-      [:div.row.location
+      [:div.row.location {:title "Location"}
        [:a {:href "#"
             :on-click (fn [e]
                         (.preventDefault e)
@@ -51,7 +51,7 @@
               (string/join ", " )))]])
 
     (let [regions @(subscribe [:get-entities (sculpture :region-ids)])]
-      [:div.row.regions
+      [:div.row.regions {:title "Regions"}
        (interpose ", "
                   (for [region (sort-by :area regions)]
                     ^{:key (region :id)}
@@ -60,7 +60,7 @@
                      (region :name)]))])
 
     (let [regions @(subscribe [:get-entities (sculpture :nearby-region-ids)])]
-      [:div.row.nearby
+      [:div.row.nearby {:title "Nearby"}
        (interpose ", "
                   (for [region (sort-by :area regions)]
                     ^{:key (region :id)}
@@ -69,16 +69,9 @@
                      (region :name)]))])
 
     (when (seq (sculpture :commissioned-by))
-      [:div.row.commission
+      [:div.row.commission {:title "Commissioned By"}
        (sculpture :commissioned-by)])
 
     (when (seq (sculpture :note))
-      [:div.row.note (sculpture :note)])]
-
-    #_(when (sculpture :location)
-        [map-view {:disable-interaction? true
-                   :on-click (fn [_]
-                               (dispatch! [:sculpture.mega-map/go-to (sculpture :location)]))
-                   :center (sculpture :location)
-                   :shapes [{:location (sculpture :location)
-                             :type :icon}]}])])
+      [:div.row.note {:title "Note"}
+       (sculpture :note)])]])

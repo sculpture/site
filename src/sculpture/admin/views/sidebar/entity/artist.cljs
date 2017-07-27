@@ -17,16 +17,16 @@
     [:h1 (artist :name)]]
    [:div.meta
     (when (artist :link-wikipedia)
-      [:div.row.wikipedia
+      [:div.row.wikipedia {:title "Wikipedia Link"}
        [:a.link {:href (artist :link-wikipedia)} "Wikipedia"]])
     (when (artist :link-website)
-      [:div.row.website
+      [:div.row.website {:title "Website Link"}
        [:a.link {:href (artist :link-website)} "Website"]])
     (when (seq (artist :tag-ids))
-      [:div.row.tags
+      [:div.row.tags {:title "Tags"}
        [related-tags-view (artist :tag-ids)]])
     (when (artist :gender)
-      [:div.row.gender
+      [:div.row.gender {:title "Gender"}
        (artist :gender)])]
    [:div.related
     [:h2 "Sculptures"]

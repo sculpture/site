@@ -14,23 +14,23 @@
 
    [:div.meta
 
-    [:div.row.user
+    [:div.row.user {:title "Photo by"}
      (let [user @(subscribe [:get-entity (photo :user-id)])]
        [:a {:href (routes/entity-path {:id (user :id)})}
         (user :name)])]
 
     (when-let [sculpture @(subscribe [:get-entity (photo :sculpture-id)])]
-      [:div.row.sculpture
+      [:div.row.sculpture {:title "Sculpture"}
        [:a {:href (routes/entity-path {:id (sculpture :id)})}
         (sculpture :title)]])
 
-    [:div.row.captured-at
+    [:div.row.captured-at {:title "Capture At"}
      (helpers/format-date (photo :captured-at) "yyyy-MM-dd")]
 
-    [:div.row.dimensions
+    [:div.row.dimensions {:title "Dimensions"}
      (photo :width) "px" " × " (photo :height) "px"]
 
-    [:div.row.colors
+    [:div.row.colors {:title "Colors"}
      (for [color (photo :colors)]
        ^{:key color}
        [:div.color
