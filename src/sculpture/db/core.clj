@@ -18,6 +18,30 @@
 (defn- type->path [entity-type]
   (str "data/" entity-type "s.yml"))
 
+(defn entities->yaml [entities]
+  (->> entities
+       (map (fn [entity]
+              (case (entity :type)
+                "sculpture"
+                (select-keys entity [:id :type :title :slug :size :note :date :date-precision :artist-ids :commissioned-by :material-ids :location :tag-ids])
+                "material"
+                (select-keys entity [:id :type :name :slug])
+                "artist"
+                (select-keys entity [:id :type :name :slug :gender :link-website :link-wikipedia :bio :birth-date :birth-date-precision :death-date :death-date-precision :tag-ids])
+                "region"
+                (select-keys entity [:id :type :name :slug :tag-ids :geojson])
+                "photo"
+                (select-keys entity [:id :type :captured-at :user-id :colors :width :height :sculpture-id])
+                "user"
+                (select-keys entity [:id :type :email :name :avatar])
+                "sculpture-tag"
+                (select-keys entity [:id :type :name :slug])
+                "region-tag"
+                (select-keys entity [:id :type :name :slug])
+                "artist-tag"
+                (select-keys entity [:id :type :name :slug]))))
+       yaml/to-string))
+
 (defn- push! [entity-type message author]
   {:pre [(s/valid? :sculpture/entity-type entity-type)
          (string? message)
@@ -25,7 +49,7 @@
   (let [entities (db.select/select-all-with-type entity-type)
         path (type->path entity-type)]
     (github/update-file! repo branch path
-                         {:content (yaml/to-string entities)
+                         {:content (entities->yaml entities)
                           :message message
                           :committer committer
                           :author {:name (author :name)
@@ -44,7 +68,7 @@
   (doseq [[entity-type entities] (->> (db.select/select-all)
                                       (group-by :type))]
     (let [path (type->path entity-type)]
-      (spit path (yaml/to-string entities)))))
+      (spit path (entities->yaml entities)))))
 
 (defn import! [entities]
   (let [grouped-entities (group-by :type entities)]
