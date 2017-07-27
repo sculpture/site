@@ -12,12 +12,11 @@
               :auto-focus true
               :on-focus (fn [_]
                           (dispatch! [:sculpture.search/set-query-focused true]))
-              :on-blur (fn [_]
-                         ; set a timeout so that when user clicks a search result
-                         ; the link click actually registers
-                         ; without it, a click on a link triggers on-blur, which may remove the link
-                         ; and then prevent the click target from changing the url
-                         (js/setTimeout (fn [] (dispatch! [:sculpture.search/set-query-focused false])) 75))
+              :on-blur (fn [e]
+                         ; set-page does a set-query-focused anyway, so, this is mostly relevant for tabbing
+                         ; but, need to have a timeout, b/c otherwise, when user clicks a search result
+                         ; the on-blur removes the link before the on-click happens
+                         (js/setTimeout (fn [] (dispatch! [:sculpture.search/set-query-focused false])) 250))
               :on-change (fn [e]
                            (dispatch! [:sculpture.search/set-query (.. e -target -value)]))}]
      (when (seq query)
