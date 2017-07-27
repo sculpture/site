@@ -31,19 +31,12 @@
          [:th "Area"]]]
        [:tbody
         (for [region (->> regions
-                          (map (fn [region]
-                                 (let [coordinates (geo/geojson->coords (region :geojson))]
-                                   (assoc region
-                                     :coordinates coordinates
-                                     :point-count (-> coordinates first count)
-                                     :area (js/Math.floor (/ (geo/ring-area (first coordinates))
-                                                             1000000))))))
                           (sort-by (fn [region]
                                      (region :area)))
                           reverse)]
           ^{:key (region :id)}
           [:tr
            [:td (region :name)]
-           [:td (region :point-count)]
+           [:td (region :points-count)]
            [:td (region :area)]])]]]]))
 
