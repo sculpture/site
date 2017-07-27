@@ -64,12 +64,6 @@
          {:material-slug slug})
        (map db->)))
 
-; regions
-
-(defn select-regions []
-  (->> (-select-regions db-spec)
-       (map db->)))
-
 ; sculpture
 
 (defn select-sculpture-with-slug [slug]

@@ -137,21 +137,6 @@ JOIN materials ON materials_sculptures."material-id" = materials.id
 WHERE
   materials.slug = :material-slug;
 
--- :name -select-regions
--- :result :many
-SELECT
-  regions.id,
-  regions.name,
-  regions.slug,
-  count(sculptures) AS "sculpture-count"
-FROM
-  regions,
-  sculptures
-WHERE
-  ST_DWithin(regions.shape, sculptures.location, 250)
-GROUP BY
-  regions.id;
-
 -- :name -select-sculpture-with-slug
 -- :result :one
 SELECT

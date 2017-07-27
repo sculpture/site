@@ -68,11 +68,27 @@ CREATE VIEW regions_with_related_ids AS (
     ROUND(ST_Area(regions.shape) / 1000) AS area,
     ST_NPoints(regions.shape::geometry) AS "points-count",
     array_agg(distinct "regions_region-tags"."region-tag-id") AS "tag-ids",
-    array_agg(distinct "sculptures".id) AS "sculpture-ids"
+    array_agg(distinct "sculptures".id) AS "sculpture-ids",
+    count(distinct "sculptures".id) AS "sculpture-count",
+    -- oddly, this is much more performant than putting it in the GROUP BY
+    (array_agg("parents".id))[1] AS "parent-id"
   FROM
     regions
   LEFT JOIN "regions_region-tags" ON "regions_region-tags"."region-id" = "regions".id
   LEFT JOIN "sculptures" ON ST_DWithin("regions".shape, sculptures.location, 250)
+  LEFT JOIN "regions" AS "parents" ON  "parents".id = (
+    SELECT "ancestors".id
+    FROM "regions" AS "ancestors"
+    WHERE
+      "regions".id != "ancestors".id AND
+      "regions".shape::geometry @ "ancestors".shape::geometry AND
+      ST_CoveredBy(ST_Centroid("regions".shape::geometry),"ancestors".shape)
+      -- technically, more exact, but slower, and above is good enough
+      --ST_Covers("ancestors".shape::geometry,"regions".shape::geometry)
+    ORDER BY
+      ST_Area("ancestors".shape::geometry)
+    LIMIT 1
+)
   GROUP BY
     regions.id
 );

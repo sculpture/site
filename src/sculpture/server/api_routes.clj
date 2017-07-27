@@ -115,7 +115,7 @@
 
     (GET "/regions/" _
       {:status 200
-       :body (db.select/select-regions)})
+       :body (db.select/select-all-with-type "region")})
 
     (GET "/regions/:id-or-slug" [id-or-slug]
       (single-entity-response "region" id-or-slug))
