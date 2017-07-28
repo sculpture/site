@@ -27,7 +27,7 @@
                 "material"
                 (select-keys entity [:id :type :name :slug])
                 "artist"
-                (select-keys entity [:id :type :name :slug :gender :link-website :link-wikipedia :bio :birth-date :birth-date-precision :death-date :death-date-precision :tag-ids])
+                (select-keys entity [:id :type :name :nationality :slug :gender :link-website :link-wikipedia :bio :birth-date :birth-date-precision :death-date :death-date-precision :tag-ids])
                 "region"
                 (select-keys entity [:id :type :name :slug :tag-ids :geojson])
                 "photo"

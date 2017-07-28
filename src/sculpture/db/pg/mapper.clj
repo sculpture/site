@@ -72,6 +72,7 @@
              :gender nil
              :link-website nil
              :link-wikipedia nil
+             :nationality nil
              :bio nil
              :birth-date nil
              :birth-date-precision nil

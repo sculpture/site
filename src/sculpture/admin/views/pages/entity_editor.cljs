@@ -40,6 +40,7 @@
       :type "artist"
       :name ""
       :gender nil
+      :nationality nil
       :link-website ""
       :link-wikipedia ""
       :birth-date nil
@@ -129,6 +130,7 @@
    :email {:type :email}
    :bio {:type :string
          :length :long}
+   :nationality {:type :string}
    :birth-date {:type :date}
    :birth-date-precision {:type :enum
                           :options #{""

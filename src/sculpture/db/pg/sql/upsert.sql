@@ -61,13 +61,14 @@ RETURNING true;
 
 -- :name -upsert-artist!
 -- :command :returning-execute
-INSERT INTO artists ("id", "type", "name", "slug", "gender", "link-website", "link-wikipedia", "bio", "birth-date", "birth-date-precision", "death-date", "death-date-precision")
-VALUES (:id, :type, :name, :slug, :gender, :link-website, :link-wikipedia, :bio, :birth-date, :birth-date-precision, :death-date, :death-date-precision)
+INSERT INTO artists ("id", "type", "name", "slug", "nationality", "gender", "link-website", "link-wikipedia", "bio", "birth-date", "birth-date-precision", "death-date", "death-date-precision")
+VALUES (:id, :type, :name, :slug, :nationality, :gender, :link-website, :link-wikipedia, :bio, :birth-date, :birth-date-precision, :death-date, :death-date-precision)
 ON CONFLICT (id) DO
 UPDATE
 SET
   "name" = :name,
   "slug" = :slug,
+  "nationality" = :nationality,
   "gender" = :gender,
   "link-website" = :link-website,
   "link-wikipedia" = :link-wikipedia,

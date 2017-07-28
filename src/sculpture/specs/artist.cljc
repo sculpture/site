@@ -15,6 +15,7 @@
                           )))
 (s/def ::name string?)
 (s/def ::bio (s/nilable string?))
+(s/def ::nationality (s/nilable string?))
 (s/def ::slug :sculpture.specs.types/slug-type)
 (s/def ::tag-ids :sculpture.specs.types/related-ids-type)
 
@@ -30,6 +31,7 @@
            (s/keys :req-un [::name
                             ::slug]
                    :req-opt [::gender
+                             ::nationality
                              ::link-website
                              ::link-wikipedia
                              ::bio

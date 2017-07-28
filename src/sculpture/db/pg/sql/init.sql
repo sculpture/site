@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS artists (
   "slug" text NOT NULL,
   -- optional:
   "gender" text, -- could be enum
+  "nationality" text,
   "link-website" text,
   "link-wikipedia" text,
   "bio" text,
