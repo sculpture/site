@@ -21,8 +21,8 @@
 (s/def ::birth-date (s/nilable :sculpture.specs.types/timestamp-type))
 (s/def ::death-date (s/nilable :sculpture.specs.types/timestamp-type))
 
-(s/def ::birth-date-precision (s/nilable int?))
-(s/def ::death-date-precision (s/nilable int?))
+(s/def ::birth-date-precision (s/nilable #{"year" "year-month" "year-month-day"}))
+(s/def ::death-date-precision (s/nilable #{"year" "year-month" "year-month-day"}))
 
 
 (s/def ::artist

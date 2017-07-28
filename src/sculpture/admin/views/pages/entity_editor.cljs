@@ -130,7 +130,11 @@
    :bio {:type :string
          :length :long}
    :birth-date {:type :date}
-   :birth-date-precision {:type :integer}
+   :birth-date-precision {:type :enum
+                          :options #{""
+                                     "year"
+                                     "year-month"
+                                     "year-month-day"}}
    :captured-at {:type :datetime}
    :death-date {:type :date}
    :death-date-precision {:type :integer}
