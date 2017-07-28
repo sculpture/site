@@ -113,7 +113,8 @@
 
 (defmethod ->db "artist"
   [artist]
-  (-> artist
+  (-> (blank-entities "artist")
+      (merge artist)
       (update :birth-date ->sql-date)
       (update :death-date ->sql-date)))
 
