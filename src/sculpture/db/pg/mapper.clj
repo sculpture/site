@@ -110,6 +110,12 @@
       (assoc :shape (region :geojson))
       (dissoc :geojson)))
 
+(defmethod ->db "artist"
+  [artist]
+  (-> artist
+      (update :birth-date ->sql-date)
+      (update :death-date ->sql-date)))
+
 ; db->
 
 (defmulti db-> :type)
