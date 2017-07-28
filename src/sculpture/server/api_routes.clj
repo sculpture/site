@@ -12,6 +12,7 @@
     [sculpture.darkroom.core :as darkroom]
     [sculpture.db.core :as db.core]
     [sculpture.db.pg.select :as db.select]
+    [sculpture.db.pg.util :as db.util]
     [sculpture.server.geocode :as geocode]
     [sculpture.server.oauth :as oauth]
     [sculpture.server.pages.oauth :as pages.oauth]))
@@ -140,6 +141,9 @@
         {:status 404
          :body {:error "Not Found"}}))
 
+    (PUT "/util/simplify" [geojson]
+      {:status 200
+       :body {:geojson (db.util/simplify-geojson geojson)}})
 
     ; SESSION
 

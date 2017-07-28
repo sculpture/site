@@ -16,7 +16,7 @@
                          :geometry
                          clj->js
                          js/JSON.stringify)))]
-    (fn [{:keys [value on-change get-shape]}]
+    (fn [{:keys [value on-change get-shape simplify]}]
       (let [geojson (or value (js/JSON.stringify (clj->js {:type "Polygon"
                                                            :coordinates [[[-10 10]
                                                                           [10 10]
@@ -48,5 +48,10 @@
            :zoom-controls true}]
          [:textarea {:value geojson
                      :on-change (fn [e]
-                                  (on-change (js/JSON.stringify (js/JSON.parse (.. e -target -value)))))}]]))))
+                                  (on-change (js/JSON.stringify (js/JSON.parse (.. e -target -value)))))}]
+         [:button {:on-click (fn [_]
+                               (simplify geojson
+                                         (fn [result]
+                                           (on-change (:geojson result)))))}
+          "Simplify"]]))))
 

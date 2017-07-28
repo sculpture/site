@@ -142,6 +142,8 @@
    :death-date-precision {:type :integer}
    :slug {:type :string}
    :geojson {:type :geojson
+             :simplify (fn [geojson callback]
+                         (dispatch! [:sculpture.edit/simplify geojson callback]))
              :get-shape (fn [query callback]
                           (dispatch! [:sculpture.edit/get-shape query callback]))}
    :link-website {:type :url}

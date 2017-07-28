@@ -270,6 +270,17 @@
             (fn [_]
               (js/alert "Fetching Shape Error"))}}))
 
+(reg-event-fx
+  :sculpture.edit/simplify
+  (fn [_ [_ geojson callback]]
+    {:ajax {:method :put
+            :uri "/api/util/simplify"
+            :params {:geojson geojson}
+            :on-success callback
+            :on-error
+            (fn [_]
+              (js/alert "Simplify Error"))}}))
+
 ;; sculpture.mega-map
 
 (reg-event-fx

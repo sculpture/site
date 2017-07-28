@@ -9,7 +9,7 @@ ST_AsGeoJSON(
       ),
       0.99
     ),
-    0.1
+    0.001
   ),
   5
 ) AS geojson;
