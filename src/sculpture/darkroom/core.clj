@@ -38,7 +38,8 @@
                  :colors (vec (image-data :colors))
                  :captured-at (image-data :created-at)
                  :width (get-in image-data [:dimensions :width])
-                 :height (get-in image-data [:dimensions :height])}
+                 :height (get-in image-data [:dimensions :height])
+                 :sculpture-id nil}
                 user-id))
   (db.select/select-entity-with-id "photo" id))
 
