@@ -11,17 +11,29 @@
     db-spec
     (->db sculpture))
 
+  (-delete-relations-artist-sculpture!
+    db-spec
+    {:sculpture-id (sculpture :id)})
+
   (doseq [artist-id (sculpture :artist-ids)]
     (-relate-artist-sculpture!
       db-spec
       {:artist-id artist-id
        :sculpture-id (sculpture :id)}))
 
+  (-delete-relations-sculpture-sculpture-tag!
+    db-spec
+    {:sculpture-id (sculpture :id)})
+
   (doseq [tag-id (sculpture :tag-ids)]
     (-relate-sculpture-sculpture-tag!
       db-spec
       {:sculpture-tag-id tag-id
        :sculpture-id (sculpture :id)}))
+
+  (-delete-relations-material-sculpture!
+    db-spec
+    {:sculpture-id (sculpture :id)})
 
   (doseq [material-id (sculpture :material-ids)]
     (-relate-material-sculpture!
@@ -33,6 +45,10 @@
   (-upsert-region!
     db-spec
     (->db region))
+
+  (-delete-relations-region-region-tag!
+    db-spec
+    {:region-id (region :id)})
 
   (doseq [tag-id (region :tag-ids)]
     (-relate-region-region-tag!
@@ -54,6 +70,10 @@
   (-upsert-artist!
     db-spec
     (->db artist))
+
+  (-delete-relations-artist-artist-tag!
+    db-spec
+    {:artist-id (artist :id)})
 
   (doseq [tag-id (artist :tag-ids)]
     (-relate-artist-artist-tag!

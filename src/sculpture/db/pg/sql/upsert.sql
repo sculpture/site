@@ -128,12 +128,24 @@ SET
 WHERE "region-tags".id = :id
 RETURNING true;
 
+-- :name -delete-relations-artist-sculpture!
+-- :command :returning-execute
+DELETE FROM artists_sculptures
+WHERE "sculpture-id" = :sculpture-id
+RETURNING true;
+
 -- :name -relate-artist-sculpture!
 -- :command :returning-execute
 INSERT INTO artists_sculptures ("artist-id", "sculpture-id")
 VALUES (:artist-id, :sculpture-id)
 ON CONFLICT ("artist-id", "sculpture-id") DO
 NOTHING
+RETURNING true;
+
+-- :name -delete-relations-region-region-tag!
+-- :command :returning-execute
+DELETE FROM "regions_region-tags"
+WHERE "region-id" = :region-id
 RETURNING true;
 
 -- :name -relate-region-region-tag!
@@ -144,6 +156,12 @@ ON CONFLICT ("region-id", "region-tag-id") DO
 NOTHING
 RETURNING true;
 
+-- :name -delete-relations-artist-artist-tag!
+-- :command :returning-execute
+DELETE FROM "artists_artist-tags"
+WHERE "artist-id" = :artist-id
+RETURNING true;
+
 -- :name -relate-artist-artist-tag!
 -- :command :returning-execute
 INSERT INTO "artists_artist-tags" ("artist-id", "artist-tag-id")
@@ -152,12 +170,24 @@ ON CONFLICT ("artist-id", "artist-tag-id") DO
 NOTHING
 RETURNING true;
 
+-- :name -delete-relations-sculpture-sculpture-tag!
+-- :command :returning-execute
+DELETE FROM "sculptures_sculpture-tags"
+WHERE "sculpture-id" = :sculpture-id
+RETURNING true;
+
 -- :name -relate-sculpture-sculpture-tag!
 -- :command :returning-execute
 INSERT INTO "sculptures_sculpture-tags" ("sculpture-id", "sculpture-tag-id")
 VALUES (:sculpture-id, :sculpture-tag-id)
 ON CONFLICT ("sculpture-id", "sculpture-tag-id") DO
 NOTHING
+RETURNING true;
+
+-- :name -delete-relations-material-sculpture!
+-- :command :returning-execute
+DELETE FROM materials_sculptures
+WHERE "sculpture-id" = :sculpture-id
 RETURNING true;
 
 -- :name -relate-material-sculpture!
