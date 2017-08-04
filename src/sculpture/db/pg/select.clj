@@ -11,9 +11,9 @@
 (def entity-type->db-table
   {"user" "users"
    "material" "materials_with_related_ids"
-   "artist-tag" "\"artist-tags\""
-   "sculpture-tag" "\"sculpture-tags\""
-   "region-tag" "\"region-tags\""
+   "artist-tag" "artist-tags"
+   "sculpture-tag" "sculpture-tags"
+   "region-tag" "region-tags"
    "photo" "photos"
    "region" "regions_with_related_ids"
    "artist" "artists_with_related_ids"
@@ -85,8 +85,9 @@
 (defn exists? [entity-type id]
   (-exists?
     db-spec
-    {:entity-type (entity-type->db-table entity-type)
-     :id id}))
+    {:type (entity-type->db-table entity-type)
+     :id id}
+    {:quoting :ansi}))
 
 (defn select-all-with-type [entity-type]
   (->> (-select-all-with-type

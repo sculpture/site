@@ -4,7 +4,7 @@ SELECT EXISTS (
   SELECT
     1
   FROM
-    :i:entity-type
+    :i:type
   WHERE
     id = :id
   LIMIT
