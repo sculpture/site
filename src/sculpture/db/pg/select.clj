@@ -11,9 +11,9 @@
 (def entity-type->db-table
   {"user" "users"
    "material" "materials_with_related_ids"
-   "artist-tag" "artist-tags"
-   "sculpture-tag" "sculpture-tags"
-   "region-tag" "region-tags"
+   "artist-tag" "\"artist-tags\""
+   "sculpture-tag" "\"sculpture-tags\""
+   "region-tag" "\"region-tags\""
    "photo" "photos"
    "region" "regions_with_related_ids"
    "artist" "artists_with_related_ids"
