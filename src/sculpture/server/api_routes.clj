@@ -154,6 +154,11 @@
         {:status 401
          :body {:error "You are not logged in"}}))
 
+    (DELETE "/session" _
+      {:status 200
+       :session nil
+       :body {:ok true}})
+
     ; OAUTH
 
     (GET "/oauth/:provider/request-token" [provider]

@@ -11,6 +11,12 @@
      "Close"]]
 
    [:div.content
+
+    [:button
+     {:on-click (fn [_]
+                  (dispatch! [:sculpture.user/log-out]))}
+     "Log Out"]
+
     [:button
      {:on-click (fn [_]
                   (dispatch! [:set-main-page :advanced-search]))}

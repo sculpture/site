@@ -107,6 +107,14 @@
             (fn [data]
               (dispatch [:sculpture.user/-handle-user-info data]))}}))
 
+(reg-event-fx
+  :sculpture.user/log-out
+  (fn [{db :db} _]
+    {:ajax {:method :delete
+            :uri "/api/session"}
+     :db (assoc db :user nil)
+     :dispatch [:set-main-page nil]}))
+
 ;; sculpture.data
 
 (reg-event-fx
