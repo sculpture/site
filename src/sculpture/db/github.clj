@@ -2,16 +2,22 @@
   (:require
     [me.raynes.fs :as fs]
     [me.raynes.fs.compression :as fs.compression]
+    [clojure.string :as string]
     [clojure.data.json :as json]
     [base64-clj.core :as base64]
     [environ.core :refer [env]]
-    [org.httpkit.client :as http]))
+    [org.httpkit.client :as http])
+  (:import
+    [org.apache.commons.codec.digest DigestUtils]))
+
+(defn git-sha [s]
+  (DigestUtils/sha1Hex (str "blob " (count s) "\u0000" s)))
 
 (def github-auth-headers
   {"User-Agent" (env :github-api-user)
    "Authorization" (str "token " (env :github-api-token))})
 
-(defonce path->sha (atom {}))
+(defonce filename->sha (atom {}))
 
 (defn fetch-file [repo branch path]
   (let [file (-> @(http/get (str "https://api.github.com/repos/" repo "/contents/" path)
@@ -19,33 +25,42 @@
                              :headers github-auth-headers})
                  :body
                  (json/read-str :key-fn keyword))]
-    (swap! path->sha assoc (file :path) (file :sha))
+    (swap! filename->sha assoc (file :name) (file :sha))
     file))
 
 (defn update-file! [repo branch path {:keys [content message author committer] :as opts}]
-  (if (nil? (@path->sha path))
-    (do
-      (fetch-file repo branch path)
-      (update-file! repo branch path opts))
-    (let [response (-> @(http/put (str "https://api.github.com/repos/" repo "/contents/" path)
-                                  {:headers (merge github-auth-headers
-                                                   {"Content-Type" "application/json"})
-                                   :body (json/write-str
-                                           {:branch branch
-                                            :path path
-                                            :message message
-                                            :content (base64/encode content "UTF-8")
-                                            :sha (@path->sha path)
-                                            :committer committer
-                                            :author author})})
-                       :body
-                       (json/read-str :key-fn keyword))]
-      (swap! path->sha assoc
-             (get-in response [:content :path])
-             (get-in response [:content :sha]))
-      response)))
+  (let [filename (last (string/split path #"/"))
+        response (-> @(http/put (str "https://api.github.com/repos/" repo "/contents/" path)
+                                {:headers (merge github-auth-headers
+                                                 {"Content-Type" "application/json"})
+                                 :body (json/write-str
+                                         {:branch branch
+                                          :path path
+                                          :message message
+                                          :content (base64/encode content "UTF-8")
+                                          :sha (@filename->sha filename)
+                                          :committer committer
+                                          :author author})})
+                     :body
+                     (json/read-str :key-fn keyword))]
+    (if (get-in response [:content :name])
+      (do
+        (swap! filename->sha assoc
+               (get-in response [:content :name])
+               (get-in response [:content :sha]))
+        true)
+      (do
+        (println "ERROR PUSHING FILE TO GITHUB" path)
+        nil))))
 
-(defn fetch-archive [repo branch]
+(defn get-shas [files]
+  (->> files
+       (remove (fn [f]
+                 (.isDirectory f)))
+       (reduce (fn [memo file]
+                 (assoc memo (.getName file) (git-sha (slurp file)))) {})))
+
+(defn fetch-archive! [repo branch]
   (println "Fetching archive...")
   (let [temp-file (fs/temp-file "sculpture_data_archive_")
         temp-dir (fs/temp-dir "sculpture_data_archive_unpacked_")]
@@ -57,4 +72,5 @@
     (println "Unzipping archive...")
     (fs.compression/unzip temp-file temp-dir)
     (println "Complete")
+    (reset! filename->sha (get-shas (file-seq temp-dir)))
     temp-dir))

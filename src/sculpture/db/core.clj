@@ -92,7 +92,7 @@
   (db/drop!)
   (println "Initializing...")
   (db/init!)
-  (import-from-dir! (github/fetch-archive repo branch))
+  (import-from-dir! (github/fetch-archive! repo branch))
   true)
 
 (defn upsert! [entity user-id]
@@ -103,5 +103,4 @@
     (db.upsert/upsert-entity! entity)
     (push! entity
            (str action " " (entity :type) " " (or (entity :slug) (entity :id)))
-           (db.select/select-entity-with-id "user" user-id)))
-  true)
+           (db.select/select-entity-with-id "user" user-id))))

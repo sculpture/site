@@ -193,10 +193,11 @@
 
     (PUT "/entities" [entity :as req]
       (if-let [user-id (get-in req [:session :user-id])]
-        (do
-          (db.core/upsert! entity user-id)
+        (if (db.core/upsert! entity user-id)
           {:status 200
-           :body {:status "OK"}})
+           :body {:status "OK"}}
+          {:status 500
+           :body {:error "Error updating or creating entity"}})
         {:status 401
          :body {:error "You must be logged in to perform this action."}}))
 
