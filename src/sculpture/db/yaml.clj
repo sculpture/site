@@ -79,14 +79,18 @@
   (yaml.writer/encode [data]
     (into-sorted-map data)))
 
-(defn from-string
+(defn many-from-string
   "Given a string containing multiple yaml docs, returns list of corresponding maps"
   [s]
   (->> (yaml.reader/parse-documents s)
        ; yaml reader returns ordered-maps; convert to regular maps
        (map (partial into {}))))
 
-(defn to-string
+(defn from-string
+  [s]
+  (into {} (yaml.reader/parse-string s)))
+
+(defn many-to-string
   "Given a list of maps, returns string containing multiple yaml docs"
   [entities]
   (->> entities
@@ -95,3 +99,7 @@
               (yaml.writer/generate-string entity :dumper-options {:flow-style :block})))
        (clojure.string/join "---\n")
        (str "---\n")))
+
+(defn to-string
+  [entity]
+  (yaml.writer/generate-string entity :dumper-options {:flow-style :block}))
