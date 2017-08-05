@@ -18,7 +18,7 @@ CREATE VIEW extended_sculptures AS (
   LEFT JOIN artists ON artists_sculptures."artist-id" = artists.id
   LEFT JOIN materials_sculptures ON materials_sculptures."sculpture-id" = sculptures.id
   LEFT JOIN regions ON ST_Covers(regions.shape, sculptures.location)
-  LEFT JOIN regions AS "nearby-regions" ON ST_DWithin("nearby-regions".shape, sculptures.location, 250) AND ST_Distance("nearby-regions".shape, sculptures.location) > 0
+  LEFT JOIN regions AS "nearby-regions" ON ST_DWithin("nearby-regions".shape, sculptures.location, 100) AND ST_Distance("nearby-regions".shape, sculptures.location) > 0
   LEFT JOIN photos ON photos."sculpture-id" = sculptures.id
   LEFT JOIN materials ON materials_sculptures."material-id" = materials.id
   GROUP BY
@@ -54,7 +54,7 @@ CREATE VIEW sculptures_with_related_ids AS (
   LEFT JOIN artists_sculptures ON "artists_sculptures"."sculpture-id" = "sculptures".id
   LEFT JOIN "sculptures_sculpture-tags" ON "sculptures_sculpture-tags"."sculpture-id" = "sculptures".id
   LEFT JOIN "regions" ON ST_Covers(regions.shape, sculptures.location)
-  LEFT JOIN "regions" AS "nearby-regions" ON ST_DWithin("nearby-regions".shape, sculptures.location, 250) AND ST_Distance("nearby-regions".shape, sculptures.location) > 0
+  LEFT JOIN "regions" AS "nearby-regions" ON ST_DWithin("nearby-regions".shape, sculptures.location, 100) AND ST_Distance("nearby-regions".shape, sculptures.location) > 0
   GROUP BY
     sculptures.id
 );
@@ -75,7 +75,7 @@ CREATE VIEW regions_with_related_ids AS (
   FROM
     regions
   LEFT JOIN "regions_region-tags" ON "regions_region-tags"."region-id" = "regions".id
-  LEFT JOIN "sculptures" ON ST_DWithin("regions".shape, sculptures.location, 250)
+  LEFT JOIN "sculptures" ON ST_DWithin("regions".shape, sculptures.location, 100)
   LEFT JOIN "regions" AS "parents" ON  "parents".id = (
     SELECT "ancestors".id
     FROM "regions" AS "ancestors"

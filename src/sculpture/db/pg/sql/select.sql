@@ -27,7 +27,7 @@ WITH target_sculptures AS (
     sculptures,
     regions
   WHERE
-    ST_DWithin(regions.shape, sculptures.location, 250) AND
+    ST_DWithin(regions.shape, sculptures.location, 100) AND
     regions.slug = lower(:region-slug)
 )
 SELECT
