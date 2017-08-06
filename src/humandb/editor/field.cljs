@@ -20,15 +20,29 @@
         on-change (r/atom nil)
         debounced-fn (debounce (fn [value]
                                  (@on-change value))
-                               200)]
-    (fn [opts]
-      (fields/field (-> opts
-                        (update :on-change
-                                (fn [original-on-change]
-                                  (fn [value]
-                                    (reset! temp-value value)
-                                    (reset! on-change original-on-change)
-                                    (debounced-fn value))))
-                        (assoc :value (or @temp-value (opts :value))))))))
+                               250)]
+
+    (r/create-class
+      {:component-did-mount
+       (fn [this]
+         (reset! temp-value (:value (r/props this)))
+         (reset! on-change (:on-change (r/props this))))
+
+       :component-did-update
+       (fn [this [_ prev-props]]
+         (when (not= (:value prev-props)
+                     (:value (r/props this)))
+           (reset! temp-value (:value (r/props this))))
+         (when (not= (:on-change prev-props)
+                     (:on-change (r/props this)))
+           (reset! on-change (:on-change (r/props this)))))
+
+       :reagent-render
+       (fn [opts]
+         (fields/field (-> opts
+                           (assoc :on-change (fn [value]
+                                               (reset! temp-value value)
+                                               (debounced-fn value)))
+                           (assoc :value @temp-value))))})))
 
 
