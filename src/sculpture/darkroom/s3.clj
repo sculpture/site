@@ -1,4 +1,5 @@
 (ns sculpture.darkroom.s3
+  (:refer-clojure :exclude [list])
   (:require
     [amazonica.aws.s3 :as s3]
     [amazonica.aws.s3transfer :as s3-tx]
@@ -37,3 +38,26 @@
   (s3/delete-object creds
                     :bucket-name bucket
                     :key path))
+
+(defn download!
+  [path dir]
+  (println "Downloading..." path)
+  (let [file (str dir "/" path)
+        prom (promise)
+        download (s3-tx/download creds
+                                 bucket
+                                 path
+                                 file)
+        listener (fn [{:keys [event bytes-transferred]}]
+                   (when (= :completed event)
+                     (println "Complete")
+                     (deliver prom (clojure.java.io/file file))))]
+    ((:add-progress-listener download) listener)
+    prom))
+
+(defn list [prefix]
+  (-> (s3/list-objects creds
+        :bucket-name bucket
+        :prefix prefix)
+      :object-summaries))
+

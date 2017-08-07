@@ -10,6 +10,7 @@
   (let [file-name (str id ".jpg")]
     (doseq [[folder convert-opts] [["preload/" {:maxsize 40 :quality 5}]
                                    ["thumb/" {:maxsize 100 :quality 75 :sharpen true}]
+                                   ["preview/" {:maxsize 300 :quality 75 :sharpen true}]
                                    ["medium/" {:maxsize 512 :quality 75 :sharpen true}]
                                    ["large/" {:maxsize 1024 :quality 95}]
                                    ["original/" nil]]]
