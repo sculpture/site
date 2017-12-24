@@ -1,4 +1,4 @@
-(defproject sculpture "0.0.1"
+(defproject stainedglass "0.0.1"
 
   :source-paths ["src"]
 

@@ -43,8 +43,8 @@
 
     [:button
      {:on-click (fn [_]
-                  (dispatch! [:sculpture.edit/create-entity {:type "sculpture"}]))}
-     "+ Sculpture"]
+                  (dispatch! [:sculpture.edit/create-entity {:type "stained-glass"}]))}
+     "+ Stained Glass"]
 
     [:button
      {:on-click (fn [_]

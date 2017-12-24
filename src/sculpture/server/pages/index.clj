@@ -8,7 +8,7 @@
   (hiccup/html
     [:html
      [:head
-      [:title "Sculpture"]
+      [:title "Stained Glass"]
       [:link {:rel "stylesheet"
               :href "https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"}]
       [:link {:rel "stylesheet"

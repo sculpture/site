@@ -7,7 +7,7 @@
 (defn query-view []
   (let [query @(subscribe [:sculpture.search/query])]
     [:div.query
-     [:input {:placeholder "Search Sculpture"
+     [:input {:placeholder "Search Stained Glass"
               :value query
               :auto-focus true
               :on-focus (fn [_]
