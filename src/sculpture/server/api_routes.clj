@@ -24,6 +24,12 @@
     {:status 404
      :body {:error "Not Found"}}))
 
+(defn request->user-id [request]
+  (or (get-in request [:session :user-id])
+      ; TODO this header should be encrypted or signed
+      (some-> (get-in request [:headers "user-id"])
+              (java.util.UUID/fromString))))
+
 (defroutes routes
   (context "/api" _
 
@@ -191,8 +197,51 @@
 
     ; REQUIRE AUTH
 
+    (POST "/sculptures" [id title slug year artist-ids :as req]
+      (if-let [user-id (request->user-id req)]
+        (if (db.core/upsert!
+              {:id id
+               :type "sculpture"
+               :slug slug
+               :title title
+               :year year
+               :artist-ids artist-ids}
+              user-id)
+          {:status 200
+           :body {:status "OK"}}
+          {:status 500
+           :body {:error "Error creating sculpture"}})
+        {:status 401
+         :body {:error "You must be logged in to perform this action."}}))
+
+    (POST "/artists" [id name slug :as req]
+      (if-let [user-id (request->user-id req)]
+        (if (db.core/upsert!
+              {:id id
+               :name name
+               :type "artist"
+               :slug slug}
+              user-id)
+          {:status 200
+           :body {:status "OK"}}
+          {:status 500
+           :body {:error "Error creating artist"}})
+        {:status 401
+         :body {:error "You must be logged in to perform this action."}}))
+
+    (POST "/photos" [id file sculpture-id :as req]
+      (if-let [user-id (request->user-id req)]
+        (let [id (java.util.UUID/fromString id)
+              sculpture-id (java.util.UUID/fromString sculpture-id)
+              {:keys [tempfile filename]} file
+              image-data (darkroom/process-image! id tempfile sculpture-id user-id)]
+          {:status 200
+           :body image-data})
+        {:status 401
+         :body {:error "You must be logged in to perform this action."}}))
+
     (PUT "/entities" [entity :as req]
-      (if-let [user-id (get-in req [:session :user-id])]
+      (if-let [user-id (request->user-id req)]
         (if (db.core/upsert! entity user-id)
           {:status 200
            :body {:status "OK"}}
@@ -202,10 +251,10 @@
          :body {:error "You must be logged in to perform this action."}}))
 
     (PUT "/upload" req
-      (if-let [user-id (get-in req [:session :user-id])]
+      (if-let [user-id (request->user-id req)]
         (let [id (java.util.UUID/fromString (get-in req [:params "id"]))
               {:keys [tempfile filename]} (get-in req [:params "file"])
-              image-data (darkroom/process-image! id tempfile user-id)]
+              image-data (darkroom/process-image! id tempfile nil user-id)]
           {:status 200
            :body image-data})
         {:status 401

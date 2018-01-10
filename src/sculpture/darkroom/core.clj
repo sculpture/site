@@ -28,8 +28,9 @@
    :created-at (convert/extract-created-at file)
    :dimensions (convert/extract-dimensions file)})
 
-(defn process-image! [id file user-id]
+(defn process-image! [id file sculpture-id user-id]
   {:pre [(uuid? id)
+         (or (uuid? sculpture-id) (nil? sculpture-id))
          (uuid? user-id)]}
   (upload-image! id file)
   (let [image-data (extract-data file)]
@@ -40,7 +41,7 @@
                  :captured-at (image-data :created-at)
                  :width (get-in image-data [:dimensions :width])
                  :height (get-in image-data [:dimensions :height])
-                 :sculpture-id nil}
+                 :sculpture-id sculpture-id}
                 user-id))
   (db.select/select-entity-with-id "photo" id))
 
