@@ -1,8 +1,8 @@
-(ns humandb.editor.fields.location
+(ns sculpture.admin.fields.location
   (:require
     [reagent.core :as r]
     [releaflet.map :refer [map-view]]
-    [humandb.editor.fields.core :refer [field]]))
+    [humandb.ui.fields.core :refer [field]]))
 
 ; TODO improve these using: http://williams.best.vwh.net/avform.htm#LL
 

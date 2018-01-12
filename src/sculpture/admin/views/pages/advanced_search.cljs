@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.pages.advanced-search
   (:require
-    [humandb.editor.field :refer [field]]
+    [humandb.ui.field :refer [field]]
     [sculpture.admin.state.core :refer [dispatch! subscribe]]
     [sculpture.admin.views.pages.entity-editor :refer [schema]]
     [sculpture.admin.views.sidebar.entity.partials.list :refer [entity-row-view]]))

@@ -1,7 +1,7 @@
-(ns humandb.editor.fields.geojson
+(ns sculpture.admin.fields.geojson
   (:require
     [reagent.core :as r]
-    [humandb.editor.fields.core :refer [field]]
+    [humandb.ui.fields.core :refer [field]]
     [releaflet.map :as leaflet]))
 
 (defmethod field :geojson

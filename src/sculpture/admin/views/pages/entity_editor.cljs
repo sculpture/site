@@ -1,7 +1,7 @@
 (ns sculpture.admin.views.pages.entity-editor
   (:require
     [clojure.string :as string]
-    [humandb.editor.field :refer [field]]
+    [humandb.ui.field :refer [field]]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.cdn :as cdn]
     [sculpture.admin.routes :as routes]))
