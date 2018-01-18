@@ -26,7 +26,8 @@
 (defn extract-data [file]
   {:colors (convert/extract-colors file)
    :created-at (convert/extract-created-at file)
-   :dimensions (convert/extract-dimensions file)})
+   :dimensions (convert/extract-dimensions file)
+   :location (convert/extract-location file)})
 
 (defn process-image! [id file sculpture-id user-id]
   {:pre [(uuid? id)
@@ -41,6 +42,7 @@
                  :captured-at (image-data :created-at)
                  :width (get-in image-data [:dimensions :width])
                  :height (get-in image-data [:dimensions :height])
+                 :location (image-data :location)
                  :sculpture-id sculpture-id}
                 user-id))
   (db.select/select-entity-with-id "photo" id))
