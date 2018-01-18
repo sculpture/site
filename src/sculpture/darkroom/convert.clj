@@ -78,3 +78,28 @@
              tc/to-date)
         (catch java.lang.IllegalArgumentException e))
       (java.util.Date. (.lastModified file)))))
+
+(defn- raw-gps-to-float [coords ref]
+  (let [numbers (->> (string/split coords #",")
+                     (map (fn [equation]
+                            (let [components (->> (string/split equation #"/")
+                                                  (map (fn [string] (Float/parseFloat string))))]
+                              (/ (first components)
+                                 (second components))))))
+        degrees (+ (first numbers)
+                   (/ (second numbers) 60)
+                   (/ (last numbers) 3600))]
+    (if (or (= ref "N") (= ref "E"))
+      degrees
+      (* -1 degrees))))
+
+(defn extract-location [file]
+  (try
+    (with-programs [identify]
+      (let [location-exif-string "%[EXIF:GPSLatitude]|%[EXIF:GPSLatitudeRef]|%[EXIF:GPSLongitude]|%[EXIF:GPSLongitudeRef]"
+            [latitude latitude-ref longitude longitude-ref]
+            (-> (identify "-ping" "-format" location-exif-string (.getPath file))
+                (string/split #"\|"))]
+        {:latitude (raw-gps-to-float latitude latitude-ref)
+         :longitude (raw-gps-to-float longitude longitude-ref)}))
+    (catch java.lang.Exception e)))
