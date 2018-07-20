@@ -15,7 +15,7 @@
                  [re-frame "0.9.1"]
                  [secretary "1.2.3"]
                  [venantius/accountant "0.1.7"]
-                 [humandb.ui "0.0.2"]
+                 [human-db/ui "0.0.2"]
 
                  ; SERVER
                  [environ "1.1.0"]
