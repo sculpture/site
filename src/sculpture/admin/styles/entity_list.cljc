@@ -8,7 +8,7 @@
         height (rem 2.6)]
     [:.entity-list
      {:overflow-x "hidden"
-      :overflow-y "scroll"}
+      :overflow-y "auto"}
 
      [:>.entity
       {:display "block"

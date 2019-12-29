@@ -41,7 +41,7 @@
     search-query-styles
 
     [:>.content
-     {:overflow-y "scroll"}
+     {:overflow-y "auto"}
 
      search-result-styles
      entity-styles
@@ -55,7 +55,7 @@
      :right "8em"
      :z-index 1000
      :max-height "100vh"
-     :overflow-y "scroll"
+     :overflow-y "auto"
      :box-sizing "border-box"}
     (floating-box)
 

@@ -40,7 +40,7 @@
 
 (def search-result-styles
   [:>.results
-   {:overflow-y "scroll"}
+   {:overflow-y "auto"}
 
    [:>.no-results
     {:padding [[pad]]}]
