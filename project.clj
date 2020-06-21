@@ -36,8 +36,8 @@
                  [org.postgresql/postgresql "9.4.1208"]
 
                  ; DARKROOM
-                 [me.raynes/conch "0.8.0"]
-                 [me.raynes/fs "1.4.6"]
+                 [clj-commons/conch "0.9.2"]
+                 [clj-commons/fs "1.5.2"]
                  [clj-time "0.14.0"]
                  [amazonica "0.3.106"]
                  [cheshire "5.7.1"]]
