@@ -98,13 +98,19 @@
 
 (defn upsert-region-tag! [region-tag]
   (-upsert-region-tag!
-    db-spec
-    (->db region-tag)))
+   db-spec
+   (->db region-tag)))
+
+(defn upsert-city! [city]
+  (-upsert-city!
+   db-spec
+   (->db city)))
 
 (defn upsert-entity! [entity]
   (let [upsert-fn! (case (entity :type)
                      "artist-tag" upsert-artist-tag!
                      "artist" upsert-artist!
+                     "city" upsert-city!
                      "material" upsert-material!
                      "sculpture-tag" upsert-sculpture-tag!
                      "sculpture" upsert-sculpture!

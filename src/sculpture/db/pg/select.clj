@@ -12,6 +12,7 @@
   {"user" "users"
    "material" "materials_with_related_ids"
    "artist-tag" "artist-tags"
+   "city" "cities"
    "sculpture-tag" "sculpture-tags"
    "region-tag" "region-tags"
    "photo" "photos"
@@ -123,6 +124,7 @@
 (defn select-all []
   (->> ["user"
         "material"
+        "city"
         "artist-tag"
         "sculpture-tag"
         "region-tag"

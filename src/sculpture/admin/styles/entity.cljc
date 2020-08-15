@@ -1,9 +1,9 @@
 (ns sculpture.admin.styles.entity
   (:require
-    [garden.units :refer [px em rem]]
-    [sculpture.admin.styles.side-button :refer [side-button]]
-    [sculpture.admin.styles.fontawesome :refer [fontawesome]]
-    [sculpture.admin.styles.colors :as colors]))
+   [garden.units :refer [px em rem]]
+   [sculpture.admin.styles.side-button :refer [side-button]]
+   [sculpture.admin.styles.fontawesome :refer [fontawesome]]
+   [sculpture.admin.styles.colors :as colors]))
 
 (def entity-styles
   [:>.active-entity
@@ -62,6 +62,7 @@
 
       [:&.tags:before (fontawesome \uf02c)]
       [:&.materials:before (fontawesome \uf12e)]
+      [:&.city:before (fontawesome \uf276)]
       [:&.location:before (fontawesome \uf041)]
       [:&.regions:before (fontawesome \uf279)]
       [:&.nearby:before (fontawesome \uf277)]

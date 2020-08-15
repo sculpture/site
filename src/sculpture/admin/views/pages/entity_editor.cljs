@@ -26,6 +26,7 @@
       :artist-ids []
       :commissioned-by ""
       :material-ids []
+      :city-id nil
       :location nil
       :note ""
       :tag-ids []
@@ -58,6 +59,15 @@
       :geojson nil
       :slug ""
       :tag-ids [])
+
+    "city"
+    (array-map
+      :id ""
+      :type "city"
+      :city ""
+      :region ""
+      :country ""
+      :slug "")
 
     "material"
     (array-map
@@ -123,7 +133,7 @@
                      "artist" "artist-tag"
                      "sculpture" "sculpture-tag"
                      "region" "region-tag"
-                     "photo" "user"}
+                     "photo" "user" "city"}
           :disabled true}
    :name {:type :string}
    :title {:type :string}
@@ -146,6 +156,12 @@
                          (dispatch! [:sculpture.edit/simplify geojson callback]))
              :get-shape (fn [query callback]
                           (dispatch! [:sculpture.edit/get-shape query callback]))}
+   :city-id {:type :single-lookup
+             :on-find (lookup-on-find)
+             :on-search (lookup-on-search "city")}
+   :city {:type :string}
+   :region {:type :string}
+   :country {:type :string}
    :link-website {:type :url}
    :link-wikipedia {:type :url}
    :size {:type :integer}

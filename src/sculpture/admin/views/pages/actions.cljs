@@ -53,6 +53,11 @@
 
     [:button
      {:on-click (fn [_]
+                  (dispatch! [:sculpture.edit/create-entity {:type "city"}]))}
+     "+ City"]
+
+    [:button
+     {:on-click (fn [_]
                   (dispatch! [:sculpture.edit/create-entity {:type "region"}]))}
      "+ Region"]
 

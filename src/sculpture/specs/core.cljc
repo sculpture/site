@@ -1,11 +1,12 @@
 (ns sculpture.specs.core
   (:require
-    [clojure.spec.alpha :as s]
-    [sculpture.specs.entity]
-    [sculpture.specs.sculpture]
-    [sculpture.specs.artist]
-    [sculpture.specs.material]
-    [sculpture.specs.user]
+   [clojure.spec.alpha :as s]
+   [sculpture.specs.entity]
+   [sculpture.specs.sculpture]
+   [sculpture.specs.city]
+   [sculpture.specs.artist]
+   [sculpture.specs.material]
+   [sculpture.specs.user]
     [sculpture.specs.photo]
     [sculpture.specs.tag]
     [sculpture.specs.region]))
@@ -13,6 +14,7 @@
 (s/def :sculpture/entity :sculpture.specs.entity/entity)
 (s/def :sculpture/entity-type :sculpture.specs.entity/type)
 (s/def :sculpture/user :sculpture.specs.user/user)
+(s/def :sculpture/city :sculpture.specs.city/city-entity)
 (s/def :sculpture/artist :sculpture.specs.artist/artist)
 (s/def :sculpture/sculpture :sculpture.specs.sculpture/sculpture)
 (s/def :sculpture/material :sculpture.specs.material/material)

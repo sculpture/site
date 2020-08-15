@@ -17,6 +17,21 @@ SET
 WHERE "sculptures".id = :id
 RETURNING true;
 
+-- :name -upsert-city!
+-- :command :returning-execute
+INSERT INTO cities ("id", "type", "slug", "city", "region", "country")
+VALUES (:id, :type, :slug, :city, :region, :country)
+ON CONFLICT (id) DO
+UPDATE
+SET
+  "slug" = :slug,
+  "city" = :city,
+  "region" = :region,
+  "country" = :country
+WHERE
+  "cities".id = :id
+RETURNING true;
+
 -- :name -upsert-region!
 -- :command :returning-execute
 INSERT INTO regions ("id", "type", "name", "slug", "shape")

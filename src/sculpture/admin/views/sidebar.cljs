@@ -6,6 +6,7 @@
     [sculpture.admin.views.sidebar.entity :refer [entity-view]]
     [sculpture.admin.views.sidebar.entity.sculpture]
     [sculpture.admin.views.sidebar.entity.region]
+    [sculpture.admin.views.sidebar.entity.city]
     [sculpture.admin.views.sidebar.entity.artist]
     [sculpture.admin.views.sidebar.entity.photo]
     [sculpture.admin.views.sidebar.entity.sculpture-tag]

@@ -5,6 +5,16 @@ BEGIN;
 CREATE EXTENSION IF NOT EXISTS "postgis";
 CREATE EXTENSION IF NOT EXISTS "postgis_topology";
 
+CREATE TABLE IF NOT EXISTS cities (
+  -- required:
+  "id" uuid PRIMARY KEY,
+  "type" text NOT NULL,
+  "city" text NOT NULL,
+  "region" text NOT NULL,
+  "country" text NOT NULL,
+  "slug" text NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS sculptures (
   -- required:
   "id" uuid PRIMARY KEY,
@@ -19,6 +29,7 @@ CREATE TABLE IF NOT EXISTS sculptures (
   "commissioned-by" text,
   "location" geography(point,4326),
   "location-precision" float
+  "city-id" uuid REFERENCES cities(id)
 );
 
 CREATE INDEX sculptures_slug ON sculptures(lower(slug));

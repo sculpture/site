@@ -33,9 +33,12 @@
        (for [[type results] grouped-results]
          ^{:key type}
          [:div.group {:class (str type)}
-          [:h2 (-> (str type)
-                   (string/capitalize)
-                   (str "s"))]
+          [:h2 (case (str type)
+                 "city" "Cities"
+                 ;; else
+                 (-> (str type)
+                     (string/capitalize)
+                     (str "s")))]
           [entity-list-view results]])))])
 
 (defn search-view []

@@ -17,7 +17,7 @@
                 :email (env :github-committer-email)})
 
 (defn entity->path [entity]
-  (str "data/" (entity :type)  "/" (entity :id) ".yml" ))
+  (str "data/" (entity :type)  "/" (entity :id) ".yml"))
 
 (def schema
   {"sculpture"

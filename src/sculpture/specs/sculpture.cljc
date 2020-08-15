@@ -28,6 +28,7 @@
                             ::commissioned-by
                             ::material-ids
                             ::location
+                            ::city-id
                             ::tag-ids])))
 
 (defmethod entity-type "sculpture"

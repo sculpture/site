@@ -6,7 +6,7 @@
   (js/Fuse. (->> data
                  (map (fn [e] (update e :id str)) data)
                  clj->js)
-            (clj->js {:keys [:title :name]
+            (clj->js {:keys [:title :name :slug]
                       :shouldSort true
                       :minMatchCharLength 3
                       :threshold 0.3

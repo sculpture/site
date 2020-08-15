@@ -7,6 +7,7 @@
 (s/def ::type #{"sculpture"
                 "material"
                 "artist"
+                "city"
                 "region"
                 "photo"
                 "user"

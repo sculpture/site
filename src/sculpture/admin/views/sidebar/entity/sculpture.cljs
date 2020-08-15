@@ -50,6 +50,11 @@
               (map (fn [c] (/ (js/Math.round (* c 100000)) 100000)))
               (string/join ", " )))]])
 
+    (when-let [city @(subscribe [:get-entity (sculpture :city-id)])]
+      [:div.row.city {:title "City"}
+       [:a {:href (routes/entity-path {:id (city :id)})}
+        (interpose ", " [(city :city) (city :region) (city :country)])]])
+
     (let [regions @(subscribe [:get-entities (sculpture :region-ids)])]
       [:div.row.regions {:title "Regions"}
        (interpose ", "

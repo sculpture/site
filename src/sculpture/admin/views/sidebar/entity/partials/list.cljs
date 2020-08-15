@@ -8,6 +8,14 @@
 
 (defmulti entity-row-data :type)
 
+(defmethod entity-row-data "city"
+  [city]
+  {:h1 (city :city)
+   :h2 (str (city :region) ", " (city :country))
+   :id (city :id)
+   :image nil
+   :type "city"})
+
 (defmethod entity-row-data "photo"
   [photo]
   {:h1 "Photo"
