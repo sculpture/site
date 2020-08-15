@@ -46,35 +46,33 @@
 
   :plugins [[lein-figwheel "0.5.10"]
             [lein-environ "1.1.0"]
-            [lein-cljsbuild "1.1.6"]]
+            [lein-cljsbuild "1.1.8"]]
 
   :figwheel {:server-port 3939
              :reload-clj-files {:clj false
                                 :cljc true}}
 
-  :cljsbuild {:builds [{:id           "dev"
-                        :source-paths ["src"]
-                        :figwheel     {:on-jsload "sculpture.admin.core/reload"}
-                        :compiler     {:main       "sculpture.admin.core"
-                                       :asset-path "/js/dev/out"
-                                       :source-map true
-                                       :output-to  "resources/public/js/sculpture.js"
-                                       :output-dir "resources/public/js/dev/out"}}
+  :cljsbuild {:builds {:dev {:source-paths ["src"]
+                             :figwheel     {:on-jsload "sculpture.admin.core/reload"}
+                             :compiler     {:main       "sculpture.admin.core"
+                                            :asset-path "/js/dev/out"
+                                            :source-map true
+                                            :output-to  "resources/public/js/sculpture.js"
+                                            :output-dir "resources/public/js/dev/out"}}
 
-                       {:id           "prod"
-                        :source-paths ["src"]
-                        :compiler     {:optimizations :advanced
-                                       :main       "sculpture.admin.core"
-                                       :asset-path "/js/prod/out"
-                                       :output-to  "resources/public/js/sculpture.js"
-                                       :output-dir "resources/public/js/prod/out"
-                                       :externs ["resources/externs/leaflet.js"
-                                                 "resources/externs/stackblur.js"]
-                                       ; to debug advanced compilation issues, enable these options:
-                                       ; :source-map "resources/public/js/sculpture.js.map"
-                                       ; :pseudo-names true
-                                       ; :pretty-print true
-                                       }}]}
+                       :prod {:source-paths ["src"]
+                              :compiler     {:optimizations :advanced
+                                             :main       "sculpture.admin.core"
+                                             :asset-path "/js/prod/out"
+                                             :output-to  "resources/public/js/sculpture.js"
+                                             :output-dir "resources/public/js/prod/out"
+                                             :externs ["resources/externs/leaflet.js"
+                                                       "resources/externs/stackblur.js"]
+                                             ; to debug advanced compilation issues, enable these options:
+                                             ; :source-map "resources/public/js/sculpture.js.map"
+                                             ; :pseudo-names true
+                                             ; :pretty-print true
+                                             }}}}
 
   :profiles {:test {:dependencies [[com.codeborne/phantomjsdriver "1.3.0"
                                     :exclusions [org.seleniumhq.selenium/selenium-java
