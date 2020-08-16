@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS sculptures (
   "date-precision" text, -- could be enum
   "commissioned-by" text,
   "location" geography(point,4326),
-  "location-precision" float
+  "location-precision" float,
   "city-id" uuid REFERENCES cities(id)
 );
 
