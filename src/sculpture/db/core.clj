@@ -26,6 +26,8 @@
    [:id :type :name :slug]
    "artist"
    [:id :type :name :nationality :slug :gender :link-website :link-wikipedia :bio :birth-date :birth-date-precision :death-date :death-date-precision :tag-ids]
+   "city"
+   [:id :type :slug :city :region :country]
    "region"
    [:id :type :name :slug :tag-ids :geojson]
    "photo"
