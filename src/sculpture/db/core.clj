@@ -21,7 +21,7 @@
 
 (def schema
   {"sculpture"
-   [:id :type :title :slug :size :note :date :date-precision :artist-ids :commissioned-by :material-ids :location :tag-ids]
+   [:id :type :title :slug :size :note :date :date-precision :artist-ids :commissioned-by :material-ids :location :city-id :tag-ids]
    "material"
    [:id :type :name :slug]
    "artist"
