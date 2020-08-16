@@ -49,6 +49,7 @@
                 :size nil
                 :note nil
                 :date nil
+                :city-id nil
                 :date-precision nil
                 :commissioned-by nil
                 :location nil}

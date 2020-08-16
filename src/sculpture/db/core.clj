@@ -68,6 +68,7 @@
   (let [grouped-entities (group-by :type entities)]
     (doseq [entity-type ["artist-tag"
                          "artist"
+                         "city"
                          "material"
                          "sculpture-tag"
                          "sculpture"

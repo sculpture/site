@@ -1,7 +1,7 @@
 -- :name -upsert-sculpture!
 -- :command :returning-execute
-INSERT INTO sculptures ("id", "type", "title", "slug", "size", "note", "date", "date-precision", "commissioned-by", "location", "location-precision")
-VALUES (:id, :type, :title, :slug, :size, :note, :date, :date-precision, :commissioned-by, ST_Point(:location-lng, :location-lat), :location-precision)
+INSERT INTO sculptures ("id", "type", "title", "slug", "size", "note", "date", "date-precision", "commissioned-by", "city-id", "location", "location-precision")
+VALUES (:id, :type, :title, :slug, :size, :note, :date, :date-precision, :commissioned-by, :city-id, ST_Point(:location-lng, :location-lat), :location-precision)
 ON CONFLICT (id) DO
 UPDATE
 SET
@@ -12,6 +12,7 @@ SET
   "date" = :date,
   "date-precision" = :date-precision,
   "commissioned-by" = :commissioned-by,
+  "city-id" = :city-id,
   "location" = ST_Point(:location-lng, :location-lat),
   "location-precision" = :location-precision
 WHERE "sculptures".id = :id
