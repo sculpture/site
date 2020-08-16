@@ -33,7 +33,8 @@
       :slug ""
       :date nil
       :date-precision ""
-      :size nil)
+      :size nil
+      :link-wikipedia "")
 
     "artist"
     (array-map

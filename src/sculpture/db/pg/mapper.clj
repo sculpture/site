@@ -52,6 +52,7 @@
                 :city-id nil
                 :date-precision nil
                 :commissioned-by nil
+                :link-wikipedia nil
                 :location nil}
    "photo" {:id nil
             :type nil

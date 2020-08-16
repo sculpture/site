@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS sculptures (
   "commissioned-by" text,
   "location" geography(point,4326),
   "location-precision" float,
+  "link-wikipedia" text,
   "city-id" uuid REFERENCES cities(id)
 );
 

@@ -37,6 +37,10 @@
       [:div.row.materials {:title "Materials"}
        [related-materials-view (sculpture :material-ids)]])
 
+    (when (sculpture :link-wikipedia)
+      [:div.row.wikipedia {:title "Wikipedia Link"}
+       [:a.link {:href (sculpture :link-wikipedia)} "Wikipedia"]])
+
     (when (sculpture :location)
       [:div.row.location {:title "Location"}
        [:a {:href "#"

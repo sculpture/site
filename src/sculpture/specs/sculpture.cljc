@@ -15,6 +15,11 @@
 (s/def ::location (s/nilable :sculpture.specs.types/location-type))
 (s/def ::slug :sculpture.specs.types/slug-type)
 (s/def ::size (s/nilable integer?))
+(s/def ::link-wikipedia (s/nilable
+                          (s/and
+                          :sculpture.specs.types/url-type
+                          ; TODO regex wikipedia
+                          )))
 
 (s/def ::sculpture
   (s/merge :sculpture.specs.entity/common
@@ -26,6 +31,7 @@
                             ::date-precision
                             ::artist-ids
                             ::commissioned-by
+                            ::link-wikipedia
                             ::material-ids
                             ::location
                             ::city-id
