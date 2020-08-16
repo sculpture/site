@@ -27,4 +27,4 @@
   (let [port (Integer/parseInt (first args))]
     (println "starting on port" port)
     (start-server! port)
-    (db/reload!)))
+    #_(db/reload!)))
