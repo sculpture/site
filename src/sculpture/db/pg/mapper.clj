@@ -133,6 +133,10 @@
   (-> result
       (dissoc :shape)))
 
+(defmethod db-> "sculpture-tag"
+  [result]
+  (-> result))
+
 (defmethod db-> "sculpture"
   [result]
   (-> result
@@ -156,6 +160,10 @@
                                   (->> json
                                        (map #(select-keys % [:id]))
                                        (map db->))))
+      (update-if-exists :sculpture-tags (fn [json]
+                                          (->> json
+                                               (map #(select-keys % [:name :slug]))
+                                               (map db->))))
       (update-if-exists :artists (fn [json]
                                    (->> json
                                         (map #(select-keys % [:name :slug]))

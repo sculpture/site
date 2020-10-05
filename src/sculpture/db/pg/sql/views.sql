@@ -10,6 +10,7 @@ CREATE VIEW extended_sculptures AS (
     json_agg(distinct to_jsonb(photos)) AS "photos",
     json_agg(distinct artists) AS "artists",
     json_agg(distinct materials) AS "materials",
+    json_agg(distinct "sculpture-tags") AS "sculpture-tags",
     json_agg(regions ORDER BY ST_Area(ST_Envelope(regions.shape::geometry)) ASC) AS "regions",
     json_agg("nearby-regions" ORDER BY ST_Distance("nearby-regions".shape, sculptures.location) ASC) AS "regions-nearby"
   FROM
@@ -21,6 +22,8 @@ CREATE VIEW extended_sculptures AS (
   LEFT JOIN regions AS "nearby-regions" ON ST_DWithin("nearby-regions".shape, sculptures.location, 100) AND ST_Distance("nearby-regions".shape, sculptures.location) > 0
   LEFT JOIN photos ON photos."sculpture-id" = sculptures.id
   LEFT JOIN materials ON materials_sculptures."material-id" = materials.id
+  LEFT JOIN "sculptures_sculpture-tags" ON "sculptures_sculpture-tags"."sculpture-id" = sculptures.id
+  LEFT JOIN "sculpture-tags" ON "sculptures_sculpture-tags"."sculpture-tag-id" = "sculpture-tags".id
   GROUP BY
     sculptures.id
 );
