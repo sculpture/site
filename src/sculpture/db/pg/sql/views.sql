@@ -11,8 +11,8 @@ CREATE VIEW extended_sculptures AS (
     json_agg(distinct artists) AS "artists",
     json_agg(distinct materials) AS "materials",
     json_agg(distinct "sculpture-tags") AS "sculpture-tags",
-    json_agg(regions ORDER BY ST_Area(ST_Envelope(regions.shape::geometry)) ASC) AS "regions",
-    json_agg("nearby-regions" ORDER BY ST_Distance("nearby-regions".shape, sculptures.location) ASC) AS "regions-nearby"
+    json_agg((SELECT distinct x FROM (SELECT "regions".name, "regions".slug ORDER BY ST_Area(ST_Envelope(regions.shape::geometry)) ASC) AS x)) AS "regions",
+    json_agg((SELECT distinct y FROM (SELECT "nearby-regions".name, "nearby-regions".slug ORDER BY ST_Distance("nearby-regions".shape, sculptures.location) ASC) AS y)) AS "regions-nearby"
   FROM
     sculptures
   LEFT JOIN artists_sculptures ON artists_sculptures."sculpture-id" = sculptures.id
