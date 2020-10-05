@@ -1,9 +1,9 @@
 (ns sculpture.server.oauth
   (:require
-    [clojure.data.json :as json]
     [environ.core :refer [env]]
     [org.httpkit.client :as http]
-    [ring.util.codec :refer [form-encode]]))
+    [ring.util.codec :refer [form-encode]]
+    [sculpture.json :as json]))
 
 (defn request-token-url [provider]
   (case provider
@@ -22,7 +22,7 @@
                       {:method :get
                        :url (str "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=" token)})
                    :body
-                   (json/read-str :key-fn keyword))]
+                   json/decode)]
       (= (resp :aud) (env :google-client-id)))))
 
 (defn get-user-info [provider token]
@@ -33,7 +33,7 @@
                         {:method :get
                          :url (str "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" token)})
                      :body
-                     (json/read-str :key-fn keyword))]
+                     json/decode)]
         {:name (resp :name)
          :email (resp :email)
          :avatar (resp :picture)}))))

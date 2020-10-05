@@ -3,11 +3,12 @@
   :source-paths ["src"]
 
   :dependencies [; COMMON
-                 [org.clojure/clojure "1.9.0-alpha17"]
+                 [org.clojure/clojure "1.10.1"]
+                 [io.bloomventures/commons "0.10.5"]
 
                  ; CLIENT
                  [org.clojure/clojurescript "1.9.562"]
-                 [cljs-ajax "0.5.8" :exclusions [cheshire]]
+                 [cljs-ajax "0.5.8"]
                  [cljsjs/fuse "2.5.0-0"]
                  [garden "1.3.2"]
                  [com.andrewmcveigh/cljs-time "0.5.0"]
@@ -25,22 +26,24 @@
                  [http-kit "2.2.0"]
                  [javax.servlet/servlet-api "2.5"]
                  [ring-cors "0.1.8"]
-                 [ring-middleware-format "0.7.0" :exclusions [cheshire]]
+                 [ring-middleware-format "0.7.0"]
 
                  ; DB
                  [base64-clj "0.1.1"]
-                 [org.clojure/data.json "0.2.6"]
                  [io.forward/yaml "1.0.6"]
-                 [com.layerware/hugsql "0.4.7"]
-                 [net.postgis/postgis-jdbc "2.2.1" :exclusions [org.postgresql/postgresql]]
-                 [org.postgresql/postgresql "9.4.1208"]
+                 [metosin/jsonista "0.2.7"]
+                 [hikari-cp "2.13.0"]
+                 [seancorfield/next.jdbc "1.1.588"]
+                 [com.layerware/hugsql "0.5.1"]
+                 [com.layerware/hugsql-adapter-next-jdbc "0.5.1"]
+                 [org.postgresql/postgresql "42.2.16"]
+                 [net.postgis/postgis-jdbc "2.5.0" :exclusions [org.postgresql/postgresql]]
 
                  ; DARKROOM
                  [clj-commons/conch "0.9.2"]
                  [clj-commons/fs "1.5.2"]
                  [clj-time "0.14.0"]
-                 [amazonica "0.3.106"]
-                 [cheshire "5.7.1"]]
+                 [amazonica "0.3.106"]]
 
   :main sculpture.server.core
 

@@ -1,40 +1,44 @@
 (ns sculpture.db.pg.mapper
   (:require
-    [clojure.data.json :as json]
-    [clojure.java.jdbc :as jdbc]
-    [clj-time.coerce :as coerce]))
+    [next.jdbc.result-set :refer [ReadableColumn]]
+    [sculpture.json :as json]))
 
-(def ->sql-date
-  (comp
-    coerce/to-sql-date
-    coerce/from-date))
+(defn parse-pg-geography [v]
+  (let [geometry (.getGeometry v)]
+    (condp instance? geometry
+      org.postgis.Polygon
+      geometry
 
-(def ->sql-time
-  (comp
-    coerce/to-sql-time
-    coerce/from-date))
+      org.postgis.Point
+      {:latitude (.getY geometry)
+       :longitude (.getX geometry)})))
 
-(extend-protocol jdbc/IResultSetReadColumn
-  java.sql.Date
-  (result-set-read-column [val _ _]
-    (coerce/to-date (coerce/from-string (.toString val))))
+(defn parse-pg-object [v]
+  (case (.getType v)
+    "json" (json/decode (.getValue v))
+    "jsonb" (json/decode (.getValue v))))
 
-  java.sql.Array
-  (result-set-read-column [val _ _]
-    (vec (remove nil? (into [] (.getArray val)))))
+(defn parse-pg-array [v]
+  (vec (remove nil? (into [] (.getArray v)))))
+
+(extend-protocol ReadableColumn
+  org.postgis.PGgeography
+  (read-column-by-label [v label]
+    (parse-pg-geography v))
+  (read-column-by-index [v result-set-meta index]
+    (parse-pg-geography v))
+
+  org.postgresql.jdbc.PgArray
+  (read-column-by-label [v label]
+    (parse-pg-array v))
+  (read-column-by-index [v result-set-meta index]
+    (parse-pg-array v))
 
   org.postgresql.util.PGobject
-  (result-set-read-column [pg-object _ _]
-    (case (.getType pg-object)
-      "json" (json/read-str (.getValue pg-object) :key-fn keyword)
-      "geography" (let [geometry (org.postgis.PGgeometry/geomFromString (.getValue pg-object))]
-                    (condp instance? geometry
-                      org.postgis.Polygon
-                      geometry
-
-                      org.postgis.Point
-                      {:latitude (.getY geometry)
-                       :longitude (.getX geometry)})))))
+  (read-column-by-label [v label]
+    (parse-pg-object v))
+  (read-column-by-index [v result-set-meta index]
+    (parse-pg-object v)) )
 
 (defn update-if-exists [obj k f]
   (if (contains? obj k)
@@ -94,7 +98,6 @@
   [sculpture]
   (-> (blank-entities "sculpture")
       (merge sculpture)
-      (update :date ->sql-date)
       (assoc :location-lng (:longitude (sculpture :location)))
       (assoc :location-lat (:latitude (sculpture :location)))
       (assoc :location-precision (:precision (sculpture :location)))
@@ -104,8 +107,7 @@
   [photo]
   (-> (blank-entities (photo :type))
       (merge photo)
-      (update :captured-at ->sql-time)
-      (update :colors json/write-str)))
+      (update :colors json/encode)))
 
 (defmethod ->db "region"
   [region]
@@ -116,9 +118,7 @@
 (defmethod ->db "artist"
   [artist]
   (-> (blank-entities "artist")
-      (merge artist)
-      (update :birth-date ->sql-date)
-      (update :death-date ->sql-date)))
+      (merge artist)))
 
 ; db->
 

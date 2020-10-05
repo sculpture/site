@@ -1,9 +1,9 @@
 (ns sculpture.server.geocode
   (:require
     [clojure.set :refer [rename-keys]]
-    [clojure.data.json :as json]
     [environ.core :refer [env]]
     [org.httpkit.client :as http]
+    [sculpture.json :as json]
     [sculpture.db.pg.util :as util]))
 
 (defn mapquest-osm-search [query]
@@ -16,7 +16,7 @@
                          :limit 1
                          :polygon_geojson 1}})
       :body
-      (json/read-str :key-fn keyword)
+      json/decode
       first))
 
 (defn locationiq-osm-search [query]
@@ -29,7 +29,7 @@
                          :limit 1
                          :polygon_geojson 1}})
       :body
-      (json/read-str :key-fn keyword)
+      json/decode
       first
       :geojson))
 
@@ -47,7 +47,7 @@
                          :location query
                          :maxResults 1}})
       :body
-      (json/read-str :key-fn keyword)
+      json/decode
       :results
       first
       :locations
@@ -62,7 +62,7 @@
           :query-params {:key (env :google-maps-api-key)
                          :address query}})
       :body
-      (json/read-str :key-fn keyword)
+      json/decode
       :results
       first
       :geometry
@@ -71,4 +71,4 @@
 
 (defn shape [query]
   (when-let [result (:geojson (mapquest-osm-search query))]
-    (util/simplify-geojson (json/write-str result))))
+    (util/simplify-geojson (json/encode result))))

@@ -3,10 +3,10 @@
     [me.raynes.fs :as fs]
     [me.raynes.fs.compression :as fs.compression]
     [clojure.string :as string]
-    [clojure.data.json :as json]
     [base64-clj.core :as base64]
     [environ.core :refer [env]]
-    [org.httpkit.client :as http])
+    [org.httpkit.client :as http]
+    [sculpture.json :as json])
   (:import
     [org.apache.commons.codec.digest DigestUtils]))
 
@@ -24,7 +24,7 @@
                             {:query-params {:ref branch}
                              :headers github-auth-headers})
                  :body
-                 (json/read-str :key-fn keyword))]
+                 json/decode)]
     (swap! filename->sha assoc (file :name) (file :sha))
     file))
 
@@ -33,7 +33,7 @@
         response (-> @(http/put (str "https://api.github.com/repos/" repo "/contents/" path)
                                 {:headers (merge github-auth-headers
                                                  {"Content-Type" "application/json"})
-                                 :body (json/write-str
+                                 :body (json/encode
                                          {:branch branch
                                           :path path
                                           :message message
@@ -42,7 +42,7 @@
                                           :committer committer
                                           :author author})})
                      :body
-                     (json/read-str :key-fn keyword))]
+                     json/decode)]
     (if (get-in response [:content :name])
       (do
         (swap! filename->sha assoc

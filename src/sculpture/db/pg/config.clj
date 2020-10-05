@@ -1,5 +1,14 @@
 (ns sculpture.db.pg.config
   (:require
-    [environ.core :refer [env]]))
+    [hugsql.core :as hugsql]
+    [hugsql.adapter.next-jdbc :as next-adapter]
+    [next.jdbc.result-set :as rs]
+    [hikari-cp.core :as hikari]
+    [sculpture.config :refer [config]]))
 
-(def ^:dynamic db-spec (env :database-url))
+(defonce datasource
+  (delay
+    (hugsql/set-adapter! (next-adapter/hugsql-adapter-next-jdbc))
+    (hikari/make-datasource {:jdbc-url (str "jdbc:" (config :db-url))})))
+
+(def ^:dynamic db-spec @datasource)
