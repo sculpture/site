@@ -1,10 +1,8 @@
 (ns sculpture.db.pg.select
   (:require
-    [clj-time.core :as t]
-    [clj-time.coerce :as coerce]
-    [hugsql.core :as hugsql]
-    [sculpture.db.pg.config :refer [db-spec]]
-    [sculpture.db.pg.mapper :refer [db->]]))
+   [hugsql.core :as hugsql]
+   [sculpture.db.pg.config :refer [db-spec]]
+   [sculpture.db.pg.mapper :refer [db->]]))
 
 (hugsql/def-db-fns "sculpture/db/pg/sql/select.sql")
 
@@ -36,9 +34,9 @@
 
 (defn select-sculptures-for-decade [decade]
   (->> (-select-sculptures-for-decade
-         db-spec
-         {:date-start (coerce/to-sql-time (t/date-time decade))
-          :date-end (coerce/to-sql-time (t/date-time (+ decade 10)))})
+        db-spec
+        {:date-start (str decade "-01-01")
+         :date-end (str (+ decade 9) "-12-31")})
        (map db->)))
 
 (defn select-sculptures-for-artist-tag-slug [artist-tag-slug]
