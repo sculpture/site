@@ -7,15 +7,16 @@
                  [io.bloomventures/commons "0.10.5"]
 
                  ; CLIENT
-                 [org.clojure/clojurescript "1.9.562"]
-                 [cljs-ajax "0.5.8"]
+                 [org.clojure/clojurescript "1.10.764"]
+                 [cljs-ajax "0.8.1"]
                  [cljsjs/fuse "2.5.0-0"]
-                 [garden "1.3.2"]
-                 [com.andrewmcveigh/cljs-time "0.5.0"]
+                 [garden "1.3.10"]
+                 [com.andrewmcveigh/cljs-time "0.5.2"]
                  [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]
-                 [re-frame "0.9.1"]
-                 [secretary "1.2.3"]
-                 [venantius/accountant "0.1.7"]
+                 [reagent "0.10.0"]
+                 [re-frame "1.1.1"]
+                 [clj-commons/secretary "1.2.4"]
+                 [venantius/accountant "0.2.5"]
                  [human-db/ui "0.0.3"]
 
                  ; SERVER
@@ -47,7 +48,7 @@
 
   :main sculpture.server.core
 
-  :plugins [[lein-figwheel "0.5.10"]
+  :plugins [[lein-figwheel "0.5.20"]
             [lein-environ "1.1.0"]
             [lein-cljsbuild "1.1.8"]]
 

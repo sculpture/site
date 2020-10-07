@@ -1,6 +1,6 @@
 (ns sculpture.admin.core
   (:require
-    [reagent.core :as r]
+    [reagent.dom :as rdom]
     [sculpture.admin.state.core :refer [dispatch-sync!]]
     [sculpture.admin.state.events]
     [sculpture.admin.state.subs]
@@ -14,7 +14,7 @@
 (enable-console-print!)
 
 (defn render []
-  (r/render-component [app-view] (.. js/document (getElementById "app"))))
+  (rdom/render [app-view] (.. js/document (getElementById "app"))))
 
 (defn ^:export init []
   (dispatch-sync! [:init])
