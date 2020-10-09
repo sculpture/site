@@ -1,6 +1,7 @@
 (ns sculpture.db.pg.mapper
   (:require
     [next.jdbc.result-set :refer [ReadableColumn]]
+    [next.jdbc.date-time] ;; requiring this auto-converts datetimes
     [sculpture.json :as json]))
 
 (defn parse-pg-geography [v]
