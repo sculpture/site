@@ -35,7 +35,7 @@
 (defn select-sculptures-for-decade [decade]
   (->> (-select-sculptures-for-decade
         db-spec
-        {:date-start (str decade "-01-01")
+        {:date-start (str decade)
          :date-end (str (+ decade 9) "-12-31")})
        (map db->)))
 

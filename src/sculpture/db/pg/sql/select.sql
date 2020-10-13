@@ -65,7 +65,7 @@ SELECT
 FROM
   extended_sculptures
 WHERE
-extended_sculptures.date BETWEEN :date-start::date AND :date-end::date;
+extended_sculptures.date BETWEEN :date-start AND :date-end;
 
 -- :name -select-sculptures-for-artist-tag-slug
 -- :result :many
