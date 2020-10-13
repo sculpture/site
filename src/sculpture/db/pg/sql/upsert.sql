@@ -1,7 +1,7 @@
 -- :name -upsert-sculpture!
 -- :command :returning-execute
-INSERT INTO sculptures ("id", "type", "title", "slug", "size", "note", "date", "date-precision", "link-wikipedia", "commissioned-by", "city-id", "location", "location-precision")
-VALUES (:id, :type, :title, :slug, :size, :note, :date, :date-precision, :link-wikipedia, :commissioned-by, :city-id, ST_Point(:location-lng, :location-lat), :location-precision)
+INSERT INTO sculptures ("id", "type", "title", "slug", "size", "note", "date", "link-wikipedia", "commissioned-by", "city-id", "location", "location-precision")
+VALUES (:id, :type, :title, :slug, :size, :note, :date, :link-wikipedia, :commissioned-by, :city-id, ST_Point(:location-lng, :location-lat), :location-precision)
 ON CONFLICT (id) DO
 UPDATE
 SET
@@ -10,7 +10,6 @@ SET
   "size" = :size,
   "note" = :note,
   "date" = :date,
-  "date-precision" = :date-precision,
   "link-wikipedia" = :link-wikipedia,
   "commissioned-by" = :commissioned-by,
   "city-id" = :city-id,
@@ -78,8 +77,8 @@ RETURNING true;
 
 -- :name -upsert-artist!
 -- :command :returning-execute
-INSERT INTO artists ("id", "type", "name", "slug", "nationality", "gender", "link-website", "link-wikipedia", "bio", "birth-date", "birth-date-precision", "death-date", "death-date-precision")
-VALUES (:id, :type, :name, :slug, :nationality, :gender, :link-website, :link-wikipedia, :bio, :birth-date, :birth-date-precision, :death-date, :death-date-precision)
+INSERT INTO artists ("id", "type", "name", "slug", "nationality", "gender", "link-website", "link-wikipedia", "bio", "birth-date", "death-date")
+VALUES (:id, :type, :name, :slug, :nationality, :gender, :link-website, :link-wikipedia, :bio, :birth-date, :death-date)
 ON CONFLICT (id) DO
 UPDATE
 SET
@@ -91,9 +90,7 @@ SET
   "link-wikipedia" = :link-wikipedia,
   "bio" = :bio,
   "birth-date" = :birth-date,
-  "birth-date-precision" = :birth-date-precision,
-  "death-date" = :death-date,
-  "death-date-precision" = :death-date-precision
+  "death-date" = :death-date
 WHERE "artists".id = :id
 RETURNING true;
 

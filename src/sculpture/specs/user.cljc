@@ -12,7 +12,7 @@
   (s/merge :sculpture.specs.entity/common
            (s/keys :req-un [::email
                             ::name]
-                   :req-opt [::avatar])))
+                   :opt-un [::avatar])))
 
 (defmethod entity-type "user"
   [_]

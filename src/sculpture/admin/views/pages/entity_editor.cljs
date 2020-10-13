@@ -32,7 +32,6 @@
       :tag-ids []
       :slug ""
       :date nil
-      :date-precision ""
       :size nil
       :link-wikipedia "")
 
@@ -46,9 +45,7 @@
       :link-website ""
       :link-wikipedia ""
       :birth-date nil
-      :birth-date-precision nil
       :death-date nil
-      :death-date-precision nil
       :slug ""
       :tag-ids [])
 
@@ -142,15 +139,9 @@
    :bio {:type :string
          :length :long}
    :nationality {:type :string}
-   :birth-date {:type :date}
-   :birth-date-precision {:type :enum
-                          :options #{""
-                                     "year"
-                                     "year-month"
-                                     "year-month-day"}}
+   :birth-date {:type :flexdate}
    :captured-at {:type :datetime}
-   :death-date {:type :date}
-   :death-date-precision {:type :integer}
+   :death-date {:type :flexdate}
    :slug {:type :string}
    :geojson {:type :geojson
              :simplify (fn [geojson callback]
@@ -174,9 +165,7 @@
             :options #{"" "male" "female" "other"}}
    :note {:type :string
           :length :long}
-   :date {:type :date}
-   :date-precision {:type :enum
-                    :options #{"" "year" "year-month" "year-month-day"}}
+   :date {:type :flexdate}
    :commissioned-by {:type :string}
    :location {:type :location
               :geocode (fn [query callback]

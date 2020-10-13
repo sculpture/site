@@ -1,8 +1,14 @@
 (ns sculpture.specs.types
   (:require
-    [clojure.spec.alpha :as s]))
+    [clojure.spec.alpha :as s]
+    [sculpture.flexdate :as flexdate]))
 
 (def email-regex #"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$")
+
+(s/def ::flexdate-type
+  (s/and
+    string?
+    #(re-matches flexdate/flexdate-regex %)))
 
 (s/def ::email-type (s/and
                       string?
@@ -16,9 +22,8 @@
 
 (s/def ::url-type (s/and
                     string?
-                    ; TODO regex http(s)
-
-                    ))
+                    ; TODO better regex
+                    #(re-matches #"^http.*" %)))
 
 
 (s/def ::longitude (s/and

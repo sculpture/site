@@ -26,7 +26,7 @@
                (for [artist artists]
                  [:a {:href (routes/entity-path {:id (artist :id)})} (artist :name)]))))
 
-     [:div.year (helpers/format-date (sculpture :date) "yyyy")]]]
+     [:div.year (sculpture :date)]]]
 
    [:div.meta
     (when (seq (sculpture :tag-ids))

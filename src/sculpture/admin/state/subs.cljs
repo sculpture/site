@@ -61,8 +61,7 @@
   (fn [db _]
     (let [validation-result (validate (db :entity-draft))
           invalid-fields (->> validation-result
-                              (map :path)
-                              (map last))
+                              (mapcat :path))
           missing-fields (->> validation-result
                               (map (fn [field]
                                      (last (re-find #".*cljs.core/contains\? % :([a-z\-]+)"

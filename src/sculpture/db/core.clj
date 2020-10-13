@@ -21,11 +21,11 @@
 
 (def schema
   {"sculpture"
-   [:id :type :title :slug :size :note :date :date-precision :artist-ids :commissioned-by :material-ids :location :city-id :tag-ids :link-wikipedia]
+   [:id :type :title :slug :size :note :date :artist-ids :commissioned-by :material-ids :location :city-id :tag-ids :link-wikipedia]
    "material"
    [:id :type :name :slug]
    "artist"
-   [:id :type :name :nationality :slug :gender :link-website :link-wikipedia :bio :birth-date :birth-date-precision :death-date :death-date-precision :tag-ids]
+   [:id :type :name :nationality :slug :gender :link-website :link-wikipedia :bio :birth-date :death-date :tag-ids]
    "city"
    [:id :type :slug :city :region :country]
    "region"

@@ -24,8 +24,7 @@ CREATE TABLE IF NOT EXISTS sculptures (
   -- optional:
   "size" integer,
   "note" text,
-  "date" date,
-  "date-precision" text, -- could be enum
+  "date" text,
   "commissioned-by" text,
   "location" geography(point,4326),
   "location-precision" float,
@@ -49,10 +48,8 @@ CREATE TABLE IF NOT EXISTS artists (
   "link-website" text,
   "link-wikipedia" text,
   "bio" text,
-  "birth-date" date,
-  "birth-date-precision" text, -- could be enum
-  "death-date" date,
-  "death-date-precision" text -- could be enum
+  "birth-date" text,
+  "death-date" text
 );
 
 CREATE INDEX artists_slug ON artists(lower(slug));

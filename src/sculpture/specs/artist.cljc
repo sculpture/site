@@ -19,27 +19,21 @@
 (s/def ::slug :sculpture.specs.types/slug-type)
 (s/def ::tag-ids :sculpture.specs.types/related-ids-type)
 
-(s/def ::birth-date (s/nilable :sculpture.specs.types/timestamp-type))
-(s/def ::death-date (s/nilable :sculpture.specs.types/timestamp-type))
-
-(s/def ::birth-date-precision (s/nilable #{"year" "year-month" "year-month-day"}))
-(s/def ::death-date-precision (s/nilable #{"year" "year-month" "year-month-day"}))
-
+(s/def ::birth-date (s/nilable :sculpture.specs.types/flexdate-type))
+(s/def ::death-date (s/nilable :sculpture.specs.types/flexdate-type))
 
 (s/def ::artist
   (s/merge :sculpture.specs.entity/common
            (s/keys :req-un [::name
                             ::slug]
-                   :req-opt [::gender
-                             ::nationality
-                             ::link-website
-                             ::link-wikipedia
-                             ::bio
-                             ::birth-date
-                             ::birth-date-precision
-                             ::death-date
-                             ::death-date-precision
-                             ::tag-ids])))
+                   :opt-un [::gender
+                            ::nationality
+                            ::link-website
+                            ::link-wikipedia
+                            ::bio
+                            ::birth-date
+                            ::death-date
+                            ::tag-ids])))
 
 (defmethod entity-type "artist"
   [_]

@@ -55,7 +55,6 @@
                 :note nil
                 :date nil
                 :city-id nil
-                :date-precision nil
                 :commissioned-by nil
                 :link-wikipedia nil
                 :location nil}
@@ -82,9 +81,7 @@
              :nationality nil
              :bio nil
              :birth-date nil
-             :birth-date-precision nil
-             :death-date nil
-             :death-date-precision nil}})
+             :death-date nil}})
 
 ; ->db
 
