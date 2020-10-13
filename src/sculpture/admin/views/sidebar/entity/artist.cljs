@@ -14,7 +14,12 @@
                                      (contains? (set (sculpture :artist-ids))
                                                 (artist :id)))])]
    [:div.info
-    [:h1 (artist :name)]]
+    [:h1 (artist :name)]
+    (when (artist :birth-date)
+      [:h2 [:div.year
+            (artist :birth-date)
+            (when (artist :death-date)
+              (str "–" (artist :death-date)))]])]
    [:div.meta
     (when (artist :link-wikipedia)
       [:div.row.wikipedia {:title "Wikipedia Link"}
