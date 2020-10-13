@@ -27,7 +27,10 @@
        [related-tags-view (artist :tag-ids)]])
     (when (artist :gender)
       [:div.row.gender {:title "Gender"}
-       (artist :gender)])]
+       (artist :gender)])
+    (when (artist :nationality)
+      [:div.row.nationality {:title "Nationality"}
+       (artist :nationality)])]
    [:div.related
     [:h2 "Sculptures"]
     [related-sculptures-view @(subscribe [:sculptures-for
