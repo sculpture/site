@@ -7,16 +7,6 @@
     [sculpture.admin.routes :as routes]
     [sculpture.schema.schema :as schema]))
 
-(defn lookup-on-search
-  [type]
-  (fn [query callback]
-    (callback @(subscribe [:sculpture.edit/related-entity-search type query]))))
-
-(defn lookup-on-find
-  []
-  (fn [id callback]
-    (callback @(subscribe [:get-entity id]))))
-
 (defn key->title [k]
   (-> k
       name
@@ -25,83 +15,8 @@
            (string/join " "))
       (string/replace #"Id" "ID")))
 
-(def schema
-  {:id {:type :string
-        :disabled true}
-   :type {:type :enum
-          :options #{"" "material"
-                     "artist" "artist-tag"
-                     "sculpture" "sculpture-tag"
-                     "region" "region-tag"
-                     "photo" "user" "city"}
-          :disabled true}
-   :name {:type :string}
-   :title {:type :string}
-   :email {:type :email}
-   :bio {:type :string
-         :length :long}
-   :nationality {:type :string}
-   :birth-date {:type :flexdate}
-   :captured-at {:type :datetime}
-   :death-date {:type :flexdate}
-   :slug {:type :string}
-   :geojson {:type :geojson
-             :simplify (fn [geojson callback]
-                         (dispatch! [:sculpture.edit/simplify geojson callback]))
-             :get-shape (fn [query callback]
-                          (dispatch! [:sculpture.edit/get-shape query callback]))}
-   :city-id {:type :single-lookup
-             :on-find (lookup-on-find)
-             :on-search (lookup-on-search "city")}
-   :city {:type :string}
-   :region {:type :string}
-   :country {:type :string}
-   :link-website {:type :url}
-   :link-wikipedia {:type :url}
-   :size {:type :integer}
-   :width {:type :integer
-           :disabled true}
-   :height {:type :integer
-            :disabled true}
-   :gender {:type :enum
-            :options #{"" "male" "female" "other"}}
-   :note {:type :string
-          :length :long}
-   :date {:type :flexdate}
-   :commissioned-by {:type :string}
-   :location {:type :location
-              :geocode (fn [query callback]
-                         (dispatch! [:sculpture.edit/geocode query callback]))}
-   :user-id {:type :single-lookup
-             :on-find (lookup-on-find)
-             :on-search (lookup-on-search "user")}
-   :sculpture-id {:type :single-lookup
-                  :on-find (lookup-on-find)
-                  :on-search (lookup-on-search "sculpture")}
-   :material-ids {:type :multi-lookup
-                  :on-find (lookup-on-find)
-                  :on-search (lookup-on-search "material")}
-   :artist-ids {:type :multi-lookup
-                :on-find (lookup-on-find)
-                :on-search (lookup-on-search "artist")}
-   :tag-ids {:type :multi-lookup
-             :on-find (lookup-on-find)
-             :on-search (lookup-on-search "sculpture-tag")}
-   })
-
 (defn field-opts [field type]
-  (get (merge schema
-              {:tag-ids {:type :multi-lookup
-                         :on-find (lookup-on-find)
-                         :on-search (lookup-on-search
-                                      (case type
-                                        "photo" "photo-tag"
-                                        "sculpture" "sculpture-tag"
-                                        "region" "region-tag"
-                                        "artist" "artist-tag"
-                                        nil))}})
-    field
-    {}))
+  (get-in schema/schema [type field :input] {}))
 
 (defn entity-editor-view [entity]
   (when entity

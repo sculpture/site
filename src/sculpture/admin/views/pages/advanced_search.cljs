@@ -2,12 +2,12 @@
   (:require
     [humandb.ui.field :refer [field]]
     [sculpture.admin.state.core :refer [dispatch! subscribe]]
-    [sculpture.admin.views.pages.entity-editor :refer [schema]]
+    [sculpture.schema.schema :as schema]
     [sculpture.admin.views.sidebar.entity.partials.list :refer [entity-row-view]]))
 
 (defn option->field-opts [option key]
   (case option
-    :equals? (schema key)
+    :equals? (schema/attr->input key)
     :nil? nil
     :re-matches? {:type :string}
     :includes? {:type :string}
@@ -16,7 +16,7 @@
     :less-than? {:type :integer}
     :greater-than? {:type :integer}
     :empty? nil
-    :contains? (merge (schema key)
+    :contains? (merge (schema/attr->input key)
                       {:type :single-lookup})
     nil))
 
@@ -54,13 +54,13 @@
                                   (dispatch! [:sculpture.advanced-search/update-condition index :option nil])
                                   (dispatch! [:sculpture.advanced-search/update-condition index :value nil]))}
             [:option {:value ""} ""]
-            (for [entity-key (sort (keys schema))]
+            (for [entity-key (sort (schema/attrs))]
               ^{:key entity-key}
               [:option {:value entity-key} (name entity-key)])]]
 
           [:div.option
            (when (condition :key)
-             (let [key-type (get-in schema [(condition :key) :type])
+             (let [key-type (:type (schema/attr->input (condition :key)))
                    options (key-type->options key-type)]
                [:select {:value (condition :option)
                          :on-change (fn [e]
