@@ -162,6 +162,7 @@
                                        (map db->))))
       (update-if-exists :sculpture-tags (fn [json]
                                           (->> json
+                                               (remove nil?)
                                                (map #(select-keys % [:name :slug]))
                                                (map db->))))
       (update-if-exists :artists (fn [json]
