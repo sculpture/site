@@ -2,7 +2,8 @@
   (:require
     [next.jdbc.result-set :refer [ReadableColumn]]
     [next.jdbc.date-time] ;; requiring this auto-converts datetimes
-    [sculpture.json :as json]))
+    [sculpture.json :as json]
+    [sculpture.schema.schema :as schema]))
 
 (defn parse-pg-geography [v]
   (let [geometry (.getGeometry v)]
@@ -46,55 +47,18 @@
     (update obj k f)
     obj))
 
-(def blank-entities
-  {"sculpture" {:id nil
-                :type nil
-                :title nil
-                :slug nil
-                :size nil
-                :note nil
-                :date nil
-                :city-id nil
-                :commissioned-by nil
-                :link-wikipedia nil
-                :location nil}
-   "photo" {:id nil
-            :type nil
-            :captured-at nil
-            :user-id nil
-            :colors nil
-            :width nil
-            :height nil
-            :sculpture-id nil}
-   "user" {:id nil
-           :type nil
-           :email nil
-           :name nil
-           :avatar nil}
-   "artist" {:id nil
-             :type nil
-             :name nil
-             :slug nil
-             :gender nil
-             :link-website nil
-             :link-wikipedia nil
-             :nationality nil
-             :bio nil
-             :birth-date nil
-             :death-date nil}})
-
 ; ->db
 
 (defmulti ->db :type)
 
 (defmethod ->db :default
   [entity]
-  (merge (blank-entities (entity :type))
+  (merge (schema/->blank-entity (entity :type))
          entity))
 
 (defmethod ->db "sculpture"
   [sculpture]
-  (-> (blank-entities "sculpture")
+  (-> (schema/->blank-entity "sculpture")
       (merge sculpture)
       (assoc :location-lng (:longitude (sculpture :location)))
       (assoc :location-lat (:latitude (sculpture :location)))
@@ -103,7 +67,7 @@
 
 (defmethod ->db "photo"
   [photo]
-  (-> (blank-entities (photo :type))
+  (-> (schema/->blank-entity (photo :type))
       (merge photo)
       (update :colors json/encode)))
 
@@ -112,11 +76,6 @@
   (-> region
       (assoc :shape (region :geojson))
       (dissoc :geojson)))
-
-(defmethod ->db "artist"
-  [artist]
-  (-> (blank-entities "artist")
-      (merge artist)))
 
 ; db->
 
@@ -130,10 +89,6 @@
   [result]
   (-> result
       (dissoc :shape)))
-
-(defmethod db-> "sculpture-tag"
-  [result]
-  (-> result))
 
 (defmethod db-> "sculpture"
   [result]

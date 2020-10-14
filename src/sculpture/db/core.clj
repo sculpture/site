@@ -9,7 +9,8 @@
     [sculpture.db.yaml :as yaml]
     [sculpture.db.pg.core :as db]
     [sculpture.db.pg.select :as db.select]
-    [sculpture.db.pg.upsert :as db.upsert]))
+    [sculpture.db.pg.upsert :as db.upsert]
+    [sculpture.schema.schema :as schema]))
 
 (def repo (env :github-repo))
 (def branch (env :github-repo-branch))
@@ -19,30 +20,8 @@
 (defn entity->path [entity]
   (str "data/" (entity :type)  "/" (entity :id) ".yml"))
 
-(def schema
-  {"sculpture"
-   [:id :type :title :slug :size :note :date :artist-ids :commissioned-by :material-ids :location :city-id :tag-ids :link-wikipedia]
-   "material"
-   [:id :type :name :slug]
-   "artist"
-   [:id :type :name :nationality :slug :gender :link-website :link-wikipedia :bio :birth-date :death-date :tag-ids]
-   "city"
-   [:id :type :slug :city :region :country]
-   "region"
-   [:id :type :name :slug :tag-ids :geojson]
-   "photo"
-   [:id :type :captured-at :user-id :colors :width :height :sculpture-id]
-   "user"
-   [:id :type :email :name :avatar]
-   "sculpture-tag"
-   [:id :type :name :slug]
-   "region-tag"
-   [:id :type :name :slug]
-   "artist-tag"
-   [:id :type :name :slug]})
-
 (defn entity->yaml [entity]
-  (->> (select-keys entity (schema (entity :type)))
+  (->> (select-keys entity (schema/->keys (entity :type)))
        yaml/to-string))
 
 (defn- push! [entity message author]
@@ -59,23 +38,14 @@
 
 (defn export-to-dir! []
   (.mkdir (java.io.File. "data"))
-  (doseq [type (keys schema)]
+  (doseq [type (schema/types)]
     (.mkdir (java.io.File. (str "data/" type))))
   (doseq [entity (db.select/select-all)]
     (spit (entity->path entity) (entity->yaml entity))))
 
 (defn import-data! [entities]
   (let [grouped-entities (group-by :type entities)]
-    (doseq [entity-type ["artist-tag"
-                         "artist"
-                         "city"
-                         "material"
-                         "sculpture-tag"
-                         "sculpture"
-                         "region-tag"
-                         "region"
-                         "user"
-                         "photo"]]
+    (doseq [entity-type (schema/types)]
       (println "Inserting" (str entity-type "s..."))
       (doseq [entity (grouped-entities entity-type)]
         (db.upsert/upsert-entity! entity))

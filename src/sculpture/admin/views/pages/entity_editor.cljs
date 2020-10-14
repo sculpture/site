@@ -4,7 +4,8 @@
     [humandb.ui.field :refer [field]]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.cdn :as cdn]
-    [sculpture.admin.routes :as routes]))
+    [sculpture.admin.routes :as routes]
+    [sculpture.schema.schema :as schema]))
 
 (defn lookup-on-search
   [type]
@@ -15,105 +16,6 @@
   []
   (fn [id callback]
     (callback @(subscribe [:get-entity id]))))
-
-(defn entity-defaults [type]
-  (case type
-    "sculpture"
-    (array-map
-      :id ""
-      :type "sculpture"
-      :title ""
-      :artist-ids []
-      :commissioned-by ""
-      :material-ids []
-      :city-id nil
-      :location nil
-      :note ""
-      :tag-ids []
-      :slug ""
-      :date nil
-      :size nil
-      :link-wikipedia "")
-
-    "artist"
-    (array-map
-      :id ""
-      :type "artist"
-      :name ""
-      :gender nil
-      :nationality nil
-      :link-website ""
-      :link-wikipedia ""
-      :birth-date nil
-      :death-date nil
-      :slug ""
-      :tag-ids [])
-
-    "region"
-    (array-map
-      :id ""
-      :type "region"
-      :name ""
-      :geojson nil
-      :slug ""
-      :tag-ids [])
-
-    "city"
-    (array-map
-      :id ""
-      :type "city"
-      :city ""
-      :region ""
-      :country ""
-      :slug "")
-
-    "material"
-    (array-map
-      :id ""
-      :type "material"
-      :name ""
-      :slug "")
-
-    "artist-tag"
-    (array-map
-      :id ""
-      :type "artist-tag"
-      :name ""
-      :slug "")
-
-    "sculpture-tag"
-    (array-map
-      :id ""
-      :type "sculpture-tag"
-      :name ""
-      :slug "")
-
-    "region-tag"
-    (array-map
-      :id ""
-      :type "region-tag"
-      :name ""
-      :slug "")
-
-    "photo"
-    (array-map
-      :id ""
-      :type "photo"
-      :sculpture-id nil
-      :captured-at nil
-      :user-id nil
-      :colors []
-      :width nil
-      :height nil)
-
-    "user"
-    (array-map
-      :id ""
-      :type "user"
-      :name ""
-      :email "")
-
-    {:type nil}))
 
 (defn key->title [k]
   (-> k
@@ -204,7 +106,7 @@
 (defn entity-editor-view [entity]
   (when entity
     (let [invalid-fields @(subscribe [:sculpture.edit/invalid-fields])
-          default-entity (entity-defaults (:type entity))]
+          default-entity (schema/->default-entity (:type entity))]
       [:div.entity.edit
        [:div.header
         [:h1 "Editing " (or (entity :name)
