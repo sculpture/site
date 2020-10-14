@@ -144,14 +144,16 @@
       (dissoc :location-precision)
       (update-if-exists :regions (fn [json]
                                    (->> json
-                                        distinct ; dedupe, wasn't able to do it in SQL
-                                        (remove nil?)
+                                        (remove (fn [x]
+                                                  (nil? (:slug x))))
+                                        distinct
                                         (map #(select-keys % [:slug :name]))
                                         (map db->))))
       (update-if-exists :regions-nearby (fn [json]
                                           (->> json
-                                               distinct ; dedupe, wasn't able to do it in SQL
-                                               (remove nil?)
+                                               (remove (fn [x]
+                                                         (nil? (:slug x))))
+                                               distinct
                                                (map #(select-keys % [:slug :name]))
                                                (map db->))))
       (update-if-exists :photos (fn [json]

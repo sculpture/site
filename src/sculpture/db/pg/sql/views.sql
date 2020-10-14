@@ -12,8 +12,10 @@ CREATE VIEW extended_sculptures AS (
     json_agg(distinct materials) AS "materials",
     (json_agg(distinct cities))->0 AS "city",
     json_agg(distinct "sculpture-tags") AS "sculpture-tags",
+    -- moving distinct to before the first select, loses the order
+    -- so we do the distinct in clojure
     json_agg((SELECT distinct x FROM (SELECT "regions".name, "regions".slug ORDER BY ST_Area(ST_Envelope(regions.shape::geometry)) ASC) AS x)) AS "regions",
-    json_agg((SELECT distinct y FROM (SELECT "nearby-regions".name, "nearby-regions".slug ORDER BY ST_Distance("nearby-regions".shape, sculptures.location) ASC) AS y)) AS "regions-nearby"
+    json_agg((SELECT distinct y FROM (SELECT "nearby-regions".name, "nearby-regions".slug, "nearby-regions".id ORDER BY ST_Distance("nearby-regions".shape, sculptures.location) ASC) AS y)) AS "regions-nearby"
   FROM
     sculptures
   LEFT JOIN artists_sculptures ON artists_sculptures."sculpture-id" = sculptures.id
