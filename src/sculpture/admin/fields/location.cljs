@@ -6,6 +6,11 @@
 
 ; TODO improve these using: http://williams.best.vwh.net/avform.htm#LL
 
+(defn coord-round
+  "Round to 6 digits, which is 0.1m precision"
+  [x]
+  (/ (js/Math.round (* x 1e6)) 1e6))
+
 (defn m->deg-lat [metres lat]
   (/ metres
      111111.0))
@@ -24,8 +29,8 @@
         on-edit (fn [o]
                   (let [latlng (.getLatLng o)]
                     (@on-change-fn
-                      {:longitude (.-lng latlng)
-                       :latitude (.-lat latlng)
+                      {:longitude (coord-round (.-lng latlng))
+                       :latitude (coord-round (.-lat latlng))
                        :precision (js/Math.floor (.getRadius o))})))]
     (fn [{:keys [value on-change geocode]}]
       (let [pad 1.5
@@ -39,8 +44,8 @@
          [:form {:on-submit (fn [e]
                               (.preventDefault e)
                               (geocode @search-query (fn [{:keys [longitude latitude]}]
-                                                       (on-change {:longitude longitude
-                                                                   :latitude latitude
+                                                       (on-change {:longitude (coord-round longitude)
+                                                                   :latitude (coord-round latitude)
                                                                    :precision 10}))))}
           [:input {:type "text"
                    :value @search-query
@@ -74,7 +79,7 @@
                                    (on-change
                                      (assoc location
                                        :longitude
-                                       (js/parseFloat (.. e -target -value)))))}]
+                                       (coord-round (js/parseFloat (.. e -target -value))))))}]
 ]]
            [:tr
             [:td "Latitude:"]
@@ -86,7 +91,7 @@
                                    (on-change
                                      (assoc location
                                        :latitude
-                                       (js/parseFloat (.. e -target -value)))))}]]]
+                                       (coord-round (js/parseFloat (.. e -target -value))))))}]]]
            [:tr
             [:td "Precision:"]
             [:td
