@@ -4,7 +4,6 @@
     [sculpture.admin.state.core :refer [dispatch-sync!]]
     [sculpture.admin.state.events]
     [sculpture.admin.state.subs]
-    [sculpture.specs.core]
     [sculpture.admin.routes]
     [sculpture.admin.fields.location]
     [sculpture.admin.fields.geojson]

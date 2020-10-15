@@ -1,15 +1,18 @@
 (ns sculpture.admin.state.events
   (:require
-    [re-frame.core :refer [dispatch reg-fx] :as reframe]
     [cljs-uuid-utils.core :as uuid]
+    [re-frame.core :refer [dispatch reg-fx] :as re-frame]
+    [malli.core :as m]
+    [malli.error :as me]
     [sculpture.admin.state.fx.dispatch-debounce :refer [dispatch-debounce-fx]]
     [sculpture.admin.state.fx.ajax :refer [ajax-fx]]
     [sculpture.admin.state.fx.redirect :refer [redirect-to-fx]]
     [sculpture.admin.state.fx.upload :refer [upload-fx]]
     [sculpture.admin.routes :as routes]
-    [sculpture.admin.state.spec :refer [check-state! validate]]
+    [sculpture.admin.state.spec :as spec]
     [sculpture.admin.state.search :as search]
-    [sculpture.admin.state.advanced-search :as advanced-search]))
+    [sculpture.admin.state.advanced-search :as advanced-search]
+    [sculpture.schema.schema :as schema]))
 
 (reg-fx :ajax ajax-fx)
 (reg-fx :upload upload-fx)
@@ -22,28 +25,27 @@
           {}
           arr))
 
-(def validate-schema-interceptor
-  (reframe/after
-    (fn [db [event-id]]
-      (when-let [errors (check-state! db)]
-        (js/console.error
-          (str
-            "Event " event-id
-            " caused the state to be invalid:\n")
-          (pr-str (map (fn [problem]
-                         {:path (problem :path)
-                          :pred (problem :pred)})
-                       (:cljs.spec.alpha/problems errors))))))))
-
-(defn reg-event-fx
-  ([id handler-fn]
-   (reg-event-fx id nil handler-fn))
-  ([id interceptors handler-fn]
-    (reframe/reg-event-fx
-        id
-        [validate-schema-interceptor
-         interceptors]
-        handler-fn)))
+(if ^boolean goog.DEBUG
+  (do
+    (def validate-schema-interceptor
+      (re-frame/after
+        (fn [db [event-id]]
+          #_(when-let [errors (m/explain spec/AppState db)]
+            (js/console.error
+              (str
+                "Event " event-id
+                " caused the state to be invalid:\n")
+              (str (me/humanize errors)))))))
+    (defn reg-event-fx
+      ([id handler-fn]
+       (reg-event-fx id nil handler-fn))
+      ([id interceptors handler-fn]
+       (re-frame/reg-event-fx
+         id
+         [validate-schema-interceptor
+          interceptors]
+         handler-fn))))
+  (def reg-event-fx re-frame/reg-event-fx))
 
 (reg-event-fx
   :init
@@ -214,7 +216,7 @@
   :sculpture.edit/save
   (fn [{db :db} _]
     (let [entity (db :entity-draft)]
-      (if (nil? (validate entity))
+      (if (m/validate schema/Entity entity)
         {:dispatch-n [[:sculpture.data/-add-entity entity]
                       [:sculpture.edit/-remote-persist-entity (entity :id)]]}
         {}))))
@@ -348,5 +350,4 @@
     {:db (assoc-in db [:advanced-search :conditions] conditions)
      :dispatch-n [[:sculpture.advanced-search/search]
                   [:set-main-page :advanced-search]]}))
-
 

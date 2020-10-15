@@ -5,6 +5,7 @@
   :dependencies [; COMMON
                  [org.clojure/clojure "1.10.1"]
                  [io.bloomventures/commons "0.10.5"]
+                 [metosin/malli "0.1.0"]
 
                  ; CLIENT
                  [org.clojure/clojurescript "1.10.764"]

@@ -1,10 +1,8 @@
 (ns sculpture.db.core
   (:require
-    [clojure.spec.alpha :as s]
     [clojure.string :as string]
-    [clojure.data :refer [diff]]
     [environ.core :refer [env]]
-    [sculpture.specs.core]
+    [malli.core :as m]
     [sculpture.db.github :as github]
     [sculpture.db.yaml :as yaml]
     [sculpture.db.pg.core :as db]
@@ -25,9 +23,9 @@
        yaml/to-string))
 
 (defn- push! [entity message author]
-  {:pre [(s/valid? :sculpture/entity entity)
+  {:pre [(m/validate schema/Entity entity)
          (string? message)
-         (s/valid? :sculpture/user author)]}
+         (m/validate schema/Entity (assoc author :type "user"))]}
 
   (github/update-file! repo branch (entity->path entity)
                        {:content (entity->yaml entity)
@@ -69,7 +67,7 @@
   true)
 
 (defn upsert! [entity user-id]
-  {:pre [(s/valid? :sculpture/entity entity)
+  {:pre [(m/validate schema/Entity entity)
          (uuid? user-id)
          (db.select/exists? "user" user-id)]}
   (let [action (if (db.select/exists? (entity :type) (entity :id)) "Update" "Add")]

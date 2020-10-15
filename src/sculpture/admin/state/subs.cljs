@@ -1,7 +1,8 @@
 (ns sculpture.admin.state.subs
   (:require
+    [malli.core :as m]
     [re-frame.core :refer [reg-sub]]
-    [sculpture.admin.state.spec :refer [validate]]
+    [sculpture.schema.schema :as schema]
     [sculpture.admin.state.search :as search]))
 
 (reg-sub
@@ -59,16 +60,10 @@
 (reg-sub
   :sculpture.edit/invalid-fields
   (fn [db _]
-    (let [validation-result (validate (db :entity-draft))
-          invalid-fields (->> validation-result
-                              (mapcat :path))
-          missing-fields (->> validation-result
-                              (map (fn [field]
-                                     (last (re-find #".*cljs.core/contains\? % :([a-z\-]+)"
-                                                    (str (field :pred))))))
-                              (remove nil?)
-                              (map keyword))]
-      (set (concat invalid-fields missing-fields)))))
+    (->> (m/explain schema/Entity (db :entity-draft))
+         :errors
+         (mapcat :in)
+         set)))
 
 (reg-sub
   :sculpture.edit/saving?

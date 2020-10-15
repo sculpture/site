@@ -1,9 +1,8 @@
 (ns sculpture.schema.schema
-  #?(:cljs
-     (:require
-       [sculpture.admin.state.core :refer [subscribe dispatch!]])))
-
-;; TODO migrate all sculpture.specs.*
+  (:require
+    [sculpture.schema.types :as types]
+    #?@(:cljs
+         [[sculpture.admin.state.core :refer [subscribe dispatch!]]])))
 
 (defn lookup-on-find
   []
@@ -17,72 +16,16 @@
      (fn [query callback]
        (callback @(subscribe [:sculpture.edit/related-entity-search type query])))))
 
-(def NonNilString
-  [:and string?
-   ;; TODO
-   ])
-
-(def Slug
-  [:and string?
-   ;; TODO
-   ])
-
-(def FlexDate
-  [:and string?
-    ;; TODO
-   ])
-
-(def Url
-  [:and string?
-   ;; TODO
-   ])
-
-(def Email
-  [:and string?
-   ;; TODO
-   ])
-
-(def Location
-  [:map
-   [:longitude [:and number?
-                ;; TODO bounds
-                ]]
-   [:latitude [:and number?
-               ;; TODO bounds
-               ]]
-   [:precision {:optional true}
-    number?]])
-
-(def GeoJson
-  ;; TODO
-  any?)
-
-(def Color
-  [:and string?
-   ;; TODO
-   ])
-
 (def id-opts
   {:default nil
    :spec uuid?
    :input {:type :string
            :disabled true}})
 
-(def string-opts
-  {:default ""
-   :spec NonNilString
-   :input {:type :string}})
-
 (def slug-opts
   {:default ""
-   :spec Slug
+   :spec types/Slug
    :input {:type :string}})
-
-(def long-string-opts
-  {:default ""
-   :spec NonNilString
-   :input {:type :string
-           :length :long}})
 
 (defn type-opts-for [entity-type]
   (let [types #{"" "artist" "artist-tag"
@@ -98,7 +41,7 @@
 
 (defn tag-ids-opts-for [entity-type]
   {:default []
-   :spec [:vector uuid?]
+   :spec types/RelatedIds
    :input {:type :multi-lookup
            :on-find (lookup-on-find)
            :on-search (lookup-on-search
@@ -109,7 +52,6 @@
                           "artist" "artist-tag"
                           nil))}})
 
-;; TODO mark optional/required
 (def schema
   ;; using array-maps so that order of keys is preserved
   ;; on the top-level, for 'order of insertion into db'
@@ -119,132 +61,184 @@
     (array-map
       :id id-opts
       :type (type-opts-for "artist-tag")
-      :name string-opts
-      :slug slug-opts)
+      :slug slug-opts
+      :name {:default ""
+             :spec types/NonBlankString
+             :input {:type :string}})
 
     "artist"
     (array-map
       :id id-opts
       :type (type-opts-for "artist")
-      :name string-opts
+      :slug slug-opts
+      :name {:default ""
+             :spec types/NonBlankString
+             :input {:type :string}}
+      ;; optional:
       :gender {:default nil
-               :spec [:enum "male" "female" "other"]
+               :optional true
+               :spec [:maybe [:enum "male" "female" "other"]]
                :input {:type :enum
                        :options #{"" "male" "female" "other"}}}
-      :nationality string-opts
+      :nationality {:default nil
+                    :optional true
+                    :spec [:maybe types/NonBlankString]
+                    :input {:type :string}}
       :link-website {:default nil
-                     :spec Url
+                     :optional true
+                     :spec [:maybe types/Url]
                      :input {:type :url}}
       :link-wikipedia {:default nil
-                       :spec Url
+                       :optional true
+                       :spec [:maybe types/Url]
                        :input {:type :url}}
       :birth-date {:default nil
-                   :spec FlexDate
+                   :optional true
+                   :spec [:maybe types/FlexDate]
                    :input {:type :flexdate}}
       :death-date {:default nil
-                   :spec FlexDate
+                   :optional true
+                   :spec [:maybe types/FlexDate]
                    :input {:type :flexdate}}
-      :bio long-string-opts
-      :slug slug-opts
+      :bio {:default nil
+            :spec [:maybe types/NonBlankString]
+            :input {:type :string
+                    :length :long}}
+      ;; related:
       :tag-ids (tag-ids-opts-for "artist"))
 
     "city"
     (array-map
       :id id-opts
       :type (type-opts-for "city")
-      :city string-opts
-      :region string-opts
-      :country string-opts
-      :slug slug-opts)
+      :slug slug-opts
+      :city {:default ""
+             :spec types/NonBlankString
+             :input {:type :string}}
+      :region {:default ""
+               :spec types/NonBlankString
+               :input {:type :string}}
+      :country {:default ""
+                :spec types/NonBlankString
+                :input {:type :string}})
 
     "material"
     (array-map
       :id id-opts
       :type (type-opts-for "material")
-      :name string-opts
-      :slug slug-opts)
+      :slug slug-opts
+      :name {:default ""
+             :spec types/NonBlankString
+             :input {:type :string}})
 
     "sculpture-tag"
     (array-map
       :id id-opts
       :type (type-opts-for "sculpture-tag")
-      :name string-opts
-      :slug slug-opts)
+      :slug slug-opts
+      :name {:default ""
+             :spec types/NonBlankString
+             :input {:type :string}})
 
     "sculpture"
     (array-map
       :id id-opts
       :type (type-opts-for "sculpture")
-      :title string-opts
-      :artist-ids {:default []
-                   :spec [:vector uuid?]
-                   :input {:type :multi-lookup
-                           :on-find (lookup-on-find)
-                           :on-search (lookup-on-search "artist")}}
-      :commissioned-by string-opts
-      :material-ids {:default []
-                     :spec [:vector uuid?]
-                     :input {:type :multi-lookup
-                             :on-find (lookup-on-find)
-                             :on-search (lookup-on-search "material")}}
-      :city-id {:default nil
-                :spec uuid?
-                :input {:type :single-lookup
-                        :on-find (lookup-on-find)
-                        :on-search (lookup-on-search "city")}}
+      :slug slug-opts
+      :title {:default ""
+              :spec types/NonBlankString
+              :input {:type :string}}
+      ;; optional:
       :location {:default nil
-                 :spec Location
+                 :spec types/Location
                  :input {:type :location
                          :geocode (fn [query callback]
                                     #?(:cljs
                                        (dispatch! [:sculpture.edit/geocode query callback])))}}
-      :note long-string-opts
-      :tag-ids (tag-ids-opts-for "sculpture")
-      :slug slug-opts
-      :date {:default nil
-             :spec FlexDate
+      :note {:default nil
+             :optional true
+             :spec [:maybe types/NonBlankString]
+             :input {:type :string
+                     :length :long}}
+      :commissioned-by {:optional true
+                        :default ""
+                        :spec [:maybe types/NonBlankString]
+                        :input {:type :string}}
+      :date {:optional true
+             :default nil
+             :spec [:maybe types/FlexDate]
              :input {:type :flexdate}}
-      :size {:default nil
-             :spec integer?
+      :size {:optional true
+             :default nil
+             :spec [:maybe integer?]
              :input {:type :integer}}
-      :link-wikipedia {:default ""
-                       :spec Url
-                       :input {:type :url}})
+      :link-wikipedia {:optional true
+                       :default nil
+                       :spec [:maybe types/Url]
+                       :input {:type :url}}
+      ;; related:
+      :tag-ids (tag-ids-opts-for "sculpture")
+      :city-id {:default nil
+                :optional true
+                :spec [:maybe uuid?]
+                :input {:type :single-lookup
+                        :on-find (lookup-on-find)
+                        :on-search (lookup-on-search "city")}}
+      :artist-ids {:default []
+                   :spec types/RelatedIds
+                   :input {:type :multi-lookup
+                           :on-find (lookup-on-find)
+                           :on-search (lookup-on-search "artist")}}
+      :material-ids {:default []
+                     :spec types/RelatedIds
+                     :input {:type :multi-lookup
+                             :on-find (lookup-on-find)
+                             :on-search (lookup-on-search "material")}})
 
     "region-tag"
     (array-map
       :id id-opts
       :type (type-opts-for "region-tag")
-      :name string-opts
-      :slug slug-opts)
+      :slug slug-opts
+      :name {:default ""
+             :spec types/NonBlankString
+             :input {:type :string}})
 
     "region"
     (array-map
       :id id-opts
       :type (type-opts-for "region")
-      :name string-opts
+      :slug slug-opts
+      :name {:default ""
+             :spec types/NonBlankString
+             :input {:type :string}}
+      ;; optional:
       :geojson {:default nil
-                :spec GeoJson
+                :spec types/GeoJson
                 :input {:type :geojson
                         :simplify (fn [geojson callback]
                                     #?(:cljs (dispatch! [:sculpture.edit/simplify geojson callback])))
                         :get-shape (fn [query callback]
                                      #?(:cljs
                                         (dispatch! [:sculpture.edit/get-shape query callback])))}}
-      :slug slug-opts
+      ;; related:
       :tag-ids (tag-ids-opts-for "region"))
 
     "user"
     (array-map
       :id id-opts
       :type (type-opts-for "user")
-      :name string-opts
+      :name {:default ""
+             :spec types/NonBlankString
+             :input {:type :string}}
       :email {:default ""
-              :spec Email
+              :spec types/Email
               :input {:type :email
                       :disabled true}}
-      :avatar {:default ""
-               :spec Url
+      ;; optional:
+      :avatar {:optional true
+               :default ""
+               :spec [:maybe types/Url]
                :input {:type :url
                        :disabled true}})
 
@@ -252,22 +246,12 @@
     (array-map
       :id id-opts
       :type (type-opts-for "photo")
-      :sculpture-id {:default nil
-                     :spec uuid?
-                     :input {:type :single-lookup
-                             :on-find (lookup-on-find)
-                             :on-search (lookup-on-search "sculpture")}}
       :captured-at {:default nil
                     :spec inst?
                     :input {:type :datetime}}
-      :user-id {:default nil
-                :spec uuid?
-                :input {:type :single-lookup
-                        :on-find (lookup-on-find)
-                        :on-search (lookup-on-search "user")}}
       :colors {:default []
-               :spec [:vector Color]
-               :input {:type :string ;; TODO
+               :spec [:vector types/Color]
+               :input {:type :string
                        :disabled true}}
       :width {:default nil
               :spec integer?
@@ -276,7 +260,18 @@
       :height {:default nil
                :spec integer?
                :input {:type :integer
-                       :disabled true}})))
+                       :disabled true}}
+      ;; related
+      :user-id {:default nil
+                :spec uuid?
+                :input {:type :single-lookup
+                        :on-find (lookup-on-find)
+                        :on-search (lookup-on-search "user")}}
+      :sculpture-id {:default nil
+                     :spec [:maybe uuid?]
+                     :input {:type :single-lookup
+                             :on-find (lookup-on-find)
+                             :on-search (lookup-on-search "sculpture")}})))
 
 (defn ->keys
   [entity-type]
@@ -318,4 +313,15 @@
 (defn attr->input [k]
   (get-in schema-by-attr [k :input]))
 
+(defn ->malli-spec [entity-type]
+  (into [:map]
+        (->> (schema entity-type)
+             (map (fn [[k v]]
+                    [k {:optional (:optional v)} (:spec v)])))))
 
+(def Entity
+  (into [:multi {:dispatch :type}]
+        (->> schema
+             keys
+             (map (fn [k]
+                    [k (->malli-spec k)])))))

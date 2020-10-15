@@ -8,11 +8,11 @@
 ;; 2020        year
 ;; 202*        decade
 
-(def flexdate-regex #"\d+\*?(-\d{2})?(-\d{2})?")
-(def year-month-day-regex #"(\d+)-(\d{2})-(\d{2})")
-(def year-month-regex #"(\d+)-(\d{2})")
-(def year-regex #"(\d+)")
-(def decade-regex #"(\d+)\*")
+(def flexdate-regex #"^\d+\*?(-\d{2})?(-\d{2})?$")
+(def year-month-day-regex #"^(\d+)-(\d{2})-(\d{2})$")
+(def year-month-regex #"^(\d+)-(\d{2})$")
+(def year-regex #"^(\d+)$")
+(def decade-regex #"^(\d+)\*$")
 
 (defn ->int [s]
   #?(:cljs (js/parseInt s 10)
