@@ -1,6 +1,7 @@
 (ns sculpture.admin.core
   (:require
     [reagent.dom :as rdom]
+    [re-frame.core :as re-frame]
     [sculpture.admin.state.core :refer [dispatch-sync!]]
     [sculpture.admin.state.events]
     [sculpture.admin.state.subs]
@@ -22,4 +23,5 @@
   (render))
 
 (defn reload []
+  (re-frame/clear-subscription-cache!)
   (render))
