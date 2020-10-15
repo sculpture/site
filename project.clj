@@ -67,6 +67,7 @@
 
                        :prod {:source-paths ["src"]
                               :compiler     {:optimizations :advanced
+                                             :closure-defines {goog.DEBUG false}
                                              :main       "sculpture.admin.core"
                                              :asset-path "/js/prod/out"
                                              :output-to  "resources/public/js/sculpture.js"
