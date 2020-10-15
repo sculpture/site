@@ -30,7 +30,7 @@
     (def validate-schema-interceptor
       (re-frame/after
         (fn [db [event-id]]
-          #_(when-let [errors (m/explain spec/AppState db)]
+          (when-let [errors (m/explain spec/AppState db)]
             (js/console.error
               (str
                 "Event " event-id
