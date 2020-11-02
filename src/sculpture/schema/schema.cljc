@@ -43,6 +43,7 @@
   {:default []
    :spec types/RelatedIds
    :input {:type :multi-lookup
+           :optional true
            :on-find (lookup-on-find)
            :on-search (lookup-on-search
                         (case entity-type
@@ -101,6 +102,7 @@
                    :spec [:maybe types/FlexDate]
                    :input {:type :flexdate}}
       :bio {:default nil
+            :optional true
             :spec [:maybe types/NonBlankString]
             :input {:type :string
                     :length :long}}
