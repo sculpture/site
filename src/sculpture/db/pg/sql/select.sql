@@ -18,6 +18,15 @@ SELECT
 FROM
   :i:type;
 
+-- :name -entity-counts
+-- :result :one
+SELECT
+  (SELECT count(sculptures) FROM sculptures) AS sculptures,
+  (SELECT count(artists) FROM artists) AS artists,
+  (SELECT count(cities) FROM cities) AS cities,
+  (SELECT count(materials) FROM materials) AS materials,
+  (SELECT count(regions) FROM regions) AS regions;
+
 -- :name -select-sculptures-for-region
 -- :result :many
 WITH target_sculptures AS (

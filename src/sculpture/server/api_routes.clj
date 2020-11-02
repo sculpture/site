@@ -33,6 +33,10 @@
 (defroutes routes
   (context "/api" _
 
+    (GET "/meta" _
+      {:status 200
+       :body (db.select/entity-counts)})
+
     (GET "/entities" req
       {:status 200
        :body (db.select/select-all)})

@@ -18,6 +18,9 @@
    "artist" "artists_with_related_ids"
    "sculpture" "sculptures_with_related_ids"})
 
+(defn entity-counts []
+  (-entity-counts db-spec))
+
 ; sculptures
 
 (defn select-sculptures-for-region [slug]
