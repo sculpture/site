@@ -25,7 +25,7 @@
                  [hiccup "1.0.5"]
                  [commons-codec "1.10"]
                  [compojure "1.5.1"]
-                 [http-kit "2.2.0"]
+                 [http-kit "2.5.0"]
                  [javax.servlet/servlet-api "2.5"]
                  [ring-cors "0.1.8"]
                  [ring-middleware-format "0.7.0"]
