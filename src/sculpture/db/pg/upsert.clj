@@ -86,6 +86,11 @@
     db-spec
     (->db artist-tag)))
 
+(defn upsert-category! [category]
+  (-upsert-category!
+    db-spec
+    (->db category)))
+
 (defn upsert-sculpture-tag! [sculpture-tag]
   (-upsert-sculpture-tag!
     db-spec
@@ -111,6 +116,7 @@
                      "artist-tag" upsert-artist-tag!
                      "artist" upsert-artist!
                      "city" upsert-city!
+                     "category" upsert-category!
                      "material" upsert-material!
                      "sculpture-tag" upsert-sculpture-tag!
                      "sculpture" upsert-sculpture!

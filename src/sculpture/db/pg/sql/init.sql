@@ -102,13 +102,20 @@ CREATE TABLE IF NOT EXISTS photos (
   "sculpture-id" uuid REFERENCES sculptures(id)
 );
 
+CREATE TABLE IF NOT EXISTS "categories" (
+  "id" uuid PRIMARY KEY,
+  "slug" text NOT NULL,
+  "type" text NOT NULL,
+  "name" text NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS "sculpture-tags" (
   -- required:
   "id" uuid PRIMARY KEY,
   "type" text NOT NULL,
   "name" text NOT NULL,
-  "slug" text NOT NULL
+  "slug" text NOT NULL,
+  "category-id" uuid REFERENCES categories(id)
 );
 
 CREATE INDEX "sculpture-tags_slug" ON "sculpture-tags"(lower(slug));

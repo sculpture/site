@@ -106,15 +106,28 @@ SET
 WHERE "artist-tags".id = :id
 RETURNING true;
 
--- :name -upsert-sculpture-tag!
+-- :name -upsert-category!
 -- :command :returning-execute
-INSERT INTO "sculpture-tags" ("id", "type", "name", "slug")
+INSERT INTO "categories" ("id", "type", "name", "slug")
 VALUES (:id, :type, :name, :slug)
 ON CONFLICT (id) DO
 UPDATE
 SET
   "name" = :name,
   "slug" = :slug
+WHERE "categories".id = :id
+RETURNING true;
+
+-- :name -upsert-sculpture-tag!
+-- :command :returning-execute
+INSERT INTO "sculpture-tags" ("id", "type", "name", "slug", "category-id")
+VALUES (:id, :type, :name, :slug, :category-id)
+ON CONFLICT (id) DO
+UPDATE
+SET
+  "name" = :name,
+  "slug" = :slug,
+  "category-id" = :category-id
 WHERE "sculpture-tags".id = :id
 RETURNING true;
 

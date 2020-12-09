@@ -26,6 +26,10 @@
 
        [:>.field
 
+        [:&.enum-lookup
+         [:>label
+          {:display "block"}]]
+
         [:&.location
 
          [:>table
@@ -38,7 +42,7 @@
         (tiny-button :x)]
 
        [:textarea
-        :input
+        "input:not([type])"
         {:padding "0.25em"
          :font-size "1em"
          :margin "-0.25em 0"

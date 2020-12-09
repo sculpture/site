@@ -71,6 +71,15 @@
     (db :saving?)))
 
 (reg-sub
+  :sculpture.edit/entities-of-type
+  (fn [db [_ type]]
+    (->> db
+         :data
+         vals
+         (filter (fn [entity]
+                   (= type (entity :type)))))))
+
+(reg-sub
   :sculpture.edit/related-entity-search
   (fn [db [_ type query]]
     (->> (search/search (get-in db [:search :fuse]) query 20)

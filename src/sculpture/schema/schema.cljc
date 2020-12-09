@@ -28,7 +28,7 @@
    :input {:type :string}})
 
 (defn type-opts-for [entity-type]
-  (let [types #{"" "artist" "artist-tag"
+  (let [types #{"" "artist" "artist-tag" "category"
                 "city" "material" "photo"
                 "region" "region-tag"
                 "sculpture" "sculpture-tag"
@@ -133,6 +133,15 @@
              :spec types/NonBlankString
              :input {:type :string}})
 
+    "category"
+    (array-map
+      :id id-opts
+      :type (type-opts-for "category")
+      :slug slug-opts
+      :name {:default ""
+             :spec types/NonBlankString
+             :input {:type :string}})
+
     "sculpture-tag"
     (array-map
       :id id-opts
@@ -140,7 +149,21 @@
       :slug slug-opts
       :name {:default ""
              :spec types/NonBlankString
-             :input {:type :string}})
+             :input {:type :string}}
+      ;; optional:
+      :category-id {:default nil
+                    :optional true
+                    :spec [:maybe uuid?]
+                    ;; wrap in a function so sub can be called later
+                    :input (fn []
+                             {:type :enum-lookup
+                              :options
+                              #?(:cljs (->> @(subscribe [:sculpture.edit/entities-of-type "category"])
+                                            (sort-by :name)
+                                            (map (fn [entity]
+                                                   [(:id entity) (:name entity)]))
+                                            (into {}))
+                                 :clj nil)})})
 
     "sculpture"
     (array-map

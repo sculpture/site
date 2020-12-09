@@ -9,6 +9,7 @@
 (def entity-type->db-table
   {"user" "users"
    "material" "materials_with_related_ids"
+   "category" "categories"
    "artist-tag" "artist-tags"
    "city" "cities"
    "sculpture-tag" "sculpture-tags"
@@ -126,6 +127,7 @@
   (->> ["user"
         "material"
         "city"
+        "category"
         "artist-tag"
         "sculpture-tag"
         "region-tag"
