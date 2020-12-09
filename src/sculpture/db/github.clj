@@ -6,7 +6,8 @@
     [base64-clj.core :as base64]
     [environ.core :refer [env]]
     [org.httpkit.client :as http]
-    [sculpture.json :as json])
+    [sculpture.json :as json]
+    [clojure.java.io :as io])
   (:import
     [org.apache.commons.codec.digest DigestUtils]))
 
@@ -64,10 +65,10 @@
   (println "Fetching archive...")
   (let [temp-file (fs/temp-file "sculpture_data_archive_")
         temp-dir (fs/temp-dir "sculpture_data_archive_unpacked_")]
-    (clojure.java.io/copy (:body @(http/get (str "https://api.github.com/repos/" repo "/zipball/" branch)
-                                    {:headers github-auth-headers
-                                     :as :byte-array}))
-                          temp-file)
+    (io/copy (:body @(http/get (str "https://api.github.com/repos/" repo "/zipball/" branch)
+                       {:headers github-auth-headers
+                        :as :byte-array}))
+             temp-file)
     (println "Complete")
     (println "Unzipping archive...")
     (fs.compression/unzip temp-file temp-dir)
