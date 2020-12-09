@@ -8,7 +8,7 @@
   (let [query @(subscribe [:sculpture.search/query])]
     [:div.query
      [:input {:placeholder "Search Sculpture"
-              :value query
+              :default-value query
               :auto-focus true
               :on-focus (fn [_]
                           (dispatch! [:sculpture.search/set-query-focused true]))
