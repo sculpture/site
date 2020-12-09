@@ -63,6 +63,10 @@
       {:status 200
        :body (db.select/select-all-with-type "sculpture-tag")})
 
+    (GET "/categories/" _
+      {:status 200
+       :body (db.select/select-all-with-type "category")})
+
     (GET "/sculpture-tags/:id-or-slug" [id-or-slug]
       (single-entity-response "sculpture-tag" id-or-slug))
 
