@@ -4,15 +4,15 @@
 
   :dependencies [; COMMON
                  [org.clojure/clojure "1.10.1"]
-                 [io.bloomventures/commons "0.10.5"]
-                 [metosin/malli "0.1.0"]
+                 [io.bloomventures/commons "0.11.5"]
+                 ;; [metosin/malli "0.1.0"] ;; from commons
 
                  ; CLIENT
                  [org.clojure/clojurescript "1.10.764"]
                  [cljs-ajax "0.8.1"]
                  [cljsjs/fuse "2.5.0-0"]
                  [garden "1.3.10"]
-                 [com.andrewmcveigh/cljs-time "0.5.2"]
+                 ;; [com.andrewmcveigh/cljs-time "0.5.2"] ;; from commons
                  [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]
                  [reagent "0.10.0"]
                  [re-frame "1.1.1"]
@@ -21,7 +21,6 @@
                  [human-db/ui "0.0.3"]
 
                  ; SERVER
-                 [environ "1.1.0"]
                  [hiccup "1.0.5"]
                  [commons-codec "1.10"]
                  [compojure "1.5.1"]
@@ -50,7 +49,6 @@
   :main sculpture.server.core
 
   :plugins [[lein-figwheel "0.5.20"]
-            [lein-environ "1.1.0"]
             [lein-cljsbuild "1.1.8"]]
 
   :figwheel {:server-port 3939

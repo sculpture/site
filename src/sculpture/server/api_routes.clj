@@ -3,12 +3,12 @@
     [compojure.core :refer [GET POST PUT DELETE defroutes context]]
     [compojure.handler :refer [api]]
     [compojure.route :as route]
-    [environ.core :refer [env]]
     [ring.middleware.multipart-params :refer [wrap-multipart-params]]
     [ring.middleware.format :refer [wrap-restful-format]]
     [ring.middleware.cors :refer [wrap-cors]]
     [ring.middleware.session :refer [wrap-session]]
     [ring.middleware.session.cookie :refer [cookie-store]]
+    [sculpture.config :refer [config]]
     [sculpture.darkroom.core :as darkroom]
     [sculpture.db.core :as db.core]
     [sculpture.db.pg.select :as db.select]
@@ -271,10 +271,10 @@
     (route/not-found "Page not found")))
 
 
-(def cookie-secret (or (env :cookie-secret)
+(def cookie-secret (or (:cookie-secret config)
                        (println "WARNING: COOKIE SECRET NOT SET")))
-(def cookie-secure? (or (env :cookie-secure?) false))
-(def cookie-max-age (or (env :cookie-max-age) (* 60 60 24 365)))
+(def cookie-secure? (or (:cookie-secure? config) false))
+(def cookie-max-age (* 60 60 24 365))
 
 (def handler
   (-> routes

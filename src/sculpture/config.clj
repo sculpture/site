@@ -8,4 +8,21 @@
    [:map
     [:http-port integer?]
     [:environment [:enum :dev :prod]]
-    [:db-url [:re #"^postgresql://.*$"]]]))
+    [:cookie-secret string?]
+    [:cookie-secure? boolean?]
+    [:db-url [:re #"^postgresql://.*$"]]
+    [:mapbox-token string?]
+    [:mapquest-api-key string?]
+    [:google-client-id string?]
+    [:google-maps-api-key string?]
+    [:oauth-redirect-uri string?]
+    [:github-api-user string?]
+    [:github-api-token string?]
+    [:github-repo string?]
+    [:github-repo-branch string?]
+    [:github-committer-name string?]
+    [:github-committer-email string?]
+    [:s3-access-key string?]
+    [:s3-secret-key string?]
+    [:s3-endpoint string?]
+    [:s3-bucket string?]]))

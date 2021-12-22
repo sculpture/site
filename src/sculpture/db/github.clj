@@ -4,8 +4,8 @@
     [me.raynes.fs.compression :as fs.compression]
     [clojure.string :as string]
     [base64-clj.core :as base64]
-    [environ.core :refer [env]]
     [org.httpkit.client :as http]
+    [sculpture.config :refer [config]]
     [sculpture.json :as json]
     [clojure.java.io :as io])
   (:import
@@ -15,8 +15,8 @@
   (DigestUtils/sha1Hex (str "blob " (count s) "\u0000" s)))
 
 (def github-auth-headers
-  {"User-Agent" (env :github-api-user)
-   "Authorization" (str "token " (env :github-api-token))})
+  {"User-Agent" (:github-api-user config)
+   "Authorization" (str "token " (:github-api-token config))})
 
 (defonce filename->sha (atom {}))
 

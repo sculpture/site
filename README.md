@@ -60,20 +60,18 @@
 
 ### Set Up Config Vars
 
-- Copy the sample config:
-  `cp profiles.sample.clj profiles.clj`
-
 - Modify the config vars:
-  edit `profiles.clj` in your preferred editor
+  create an `config.edn` in your preferred editor
+  (see `src/sculpture/config.clj` for schema)
 
 
 ### Standard Dev Session
 
 - In CLI, start the REPL:
-  `lein with-profiles +sculpture repl`
+  `lein repl`
 
 - In the REPL, launch the server:
-  `(start-server! 2469)`
+  `(start-server!)`
 
 - If necessary, re-import database:
   `(db/reload!)`

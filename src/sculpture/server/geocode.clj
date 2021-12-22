@@ -1,8 +1,8 @@
 (ns sculpture.server.geocode
   (:require
     [clojure.set :refer [rename-keys]]
-    [environ.core :refer [env]]
     [org.httpkit.client :as http]
+    [sculpture.config :refer [config]]
     [sculpture.json :as json]
     [sculpture.db.pg.util :as util]))
 
@@ -10,7 +10,7 @@
   (-> @(http/request
          {:method :get
           :url "http://open.mapquestapi.com/nominatim/v1/search.php"
-          :query-params {:key (env :mapquest-api-key)
+          :query-params {:key (:mapquest-api-key config)
                          :format "json"
                          :q query
                          :limit 1
@@ -23,7 +23,7 @@
   (-> @(http/request
          {:method :get
           :url "http://locationiq.org/v1/search.php"
-          :query-params {:key (env :location-iq-api-key)
+          :query-params {:key (:location-iq-api-key config)
                          :format "json"
                          :q query
                          :limit 1
@@ -42,7 +42,7 @@
   (-> @(http/request
          {:method :get
           :url "http://open.mapquestapi.com/geocoding/v1/address"
-          :query-params {:key (env :mapquest-api-key)
+          :query-params {:key (:mapquest-api-key config)
                          :format "json"
                          :location query
                          :maxResults 1}})
@@ -59,7 +59,7 @@
   (-> @(http/request
          {:method :get
           :url "https://maps.googleapis.com/maps/api/geocode/json"
-          :query-params {:key (env :google-maps-api-key)
+          :query-params {:key (:google-maps-api-key config)
                          :address query}})
       :body
       json/decode

@@ -1,8 +1,8 @@
 (ns sculpture.db.core
   (:require
     [clojure.string :as string]
-    [environ.core :refer [env]]
     [malli.core :as m]
+    [sculpture.config :refer [config]]
     [sculpture.db.github :as github]
     [sculpture.db.yaml :as yaml]
     [sculpture.db.pg.core :as db]
@@ -10,10 +10,10 @@
     [sculpture.db.pg.upsert :as db.upsert]
     [sculpture.schema.schema :as schema]))
 
-(def repo (env :github-repo))
-(def branch (env :github-repo-branch))
-(def committer {:name (env :github-committer-name)
-                :email (env :github-committer-email)})
+(def repo (:github-repo config))
+(def branch (:github-repo-branch config))
+(def committer {:name (:github-committer-name config)
+                :email (:github-committer-email config)})
 
 (defn entity->path [entity]
   (str "data/" (entity :type)  "/" (entity :id) ".yml"))

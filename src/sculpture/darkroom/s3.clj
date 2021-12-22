@@ -3,18 +3,18 @@
   (:require
     [amazonica.aws.s3 :as s3]
     [amazonica.aws.s3transfer :as s3-tx]
-    [environ.core :refer [env]]))
+    [sculpture.config :refer [config]]))
 
 (def creds
-  {:access-key (env :s3-access-key)
-   :secret-key (env :s3-secret-key)
-   :endpoint (env :s3-endpoint)})
+  {:access-key (:s3-access-key config)
+   :secret-key (:s3-secret-key config)
+   :endpoint (:s3-endpoint config)})
 
-(def bucket (env :s3-bucket))
+(def bucket (:s3-bucket config))
 
 (defn object-exists? [path]
   (try
-    (s3/get-object-metadata creds :bucket-name (env :s3-bucket) :key path)
+    (s3/get-object-metadata creds :bucket-name bucket :key path)
     (catch Exception e nil)))
 
 (defn upload!

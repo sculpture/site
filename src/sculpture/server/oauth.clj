@@ -1,8 +1,8 @@
 (ns sculpture.server.oauth
   (:require
-    [environ.core :refer [env]]
     [org.httpkit.client :as http]
     [ring.util.codec :refer [form-encode]]
+    [sculpture.config :refer [config]]
     [sculpture.json :as json]))
 
 (defn request-token-url [provider]
@@ -10,8 +10,8 @@
     :google
     (str "https://accounts.google.com/o/oauth2/v2/auth?"
          (form-encode {:response_type "token"
-                       :client_id (env :google-client-id)
-                       :redirect_uri (env :oauth-redirect-uri)
+                       :client_id (:google-client-id config)
+                       :redirect_uri (:oauth-redirect-uri config)
                        :scope "email profile"}))
     nil))
 
@@ -23,7 +23,7 @@
                        :url (str "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=" token)})
                    :body
                    json/decode)]
-      (= (resp :aud) (env :google-client-id)))))
+      (= (resp :aud) (:google-client-id config)))))
 
 (defn get-user-info [provider token]
   (when (valid-token? provider token)

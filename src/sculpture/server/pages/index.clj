@@ -1,7 +1,7 @@
 (ns sculpture.server.pages.index
   (:require
-    [environ.core :refer [env]]
     [hiccup.core :as hiccup]
+    [sculpture.config :refer [config]]
     [sculpture.server.digest :as digest]))
 
 (defn html []
@@ -30,7 +30,7 @@
       [:script {:type "text/javascript"}
        "window.env = {};"
        (for [k [:mapbox-token]]
-         (str "window.env['" (name k) "'] = '" (env k) "';"))]
+         (str "window.env['" (name k) "'] = '" (config k) "';"))]
 
       (let [digest (digest/from-file "public/js/sculpture.js")]
         [:script {:type "text/javascript"
