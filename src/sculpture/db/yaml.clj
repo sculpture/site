@@ -1,5 +1,6 @@
 (ns sculpture.db.yaml
   (:require
+    [clojure.string :as string]
     [yaml.writer]
     [yaml.reader]))
 
@@ -90,16 +91,20 @@
   [s]
   (into {} (yaml.reader/parse-string s)))
 
+(defn to-string
+  [entity]
+  (-> entity
+      ;; remove keys with vals of empty sequences
+      (->> (remove (fn [[k v]]
+                     (and (sequential? v) (empty? v))) )
+           (into {}))
+      (yaml.writer/generate-string :dumper-options {:flow-style :block})))
+
 (defn many-to-string
   "Given a list of maps, returns string containing multiple yaml docs"
   [entities]
   (->> entities
        (sort-by :id)
-       (map (fn [entity]
-              (yaml.writer/generate-string entity :dumper-options {:flow-style :block})))
-       (clojure.string/join "---\n")
+       (map to-string)
+       (string/join "---\n")
        (str "---\n")))
-
-(defn to-string
-  [entity]
-  (yaml.writer/generate-string entity :dumper-options {:flow-style :block}))
