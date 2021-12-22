@@ -8,12 +8,12 @@
 (hugsql/def-db-fns "sculpture/db/pg/sql/drop.sql")
 
 (defn reset-views! []
-  (-views! db-spec))
+  (-views! @db-spec))
 
 (defn init! []
-  (-init! db-spec)
+  (-init! @db-spec)
   (reset-views!))
 
 (defn drop! []
-  (-drop! db-spec))
+  (-drop! @db-spec))
 

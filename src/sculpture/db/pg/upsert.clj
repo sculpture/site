@@ -8,107 +8,107 @@
 
 (defn upsert-sculpture! [sculpture]
   (-upsert-sculpture!
-    db-spec
+    @db-spec
     (->db sculpture))
 
   (-delete-relations-artist-sculpture!
-    db-spec
+    @db-spec
     {:sculpture-id (sculpture :id)})
 
   (doseq [artist-id (sculpture :artist-ids)]
     (-relate-artist-sculpture!
-      db-spec
+      @db-spec
       {:artist-id artist-id
        :sculpture-id (sculpture :id)}))
 
   (-delete-relations-sculpture-sculpture-tag!
-    db-spec
+    @db-spec
     {:sculpture-id (sculpture :id)})
 
   (doseq [tag-id (sculpture :tag-ids)]
     (-relate-sculpture-sculpture-tag!
-      db-spec
+      @db-spec
       {:sculpture-tag-id tag-id
        :sculpture-id (sculpture :id)}))
 
   (-delete-relations-material-sculpture!
-    db-spec
+    @db-spec
     {:sculpture-id (sculpture :id)})
 
   (doseq [material-id (sculpture :material-ids)]
     (-relate-material-sculpture!
-      db-spec
+      @db-spec
       {:material-id material-id
        :sculpture-id (sculpture :id)})))
 
 (defn upsert-region! [region]
   (-upsert-region!
-    db-spec
+    @db-spec
     (->db region))
 
   (-delete-relations-region-region-tag!
-    db-spec
+    @db-spec
     {:region-id (region :id)})
 
   (doseq [tag-id (region :tag-ids)]
     (-relate-region-region-tag!
-      db-spec
+      @db-spec
       {:region-tag-id tag-id
        :region-id (region :id)})))
 
 (defn upsert-photo! [photo]
   (-upsert-photo!
-    db-spec
+    @db-spec
     (->db photo)))
 
 (defn upsert-user! [user]
   (-upsert-user!
-    db-spec
+    @db-spec
     (->db user)))
 
 (defn upsert-artist! [artist]
   (-upsert-artist!
-    db-spec
+    @db-spec
     (->db artist))
 
   (-delete-relations-artist-artist-tag!
-    db-spec
+    @db-spec
     {:artist-id (artist :id)})
 
   (doseq [tag-id (artist :tag-ids)]
     (-relate-artist-artist-tag!
-      db-spec
+      @db-spec
       {:artist-tag-id tag-id
        :artist-id (artist :id)})))
 
 (defn upsert-artist-tag! [artist-tag]
   (-upsert-artist-tag!
-    db-spec
+    @db-spec
     (->db artist-tag)))
 
 (defn upsert-category! [category]
   (-upsert-category!
-    db-spec
+    @db-spec
     (->db category)))
 
 (defn upsert-sculpture-tag! [sculpture-tag]
   (-upsert-sculpture-tag!
-    db-spec
+    @db-spec
     (->db sculpture-tag)))
 
 (defn upsert-material! [material]
   (-upsert-material!
-    db-spec
+    @db-spec
     (->db material)))
 
 (defn upsert-region-tag! [region-tag]
   (-upsert-region-tag!
-   db-spec
+   @db-spec
    (->db region-tag)))
 
 (defn upsert-city! [city]
   (-upsert-city!
-   db-spec
+   @db-spec
    (->db city)))
 
 (defn upsert-entity! [entity]

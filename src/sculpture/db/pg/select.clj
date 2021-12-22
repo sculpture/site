@@ -20,50 +20,50 @@
    "sculpture" "sculptures_with_related_ids"})
 
 (defn entity-counts []
-  (-entity-counts db-spec))
+  (-entity-counts @db-spec))
 
 ; sculptures
 
 (defn select-sculptures-for-region [slug]
   (->> (-select-sculptures-for-region
-         db-spec
+         @db-spec
          {:region-slug slug})
        (map db->)))
 
 (defn select-sculptures-for-artist [artist-slug]
   (->> (-select-sculptures-for-artist
-         db-spec
+         @db-spec
          {:artist-slug artist-slug})
        (map db->)))
 
 (defn select-sculptures-for-decade [decade]
   (->> (-select-sculptures-for-decade
-        db-spec
+        @db-spec
         {:date-start (str (/ decade 10) "*")
          :date-end (str (+ decade 9) "-12-31")})
        (map db->)))
 
 (defn select-sculptures-for-artist-tag-slug [artist-tag-slug]
   (->> (-select-sculptures-for-artist-tag-slug
-         db-spec
+         @db-spec
          {:artist-tag-slug artist-tag-slug})
        (map db->)))
 
 (defn select-sculptures-for-artist-gender [artist-gender]
   (->> (-select-sculptures-for-artist-gender
-         db-spec
+         @db-spec
          {:artist-gender artist-gender})
        (map db->)))
 
 (defn select-sculptures-for-sculpture-tag-slug [sculpture-tag-slug]
   (->> (-select-sculptures-for-sculpture-tag-slug
-         db-spec
+         @db-spec
          {:sculpture-tag-slug sculpture-tag-slug})
        (map db->)))
 
 (defn select-sculptures-for-material-slug [slug]
   (->> (-select-sculptures-for-material-slug
-         db-spec
+         @db-spec
          {:material-slug slug})
        (map db->)))
 
@@ -71,7 +71,7 @@
 
 (defn select-sculpture-with-slug [slug]
   (->> (-select-sculpture-with-slug
-         db-spec
+         @db-spec
          {:slug slug})
        db->))
 
@@ -79,7 +79,7 @@
 
 (defn select-user-with-email [email]
   (->> (-select-user-with-email
-         db-spec
+         @db-spec
          {:email email})
        db->))
 
@@ -87,7 +87,7 @@
 
 (defn exists? [entity-type id]
   (->> (-exists?
-         db-spec
+         @db-spec
          {:type (entity-type->db-table entity-type)
           :id id}
          {:quoting :ansi})
@@ -95,14 +95,14 @@
 
 (defn select-all-with-type [entity-type]
   (->> (-select-all-with-type
-         db-spec
+         @db-spec
          {:type (entity-type->db-table entity-type)}
          {:quoting :ansi})
        (map db->)))
 
 (defn select-entity-with-id [entity-type id]
   (-> (-select-entity-with-id
-        db-spec
+        @db-spec
         {:entity-type (entity-type->db-table entity-type)
          :id id}
         {:quoting :ansi})
@@ -110,7 +110,7 @@
 
 (defn select-entity-with-slug [entity-type slug]
   (-> (-select-entity-with-slug
-        db-spec
+        @db-spec
         {:entity-type (entity-type->db-table entity-type)
          :slug slug}
         {:quoting :ansi})
@@ -141,5 +141,5 @@
 ; misc
 
 (defn select-random-sculpture-slug []
-  (->> (-select-random-sculpture-slug db-spec)
+  (->> (-select-random-sculpture-slug @db-spec)
        :slug))

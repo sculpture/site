@@ -7,6 +7,6 @@
 
 (defn simplify-geojson [geojson]
   (->> (-simplify-geojson
-         db-spec
+         @db-spec
          {:geojson geojson})
        :geojson))

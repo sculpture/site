@@ -11,4 +11,4 @@
     (hugsql/set-adapter! (next-adapter/hugsql-adapter-next-jdbc))
     (hikari/make-datasource {:jdbc-url (str "jdbc:" (config :db-url))})))
 
-(def ^:dynamic db-spec @datasource)
+(def ^:dynamic db-spec datasource)
