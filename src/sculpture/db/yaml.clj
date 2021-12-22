@@ -76,6 +76,12 @@
   (yaml.writer/encode [data]
     (into-sorted-map data))
 
+  java.lang.Double
+  (yaml.writer/encode [data]
+    (if (zero? (mod data 1))
+      (int data)
+      data))
+
   clojure.lang.PersistentArrayMap
   (yaml.writer/encode [data]
     (into-sorted-map data)))
