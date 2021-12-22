@@ -31,7 +31,7 @@
 
                  ; DB
                  [base64-clj "0.1.1"]
-                 [io.forward/yaml "1.0.6"]
+                 [io.forward/yaml "1.0.10"]
                  [metosin/jsonista "0.2.7"]
                  [hikari-cp "2.13.0"]
                  [seancorfield/next.jdbc "1.1.588"]
