@@ -35,11 +35,14 @@
                                  :email (author :email)}}))
 
 (defn export-to-dir! []
-  (.mkdir (java.io.File. "data"))
-  (doseq [type (schema/types)]
-    (.mkdir (java.io.File. (str "data/" type))))
-  (doseq [entity (db.select/select-all)]
-    (spit (entity->path entity) (entity->yaml entity))))
+  (let [dir "export-data"
+        entity->path (fn [entity]
+                       (str dir "/" (entity :type) "/" (entity :id) ".yml"))]
+    (.mkdir (java.io.File. dir))
+    (doseq [type (schema/types)]
+      (.mkdir (java.io.File. (str dir "/" type))))
+    (doseq [entity (db.select/select-all)]
+      (spit (entity->path entity) (entity->yaml entity)))))
 
 (defn import-data! [entities]
   (let [grouped-entities (group-by :type entities)]
