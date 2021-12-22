@@ -1,4 +1,4 @@
-(ns sculpture.misc
+(ns sculpture.scripts.misc
   (:require
     [clojure.string :as string]
     [clojure.java.io :as io]
