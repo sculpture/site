@@ -143,3 +143,39 @@
 (defn select-random-sculpture-slug []
   (->> (-select-random-sculpture-slug @db-spec)
        :slug))
+
+; sample
+#_(select-entity-with-slug "region" "bce")
+
+#_(select-random-sculpture-slug)
+
+#_(-select-sculpture-with-slug
+    @db-spec
+    {:slug "bird-wings"})
+
+#_(-select-entity-with-slug
+    @db-spec
+    {:entity-type "artists"
+     :slug "mark-gomes"}
+    {:quoting :ansi})
+
+#_(-select-entity-with-slug
+    @db-spec
+    {:entity-type "extended_sculptures"
+     :slug "bird-wings"}
+    {:quoting :ansi})
+
+#_(-select-entity-with-slug
+    @db-spec
+    {:entity-type "regions"
+     :slug "toronto"}
+    {:quoting :ansi})
+
+#_(-select-entity-with-slug
+    @db-spec
+    {:entity-type "category"
+     :slug "sculpture-subject-person"}
+    {:quoting :ansi})
+
+#_(time
+    (select-sculptures-for-region "canada"))
