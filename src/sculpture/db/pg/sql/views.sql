@@ -40,13 +40,15 @@ CREATE VIEW artists_with_related_ids AS (
     json_agg(distinct "artist-tags") AS "tags",
     array_agg(distinct "artists_artist-tags"."artist-tag-id") AS "tag-ids",
     json_agg(distinct "nationalities") AS "nationalities",
-    array_agg(distinct "artists_nationalities"."nationality-id") AS "nationality-ids"
+    array_agg(distinct "artists_nationalities"."nationality-id") AS "nationality-ids",
+    count("artists_sculptures"."sculpture-id") AS "sculpture-count"
   FROM
     artists
   LEFT JOIN "artists_artist-tags" ON "artists_artist-tags"."artist-id" = "artists".id
   LEFT JOIN "artists_nationalities" ON "artists_nationalities"."artist-id" = "artists".id
   LEFT JOIN "nationalities" ON "artists_nationalities"."nationality-id" = "nationalities".id
   LEFT JOIN "artist-tags" ON "artists_artist-tags"."artist-tag-id" = "artist-tags".id
+  LEFT JOIN "artists_sculptures" ON "artists_sculptures"."artist-id" = "artists".id
   GROUP BY
     artists.id
 );
@@ -117,6 +119,19 @@ CREATE VIEW materials_with_related_ids AS (
   LEFT JOIN "materials_sculptures" ON "materials_sculptures"."material-id" = "materials".id
   GROUP BY
     materials.id
+);
+
+DROP VIEW IF EXISTS "sculpture-tags_with_counts";
+
+CREATE VIEW "sculpture-tags_with_counts" AS (
+  SELECT
+    "sculpture-tags".*,
+    count("sculptures_sculpture-tags"."sculpture-id") AS "sculpture-count"
+  FROM
+    "sculpture-tags"
+  LEFT JOIN "sculptures_sculpture-tags" ON "sculptures_sculpture-tags"."sculpture-tag-id" = "sculpture-tags".id
+  GROUP BY
+    "sculpture-tags".id
 );
 
 COMMIT;

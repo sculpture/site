@@ -13,7 +13,7 @@
    "artist-tag" "artist-tags"
    "city" "cities"
    "nationality" "nationalities"
-   "sculpture-tag" "sculpture-tags"
+   "sculpture-tag" "sculpture-tags_with_counts"
    "region-tag" "region-tags"
    "photo" "photos"
    "region" "regions_with_related_ids"
