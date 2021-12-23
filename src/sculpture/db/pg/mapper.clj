@@ -90,6 +90,22 @@
   (-> result
       (dissoc :shape)))
 
+(defmethod db-> "artist"
+  [result]
+  (-> result
+      (update-if-exists :tags (fn [json]
+                                   (->> json
+                                        (remove (fn [x]
+                                                  (nil? (:slug x))))
+                                        distinct
+                                        (map db->))))
+      (update-if-exists :nationalities (fn [json]
+                                         (->> json
+                                              (remove (fn [x]
+                                                        (nil? (:slug x))))
+                                              distinct
+                                              (map db->))))))
+
 (defmethod db-> "sculpture"
   [result]
   (-> result

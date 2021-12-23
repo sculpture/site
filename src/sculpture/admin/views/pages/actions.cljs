@@ -78,6 +78,11 @@
 
     [:button
      {:on-click (fn [_]
+                  (dispatch! [:sculpture.edit/create-entity {:type "nationality"}]))}
+     "+ Nationality"]
+
+    [:button
+     {:on-click (fn [_]
                   (dispatch! [:sculpture.edit/create-entity {:type "artist-tag"}]))}
      "+ Artist Tag"]
 

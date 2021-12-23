@@ -36,6 +36,17 @@ CREATE INDEX sculptures_slug ON sculptures(lower(slug));
 CREATE INDEX sculptures_dates ON sculptures(date);
 CREATE INDEX sculptures_gix ON sculptures USING GIST ( location );
 
+CREATE TABLE IF NOT EXISTS "nationalities" (
+  -- required:
+  "id" uuid PRIMARY KEY,
+  "type" text NOT NULL,
+  "nation" text NOT NULL,
+  "demonym" text NOT NULL,
+  "slug" text NOT NULL
+);
+
+CREATE INDEX "nationality_slug" ON "nationalities"(lower(slug));
+
 CREATE TABLE IF NOT EXISTS artists (
   -- required:
   "id" uuid PRIMARY KEY,
@@ -44,7 +55,6 @@ CREATE TABLE IF NOT EXISTS artists (
   "slug" text NOT NULL,
   -- optional:
   "gender" text, -- could be enum
-  "nationality" text,
   "link-website" text,
   "link-wikipedia" text,
   "bio" text,
@@ -158,6 +168,13 @@ CREATE TABLE IF NOT EXISTS "sculptures_sculpture-tags" (
   "sculpture-tag-id" uuid references "sculpture-tags"(id),
   "sculpture-id" uuid references sculptures(id),
   PRIMARY KEY ("sculpture-tag-id", "sculpture-id")
+);
+
+
+CREATE TABLE IF NOT EXISTS "artists_nationalities" (
+  "nationality-id" uuid references "nationalities"(id),
+  "artist-id" uuid references "artists"(id),
+  PRIMARY KEY ("nationality-id", "artist-id")
 );
 
 CREATE TABLE IF NOT EXISTS "artists_artist-tags" (

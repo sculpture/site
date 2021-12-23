@@ -4,6 +4,7 @@
    [sculpture.admin.views.sidebar.entity :refer [entity-view]]
    [sculpture.admin.views.sidebar.entity.partials.related-sculptures :refer [related-sculptures-view]]
    [sculpture.admin.views.sidebar.entity.partials.related-tags :refer [related-tags-view]]
+   [sculpture.admin.views.sidebar.entity.partials.related-nationalities :refer [related-nationalities-view]]
    [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [photo-mosaic-view]]))
 
 (defmethod entity-view "artist"
@@ -33,9 +34,9 @@
     (when (artist :gender)
       [:div.row.gender {:title "Gender"}
        (artist :gender)])
-    (when (artist :nationality)
-      [:div.row.nationality {:title "Nationality"}
-       (artist :nationality)])]
+    (when (artist :nationality-ids)
+      [:div.row.nationalities {:title "Nationality"}
+       [related-nationalities-view (artist :nationality-ids)]])]
    [:div.related
     [:h2 "Sculptures"]
     [related-sculptures-view @(subscribe [:sculptures-for

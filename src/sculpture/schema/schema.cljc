@@ -29,7 +29,7 @@
 
 (defn type-opts-for [entity-type]
   (let [types #{"" "artist" "artist-tag" "category"
-                "city" "material" "photo"
+                "city" "material" "nationality" "photo"
                 "region" "region-tag"
                 "sculpture" "sculpture-tag"
                 "user"}]
@@ -67,6 +67,18 @@
              :spec types/NonBlankString
              :input {:type :string}})
 
+    "nationality"
+    (array-map
+      :id id-opts
+      :type (type-opts-for "nationality")
+      :slug slug-opts
+      :nation {:default ""
+               :spec types/NonBlankString
+               :input {:type :string}}
+      :demonym {:default ""
+                :spec types/NonBlankString
+                :input {:type :string}})
+
     "artist"
     (array-map
       :id id-opts
@@ -81,10 +93,6 @@
                :spec [:maybe [:enum "male" "female" "other"]]
                :input {:type :enum
                        :options #{"" "male" "female" "other"}}}
-      :nationality {:default nil
-                    :optional true
-                    :spec [:maybe types/NonBlankString]
-                    :input {:type :string}}
       :link-website {:default nil
                      :optional true
                      :spec [:maybe types/Url]
@@ -107,6 +115,12 @@
             :input {:type :string
                     :length :long}}
       ;; related:
+      :nationality-ids {:default []
+                        :spec types/RelatedIds
+                        :input {:type :multi-lookup
+                                :optional true
+                                :on-find (lookup-on-find)
+                                :on-search (lookup-on-search "nationality")}}
       :tag-ids (tag-ids-opts-for "artist"))
 
     "city"

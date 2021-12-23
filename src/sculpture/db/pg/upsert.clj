@@ -75,16 +75,31 @@
     @db-spec
     {:artist-id (artist :id)})
 
+  (-delete-relations-artist-nationality!
+    @db-spec
+    {:artist-id (artist :id)})
+
   (doseq [tag-id (artist :tag-ids)]
     (-relate-artist-artist-tag!
       @db-spec
       {:artist-tag-id tag-id
+       :artist-id (artist :id)}))
+
+  (doseq [nationality-id (artist :nationality-ids)]
+    (-relate-artist-nationality!
+      @db-spec
+      {:nationality-id nationality-id
        :artist-id (artist :id)})))
 
 (defn upsert-artist-tag! [artist-tag]
   (-upsert-artist-tag!
     @db-spec
     (->db artist-tag)))
+
+(defn upsert-nationality! [nationality]
+  (-upsert-nationality!
+    @db-spec
+    (->db nationality)))
 
 (defn upsert-category! [category]
   (-upsert-category!
@@ -119,6 +134,7 @@
                      "category" upsert-category!
                      "material" upsert-material!
                      "sculpture-tag" upsert-sculpture-tag!
+                     "nationality" upsert-nationality!
                      "sculpture" upsert-sculpture!
                      "region-tag" upsert-region-tag!
                      "region" upsert-region!

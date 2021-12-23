@@ -37,10 +37,16 @@ DROP VIEW IF EXISTS artists_with_related_ids;
 CREATE VIEW artists_with_related_ids AS (
   SELECT
     artists.*,
-    array_agg(distinct "artists_artist-tags"."artist-tag-id") AS "tag-ids"
+    json_agg(distinct "artist-tags") AS "tags",
+    array_agg(distinct "artists_artist-tags"."artist-tag-id") AS "tag-ids",
+    json_agg(distinct "nationalities") AS "nationalities",
+    array_agg(distinct "artists_nationalities"."nationality-id") AS "nationality-ids"
   FROM
     artists
   LEFT JOIN "artists_artist-tags" ON "artists_artist-tags"."artist-id" = "artists".id
+  LEFT JOIN "artists_nationalities" ON "artists_nationalities"."artist-id" = "artists".id
+  LEFT JOIN "nationalities" ON "artists_nationalities"."nationality-id" = "nationalities".id
+  LEFT JOIN "artist-tags" ON "artists_artist-tags"."artist-tag-id" = "artist-tags".id
   GROUP BY
     artists.id
 );

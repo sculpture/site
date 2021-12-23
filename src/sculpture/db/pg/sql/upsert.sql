@@ -77,14 +77,13 @@ RETURNING true;
 
 -- :name -upsert-artist!
 -- :command :returning-execute
-INSERT INTO artists ("id", "type", "name", "slug", "nationality", "gender", "link-website", "link-wikipedia", "bio", "birth-date", "death-date")
-VALUES (:id, :type, :name, :slug, :nationality, :gender, :link-website, :link-wikipedia, :bio, :birth-date, :death-date)
+INSERT INTO artists ("id", "type", "name", "slug", "gender", "link-website", "link-wikipedia", "bio", "birth-date", "death-date")
+VALUES (:id, :type, :name, :slug, :gender, :link-website, :link-wikipedia, :bio, :birth-date, :death-date)
 ON CONFLICT (id) DO
 UPDATE
 SET
   "name" = :name,
   "slug" = :slug,
-  "nationality" = :nationality,
   "gender" = :gender,
   "link-website" = :link-website,
   "link-wikipedia" = :link-wikipedia,
@@ -92,6 +91,19 @@ SET
   "birth-date" = :birth-date,
   "death-date" = :death-date
 WHERE "artists".id = :id
+RETURNING true;
+
+-- :name -upsert-nationality!
+-- :command :returning-execute
+INSERT INTO "nationalities" ("id", "type", "demonym", "nation", "slug")
+VALUES (:id, :type, :demonym, :nation, :slug)
+ON CONFLICT (id) DO
+UPDATE
+SET
+  "demonym" = :demonym,
+  "nation" = :nation,
+  "slug" = :slug
+WHERE "nationalities".id = :id
 RETURNING true;
 
 -- :name -upsert-artist-tag!
@@ -194,6 +206,20 @@ RETURNING true;
 INSERT INTO "artists_artist-tags" ("artist-id", "artist-tag-id")
 VALUES (:artist-id, :artist-tag-id)
 ON CONFLICT ("artist-id", "artist-tag-id") DO
+NOTHING
+RETURNING true;
+
+-- :name -delete-relations-artist-nationality!
+-- :command :returning-execute
+DELETE FROM "artists_nationalities"
+WHERE "artist-id" = :artist-id
+RETURNING true;
+
+-- :name -relate-artist-nationality!
+-- :command :returning-execute
+INSERT INTO "artists_nationalities" ("artist-id", "nationality-id")
+VALUES (:artist-id, :nationality-id)
+ON CONFLICT ("artist-id", "nationality-id") DO
 NOTHING
 RETURNING true;
 
