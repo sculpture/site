@@ -44,7 +44,7 @@
                  [clj-commons/conch "0.9.2"]
                  [clj-commons/fs "1.5.2"]
                  [clj-time "0.14.0"]
-                 [amazonica "0.3.106"]]
+                 [amazonica "0.3.157"]]
 
   :main sculpture.server.core
 
