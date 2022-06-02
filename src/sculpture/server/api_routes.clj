@@ -102,6 +102,10 @@
       {:status 200
        :body (db.select/select-sculptures-for-artist slug)})
 
+    (GET "/graph/sculptures" []
+      {:status 200
+       :body (db.select/graph-select)})
+
     (GET "/sculptures/random" []
       {:status 302
        :headers {"Location" (str "./" (db.select/select-random-sculpture-slug))}})

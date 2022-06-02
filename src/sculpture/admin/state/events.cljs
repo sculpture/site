@@ -54,6 +54,7 @@
                    :results nil
                    :focused? false
                    :fuse nil}
+          :db/map-sculptures []
           :user nil
           :active-entity-id nil
           :entity-draft nil
@@ -64,8 +65,8 @@
           :advanced-search {:conditions []}
           :mega-map {:dirty? false}}
      :dispatch-n [[:sculpture.user/-remote-auth]
+                  [:sculpture.data/-remote-get-map-sculptures]
                   [:sculpture.data/-remote-get-data]]}))
-
 
 ;; sculpture.user
 
@@ -118,6 +119,20 @@
      :dispatch [:set-main-page nil]}))
 
 ;; sculpture.data
+
+(reg-event-fx
+  :sculpture.data/-remote-get-map-sculptures
+  (fn [_ _]
+    {:ajax {:method :get
+            :uri "/api/graph/sculptures?keys=location"
+            :on-success
+            (fn [data]
+              (dispatch [:sculpture.data/-set-map-sculptures! data]))}}))
+
+(reg-event-fx
+  :sculpture.data/-set-map-sculptures!
+  (fn [{db :db} [_ data]]
+    {:db (assoc db :db/map-sculptures data)}))
 
 (reg-event-fx
   :sculpture.data/-remote-get-data

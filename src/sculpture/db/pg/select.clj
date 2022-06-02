@@ -23,6 +23,11 @@
 (defn entity-counts []
   (-entity-counts @db-spec))
 
+(defn graph-select []
+  (->> (-graph-select-sculptures
+         @db-spec)
+       (map db->)))
+
 ; sculptures
 
 (defn select-sculptures-for-region [slug]

@@ -122,12 +122,7 @@
 (reg-sub
   :sculpture.mega-map/sculptures
   (fn [db _]
-    (->> db
-         :data
-         vals
-         (filter (fn [entity]
-                   (= "sculpture" (entity :type)))))))
-
+    (db :db/map-sculptures)))
 
 (reg-sub
   :sculpture.mega-map/config
