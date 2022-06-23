@@ -12,15 +12,19 @@
          @db-spec)
        (map db->)))
 
-(defn search [query]
+(defn search
+  [{:keys [query limit]}]
   (if (string/blank? query)
     (throw (ex-info "Query must not be nil or blank" {}))
     (->> (-graph-search-entities
            @db-spec
-           {:query query})
+           {:query query
+            :limit limit})
          (map db->))))
 
 #_(graph-search "Canadian")
-#_(search "Kosso")
+#_(search {:query "John"})
+#_(search {:query "John"
+           :limit 1})
 
 

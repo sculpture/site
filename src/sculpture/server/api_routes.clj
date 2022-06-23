@@ -107,9 +107,10 @@
       {:status 200
        :body (db.graph/select)})
 
-    (GET "/graph/search" [query]
+    (GET "/graph/search" [query limit]
       {:status 200
-       :body (db.graph/search query)})
+       :body (db.graph/search {:query query
+                               :limit (Integer. limit)})})
 
     (GET "/sculptures/random" []
       {:status 302

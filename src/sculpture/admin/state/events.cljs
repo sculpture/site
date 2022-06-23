@@ -173,7 +173,7 @@
   (fn [{db :db} [_ query]]
     {:db (assoc-in db [:db/search :query] query)
      :dispatch-debounce {:id :query
-                         :timeout 250
+                         :timeout 100
                          :dispatch [:sculpture.search/-remote-search! query]}}))
 
 (reg-event-fx
@@ -182,7 +182,8 @@
     (when-not (string/blank? query)
       {:ajax {:method :get
               :uri "/api/graph/search"
-              :params {:query query}
+              :params {:query query
+                       :limit 10}
               :on-success
               (fn [data]
                 (dispatch [:sculpture.search/-set-results! data]))}})))
