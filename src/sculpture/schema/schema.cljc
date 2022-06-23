@@ -27,14 +27,20 @@
    :spec types/Slug
    :input {:type :string}})
 
+(def entity-types
+  #{"artist" "artist-tag" "category"
+    "city" "material" "nationality" "photo"
+    "region" "region-tag"
+    "sculpture" "sculpture-tag"
+    "user"})
+
+(def EntityType
+  (into [:enum] entity-types))
+
 (defn type-opts-for [entity-type]
-  (let [types #{"" "artist" "artist-tag" "category"
-                "city" "material" "nationality" "photo"
-                "region" "region-tag"
-                "sculpture" "sculpture-tag"
-                "user"}]
+  (let [types (conj entity-types "")]
     {:default entity-type
-     :spec (into [:enum] types)
+     :spec EntityType
      :input {:type :enum
              :options types
              :disabled true}}))

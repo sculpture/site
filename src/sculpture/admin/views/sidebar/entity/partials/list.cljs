@@ -10,47 +10,51 @@
 
 (defmethod entity-row-data "city"
   [city]
-  {:h1 (city :city)
-   :h2 (str (city :region) ", " (city :country))
+  {:title (city :city)
+   :subtitle (str (city :region) ", " (city :country))
    :id (city :id)
-   :image nil
+   :photo-id nil
    :type "city"})
 
 (defmethod entity-row-data "photo"
   [photo]
-  {:h1 "Photo"
-   :h2 (helpers/format-date (photo :captured-at) "yyyy-MM-dd")
+  {:title "Photo"
+   :subtitle (helpers/format-date (photo :captured-at) "yyyy-MM-dd")
    :id (photo :id)
-   :image photo
+   :photo-id (:id photo)
    :type "photo"})
 
 (defmethod entity-row-data "sculpture"
   [sculpture]
   (let [photos (subscribe [:photos-for-sculpture (sculpture :id)])
         artists (subscribe [:get-entities (sculpture :artist-ids)])]
-    {:h1 (sculpture :title)
-     :h2 (string/join ", " (map :name @artists))
+    {:title (sculpture :title)
+     :subtitle (string/join ", " (map :name @artists))
      :id (sculpture :id)
-     :image (first @photos)
+     :photo-id (:id (first @photos))
      :type "sculpture"}))
 
 (defmethod entity-row-data :default
   [entity]
-  {:h1 (or (entity :title) (entity :name))
-   :h2 "..."
+  {:title (or (entity :title) (entity :name))
+   :subtitle "..."
    :id (entity :id)
-   :image nil
+   :photo-id nil
    :type (entity :type)})
+
+(defn row-view
+  [{:keys [id photo-id type title subtitle]}]
+  [:a.entity
+   {:href (routes/entity-path {:id id})
+    :class type}
+   [photo-view {:photo {:id photo-id}
+                :size :thumb}]
+   [:div.h1 title]
+   [:div.h2 subtitle]])
 
 (defn entity-row-view [entity]
   (let [data (entity-row-data entity)]
-    [:a.entity
-     {:href (routes/entity-path {:id (data :id)})
-      :class (data :type)}
-     [photo-view {:photo (data :image)
-                  :size :thumb}]
-     [:div.h1 (data :h1)]
-     [:div.h2 (data :h2)]]))
+    [row-view data]))
 
 (defn entity-list-view [entities]
   [:div.entity-list

@@ -2,7 +2,7 @@
   (:require
     [clojure.string :as string]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
-    [sculpture.admin.views.sidebar.entity.partials.list :refer [entity-list-view]]))
+    [sculpture.admin.views.sidebar.entity.partials.list :refer [row-view]]))
 
 (defn query-view []
   (let [query @(subscribe [:sculpture.search/query])]
@@ -11,18 +11,18 @@
               :default-value query
               :auto-focus true
               :on-focus (fn [_]
-                          (dispatch! [:sculpture.search/set-query-focused true]))
+                          (dispatch! [:sculpture.search/set-query-focused! true]))
               :on-blur (fn [e]
                          ; set-page does a set-query-focused anyway, so, this is mostly relevant for tabbing
                          ; but, need to have a timeout, b/c otherwise, when user clicks a search result
                          ; the on-blur removes the link before the on-click happens
-                         (js/setTimeout (fn [] (dispatch! [:sculpture.search/set-query-focused false])) 250))
+                         (js/setTimeout (fn [] (dispatch! [:sculpture.search/set-query-focused! false])) 250))
               :on-change (fn [e]
-                           (dispatch! [:sculpture.search/set-query (.. e -target -value)]))}]
+                           (dispatch! [:sculpture.search/set-query! (.. e -target -value)]))}]
      (when (seq query)
        [:button.clear
         {:on-click (fn [_]
-                     (dispatch! [:sculpture.search/set-query ""]))}])]))
+                     (dispatch! [:sculpture.search/set-query! ""]))}])]))
 
 (defn results-view []
   [:div.results
@@ -35,13 +35,13 @@
          [:div.group {:class (str type)}
           [:h2 (case (str type)
                  "city" "Cities"
+                 "nationality" "Nationalities"
+                 "sculpture-tag" "Sculpture Tags"
                  ;; else
                  (-> (str type)
                      (string/capitalize)
                      (str "s")))]
-          [entity-list-view results]])))])
-
-(defn search-view []
-  [:div.search
-   [query-view]
-   [results-view]])
+          [:div.entity-list
+           (for [result results]
+             ^{:key (:id result)}
+             [row-view result])]])))])

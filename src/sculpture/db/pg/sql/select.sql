@@ -67,15 +67,6 @@ FROM
 WHERE
     extended_sculptures.id = target_sculptures.id;
 
--- :name -graph-select-sculptures
--- :result :many
-SELECT
-  sculptures.id,
-  sculptures.location,
-  sculptures.title
-FROM
-  sculptures;
-
 -- :name -select-sculptures-for-decade
 -- :result :many
 SELECT

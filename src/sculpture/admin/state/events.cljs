@@ -50,10 +50,10 @@
 (reg-event-fx
   :init
   (fn [_ _]
-    {:db {:search {:query ""
-                   :results nil
-                   :focused? false
-                   :fuse nil}
+    {:db {:db/search {:query ""
+                      :results nil
+                      :focused? false
+                      :fuse nil}
           :db/map-sculptures []
           :user nil
           :active-entity-id nil
@@ -158,31 +158,37 @@
 (reg-event-fx
   :sculpture.data/-reset-search-index
   (fn [{db :db} _]
-    {:db (assoc-in db [:search :fuse] (search/init (vals (db :data))))}))
+    {:db (assoc-in db [:db/search :fuse] (search/init (vals (db :data))))}))
 
 ;; sculpture.search
 
 (reg-event-fx
-  :sculpture.search/set-query-focused
+  :sculpture.search/set-query-focused!
   (fn [{db :db} [_ bool]]
-    {:db (assoc-in db [:search :focused?] bool)}))
+    {:db (assoc-in db [:db/search :focused?] bool)}))
 
 (reg-event-fx
-  :sculpture.search/set-query
+  :sculpture.search/set-query!
   (fn [{db :db} [_ query]]
-    {:db (assoc-in db [:search :query] query)
+    {:db (assoc-in db [:db/search :query] query)
      :dispatch-debounce {:id :query
                          :timeout 250
-                         :dispatch [:sculpture.search/set-results query]}}))
+                         :dispatch [:sculpture.search/-remote-search! query]}}))
 
 (reg-event-fx
-  :sculpture.search/set-results
-  (fn [{db :db} [_ query]]
-    {:db (assoc-in db [:search :results]
-           (map
-             (fn [id]
-               (get-in db [:data id]))
-             (search/search (get-in db [:search :fuse]) query 20)))}))
+  :sculpture.search/-remote-search!
+  (fn [{} [_ query]]
+    {:ajax {:method :get
+            :uri "/api/graph/search"
+            :params {:query query}
+            :on-success
+            (fn [data]
+              (dispatch [:sculpture.search/-set-results! data]))}}))
+
+(reg-event-fx
+  :sculpture.search/-set-results!
+  (fn [{db :db} [_ data]]
+    {:db (assoc-in db [:db/search :results] data)}))
 
 ;; set-page
 
@@ -190,7 +196,7 @@
   :set-page
   (fn [{db :db} [_ page]]
     {:db (assoc db :page page)
-     :dispatch [:sculpture.search/set-query-focused false]}))
+     :dispatch [:sculpture.search/set-query-focused! false]}))
 
 ;; set-main-page
 

@@ -12,6 +12,7 @@
     [sculpture.darkroom.core :as darkroom]
     [sculpture.db.core :as db.core]
     [sculpture.db.pg.select :as db.select]
+    [sculpture.db.pg.graph :as db.graph]
     [sculpture.db.pg.util :as db.util]
     [sculpture.server.geocode :as geocode]
     [sculpture.server.oauth :as oauth]
@@ -104,7 +105,11 @@
 
     (GET "/graph/sculptures" []
       {:status 200
-       :body (db.select/graph-select)})
+       :body (db.graph/select)})
+
+    (GET "/graph/search" [query]
+      {:status 200
+       :body (db.graph/search query)})
 
     (GET "/sculptures/random" []
       {:status 302

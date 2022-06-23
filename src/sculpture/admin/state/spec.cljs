@@ -5,10 +5,15 @@
 
 (def AppState
   [:map
-   [:search
+   [:db/search
     [:map
      [:query [:maybe string?]]
-     [:results [:maybe [:sequential schema/Entity]]]
+     [:results [:maybe [:sequential [:map
+                                     [:id uuid?]
+                                     [:title types/NonBlankString]
+                                     [:subtitle [:maybe types/NonBlankString]]
+                                     [:photo-id [:maybe uuid?]]
+                                     [:type schema/EntityType]]]]]
      [:fuse any?]
      [:focused? boolean?]]]
    [:active-entity-id [:maybe uuid?]]

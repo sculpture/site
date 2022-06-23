@@ -13,12 +13,12 @@
 (reg-sub
   :sculpture.search/query
   (fn [db _]
-    (get-in db [:search :query])))
+    (get-in db [:db/search :query])))
 
 (reg-sub
   :sculpture.search/results
   (fn [db _]
-    (get-in db [:search :results])))
+    (get-in db [:db/search :results])))
 
 (reg-sub
   :page
@@ -82,7 +82,7 @@
 (reg-sub
   :sculpture.edit/related-entity-search
   (fn [db [_ type query]]
-    (->> (search/search (get-in db [:search :fuse]) query 20)
+    (->> (search/search (get-in db [:db/search :fuse]) query 20)
          (map (fn [id]
                 (get-in db [:data id])))
          (filter (fn [entity]
@@ -132,7 +132,7 @@
 (reg-sub
   :sculpture.search/query-focused?
   (fn [db _]
-    (get-in db [:search :focused?])))
+    (get-in db [:db/search :focused?])))
 
 (reg-sub
   :sculpture.advanced-search/conditions
