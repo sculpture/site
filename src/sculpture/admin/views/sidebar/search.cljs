@@ -28,8 +28,12 @@
   [:div.results
    (let [results @(subscribe [:sculpture.search/results])
          grouped-results (group-by :type results)]
-     (if-not (seq results)
+     (cond
+       (nil? results)
+       nil
+       (empty? results)
        [:div.no-results "No results"]
+       :else
        (for [[type results] grouped-results]
          ^{:key type}
          [:div.group {:class (str type)}
