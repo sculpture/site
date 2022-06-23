@@ -1,5 +1,6 @@
 (ns sculpture.admin.state.events
   (:require
+    [clojure.string :as string]
     [cljs-uuid-utils.core :as uuid]
     [re-frame.core :refer [dispatch reg-fx] :as re-frame]
     [malli.core :as m]
@@ -178,12 +179,13 @@
 (reg-event-fx
   :sculpture.search/-remote-search!
   (fn [{} [_ query]]
-    {:ajax {:method :get
-            :uri "/api/graph/search"
-            :params {:query query}
-            :on-success
-            (fn [data]
-              (dispatch [:sculpture.search/-set-results! data]))}}))
+    (when-not (string/blank? query)
+      {:ajax {:method :get
+              :uri "/api/graph/search"
+              :params {:query query}
+              :on-success
+              (fn [data]
+                (dispatch [:sculpture.search/-set-results! data]))}})))
 
 (reg-event-fx
   :sculpture.search/-set-results!
