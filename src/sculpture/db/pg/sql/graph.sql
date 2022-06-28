@@ -6,7 +6,7 @@ WITH search_results AS (
     sculptures.id AS id,
     'sculpture' AS type,
     sculptures.title AS title,
-  string_agg(artists.name, ', ') AS subtitle,
+    string_agg(distinct(artists.name), ', ') AS subtitle,
     (array_agg(photos.id))[1] AS "photo-id"
   FROM
     sculptures, artists_sculptures, artists, photos
