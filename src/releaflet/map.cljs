@@ -1,6 +1,7 @@
 (ns releaflet.map
   (:require
     [reagent.core :as r]
+    [reagent.dom :as r.dom]
     [releaflet.mapbox :as mapbox]
     [releaflet.shape :refer [make-shape]]
     [releaflet.helpers :refer [lnglat->jsloc]]))
@@ -100,7 +101,7 @@
       {:display-name "leaflet-map"
        :component-did-mount
        (fn [this]
-         (create-map! (r/dom-node this) (r/props this))
+         (create-map! (r.dom/dom-node this) (r/props this))
          (update-map! (r/props this)))
        :component-did-update
        (fn [this]

@@ -12,11 +12,6 @@
   #?(:clj (Math/sin x)
      :cljs (js/Math.sin x)))
 
-(defn abs [x]
-  (if (> x 0)
-    x
-    (* x -1)))
-
 (defn rad [r]
   (/ (* r pi) 180))
 

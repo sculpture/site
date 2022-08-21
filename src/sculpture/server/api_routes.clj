@@ -1,13 +1,7 @@
 (ns sculpture.server.api-routes
   (:require
-    [compojure.core :refer [GET POST PUT DELETE defroutes context]]
-    [compojure.handler :refer [api]]
-    [compojure.route :as route]
+    [bloom.commons.tada.rpc.server :as tada.rpc]
     [ring.middleware.multipart-params :refer [wrap-multipart-params]]
-    [ring.middleware.format :refer [wrap-restful-format]]
-    [ring.middleware.cors :refer [wrap-cors]]
-    [ring.middleware.session :refer [wrap-session]]
-    [ring.middleware.session.cookie :refer [cookie-store]]
     [sculpture.config :refer [config]]
     [sculpture.darkroom.core :as darkroom]
     [sculpture.db.core :as db.core]
@@ -31,272 +25,240 @@
       (some-> (get-in request [:headers "user-id"])
               (java.util.UUID/fromString))))
 
-(defroutes routes
-  (context "/api" _
+(def routes
+  (concat
+    [[[:post "/api/tada/*"]
+      (tada.rpc/make-handler
+        {:extra-params (fn [request]
+                         {:user-id (get-in request [:session :user-id])})})]]
 
-    (GET "/meta" _
-      {:status 200
-       :body (db.select/entity-counts)})
+    (->> [["category" "categories"]
+          ["material"]
+          ["artist-tag"]
+          ["sculpture-tag"]
+          ["region-tag"]
+          ["user"]
+          ["photo"]
+          ["artist"]
+          ["region"]]
+         (mapcat (fn [[entity-type plural]]
+                   (let [plural (or plural (str entity-type "s"))]
 
-    (GET "/entities" req
-      {:status 200
-       :body (db.select/select-all)})
+                     [[[:get (str "/api/" plural "/")]
+                       (fn [_]
+                         {:status 200
+                          :body (db.select/select-all-with-type entity-type)})]
 
-    (GET "/materials/" _
-      {:status 200
-       :body (db.select/select-all-with-type "material")})
+                      [[:get (str "/api/" entity-type "s/:id-or-slug")]
+                       (fn [{{:keys [id-or-slug]} :params}]
+                         (single-entity-response entity-type id-or-slug))]]))))
 
-    (GET "/materials/:id-or-slug" [id-or-slug]
-      (single-entity-response "material" id-or-slug))
-
-    (GET "/materials/:slug/sculptures" [slug]
-      {:status 200
-       :body (db.select/select-sculptures-for-material-slug slug)})
-
-    (GET "/artist-tags/" _
-      {:status 200
-       :body (db.select/select-all-with-type "artist-tag")})
-
-    (GET "/artist-tags/:id-or-slug" [id-or-slug]
-      (single-entity-response "artist-tag" id-or-slug))
-
-    (GET "/sculpture-tags/" _
-      {:status 200
-       :body (db.select/select-all-with-type "sculpture-tag")})
-
-    (GET "/categories/" _
-      {:status 200
-       :body (db.select/select-all-with-type "category")})
-
-    (GET "/sculpture-tags/:id-or-slug" [id-or-slug]
-      (single-entity-response "sculpture-tag" id-or-slug))
-
-    (GET "/region-tags/" _
-      {:status 200
-       :body (db.select/select-all-with-type "region-tags")})
-
-    (GET "/region-tags/:id-or-slug" [id-or-slug]
-      (single-entity-response "region-tag" id-or-slug))
-
-    (GET "/users/" _
-      {:status 200
-       :body (db.select/select-all-with-type "user")})
-
-    (GET "/users/:id-or-slug" [id-or-slug]
-      (single-entity-response "user" id-or-slug))
-
-    (GET "/photos/" _
-      {:status 200
-       :body (db.select/select-all-with-type "photo")})
-
-    (GET "/photos/:id-or-slug" [id-or-slug]
-      (single-entity-response "photo" id-or-slug))
-
-    (GET "/artists/" _
-      {:status 200
-       :body (db.select/select-all-with-type "artist")})
-
-    (GET "/artists/:id-or-slug" [id-or-slug]
-      (single-entity-response "artist" id-or-slug))
-
-    (GET "/artists/:slug/sculptures" [slug]
-      {:status 200
-       :body (db.select/select-sculptures-for-artist slug)})
-
-    (GET "/graph/sculptures" []
-      {:status 200
-       :body (db.graph/select)})
-
-    (GET "/graph/search" [query limit]
-      {:status 200
-       :body (db.graph/search {:query query
-                               :limit (Integer. limit)})})
-
-    (GET "/sculptures/random" []
-      {:status 302
-       :headers {"Location" (str "./" (db.select/select-random-sculpture-slug))}})
-
-    (GET "/sculptures/" [decade artist-gender artist-tag sculpture-tag]
-      (cond
-        decade
+    [
+     [[:get "/api/meta"]
+      (fn [_]
         {:status 200
-         :body (db.select/select-sculptures-for-decade (Integer. decade))}
+         :body (db.select/entity-counts)})]
 
-        artist-tag
+     [[:get "/api/entities"]
+      (fn [_]
         {:status 200
-         :body (db.select/select-sculptures-for-artist-tag-slug artist-tag)}
+         :body (db.select/select-all)})]
 
-        sculpture-tag
+     [[:get "/api/regions/:slug/sculptures"]
+      (fn [{{:keys [slug]} :params}]
         {:status 200
-         :body (db.select/select-sculptures-for-sculpture-tag-slug sculpture-tag)}
+         :body (db.select/select-sculptures-for-region slug)})]
 
-        artist-gender
+     [[:get "/api/materials/:slug/sculptures"]
+      (fn [{{:keys [slug]} :params}]
         {:status 200
-         :body (db.select/select-sculptures-for-artist-gender artist-gender)}))
+         :body (db.select/select-sculptures-for-material-slug slug)})]
 
-    (GET "/sculptures/:slug" [slug]
-      {:status 200
-       :body (db.select/select-sculpture-with-slug slug)})
-
-    (GET "/regions/" _
-      {:status 200
-       :body (db.select/select-all-with-type "region")})
-
-    (GET "/regions/:id-or-slug" [id-or-slug]
-      (single-entity-response "region" id-or-slug))
-
-    (GET "/regions/:slug/sculptures" [slug]
-      {:status 200
-       :body (db.select/select-sculptures-for-region slug)})
-
-    ; UTIL
-
-    (GET "/util/geocode" [query]
-      (if-let [result (geocode/google-geocode query)]
+     [[:get "/api/artists/:slug/sculptures"]
+      (fn [{{:keys [slug]} :params}]
         {:status 200
-         :body result}
-        {:status 404
-         :body {:error "Not Found"}}))
+         :body (db.select/select-sculptures-for-artist slug)})]
 
-    (GET "/util/shape" [query]
-      (if-let [result (geocode/shape query)]
+     [[:get "/api/graph/sculptures"]
+      (fn [_]
         {:status 200
-         :body {:geojson result}}
-        {:status 404
-         :body {:error "Not Found"}}))
+         :body (db.graph/select)})]
 
-    (PUT "/util/simplify" [geojson]
-      {:status 200
-       :body {:geojson (db.util/simplify-geojson geojson)}})
-
-    ; SESSION
-
-    (GET "/session" req
-      (if-let [user-id (get-in req [:session :user-id])]
-        {:status 200
-         :body (db.select/select-entity-with-id "user" user-id)}
-        {:status 401
-         :body {:error "You are not logged in"}}))
-
-    (DELETE "/session" _
-      {:status 200
-       :session nil
-       :body {:ok true}})
-
-    ; OAUTH
-
-    (GET "/oauth/:provider/request-token" [provider]
-      (if-let [request-token-url (oauth/request-token-url (keyword provider))]
+     [[:get "/api/sculptures/random"]
+      (fn [_]
         {:status 302
-         :body {:ok true}
-         :headers {"Location" request-token-url}}
-        {:status 400
-         :body {:error "Unsupported oauth provider"}}))
+         :headers {"Location" (str "/api/sculptures/" (db.select/select-random-sculpture-slug))}})]
 
-    (GET "/oauth/:provider/post-auth" _
-      {:status 200
-       :headers {"Content-Type" "text/html"}
-       :body (pages.oauth/html)})
+     [[:get "/api/sculptures/"]
+      (fn [{{:keys [decade artist-gender artist-tag sculpture-tag]} :params}]
+        (cond
+          decade
+          {:status 200
+           :body (db.select/select-sculptures-for-decade (Integer. decade))}
 
-    (PUT "/oauth/:provider/authenticate" [provider token]
-      (if-let [oauth-user-info (oauth/get-user-info (keyword provider) token)]
-        (if-let [user (db.select/select-user-with-email (oauth-user-info :email))]
-          (do
-            (when (or (not= (:name oauth-user-info) (:name user))
-                      (not= (:avatar oauth-user-info) (:avatar user)))
-              (db.core/upsert! (merge user oauth-user-info) (:id user)))
-            {:status 200
-             :body (merge user oauth-user-info)
-             :session {:user-id (user :id)}})
+          artist-tag
+          {:status 200
+           :body (db.select/select-sculptures-for-artist-tag-slug artist-tag)}
+
+          sculpture-tag
+          {:status 200
+           :body (db.select/select-sculptures-for-sculpture-tag-slug sculpture-tag)}
+
+          artist-gender
+          {:status 200
+           :body (db.select/select-sculptures-for-artist-gender artist-gender)}))]
+
+     [[:get "/api/sculptures/:slug"]
+      (fn [{{:keys [slug]} :params}]
+        {:status 200
+         :body (db.select/select-sculpture-with-slug slug)})]
+
+     ; UTIL
+
+     [[:get "/api/util/geocode"]
+      (fn [{{:keys [query]} :params}]
+        (if-let [result (geocode/google-geocode query)]
+          {:status 200
+           :body result}
+          {:status 404
+           :body {:error "Not Found"}}))]
+
+     [[:get "/api/util/shape"]
+      (fn [{{:keys [query]} :params}]
+        (if-let [result (geocode/shape query)]
+          {:status 200
+           :body {:geojson result}}
+          {:status 404
+           :body {:error "Not Found"}}))]
+
+     [[:put "/api/util/simplify"]
+      (fn [{{:keys [geojson]} :body-params}]
+        {:status 200
+         :body {:geojson (db.util/simplify-geojson geojson)}})]
+
+     ; SESSION
+
+     [[:get "/api/session"]
+      (fn [request]
+        (if-let [user-id (get-in request [:session :user-id])]
+          {:status 200
+           :body (db.select/select-entity-with-id "user" user-id)}
           {:status 401
-           :body {:error "User has not been approved"}})
-        {:status 401
-         :body {:error "User could not be authenticated"}}))
+           :body {:error "You are not logged in"}}))]
 
-    ; REQUIRE AUTH
+     [[:delete "/api/session"]
+      (fn [_]
+        {:status 200
+         :session nil
+         :body {:ok true}})]
 
-    (POST "/sculptures" [id title slug year artist-ids :as req]
-      (if-let [user-id (request->user-id req)]
-        (if (db.core/upsert!
-              {:id id
-               :type "sculpture"
-               :slug slug
-               :title title
-               :year year
-               :artist-ids artist-ids}
-              user-id)
-          {:status 200
-           :body {:status "OK"}}
-          {:status 500
-           :body {:error "Error creating sculpture"}})
-        {:status 401
-         :body {:error "You must be logged in to perform this action."}}))
+     ; OAUTH
 
-    (POST "/artists" [id name slug :as req]
-      (if-let [user-id (request->user-id req)]
-        (if (db.core/upsert!
-              {:id id
-               :name name
-               :type "artist"
-               :slug slug}
-              user-id)
-          {:status 200
-           :body {:status "OK"}}
-          {:status 500
-           :body {:error "Error creating artist"}})
-        {:status 401
-         :body {:error "You must be logged in to perform this action."}}))
+     [[:get "/api/oauth/:provider/request-token"]
+      (fn [{{:keys [provider]} :params}]
+        (if-let [request-token-url (oauth/request-token-url (keyword provider))]
+          {:status 302
+           :body {:ok true}
+           :headers {"Location" request-token-url}}
+          {:status 400
+           :body {:error "Unsupported oauth provider"}}))]
 
-    (POST "/photos" [id file sculpture-id :as req]
-      (if-let [user-id (request->user-id req)]
-        (let [id (java.util.UUID/fromString id)
-              sculpture-id (java.util.UUID/fromString sculpture-id)
-              {:keys [tempfile filename]} file
-              image-data (darkroom/process-image! id tempfile sculpture-id user-id)]
-          {:status 200
-           :body image-data})
-        {:status 401
-         :body {:error "You must be logged in to perform this action."}}))
+     [[:get "/api/oauth/:provider/post-auth"]
+      (fn [_]
+        {:status 200
+         :headers {"Content-Type" "text/html"}
+         :body (pages.oauth/html)})]
 
-    (PUT "/entities" [entity :as req]
-      (if-let [user-id (request->user-id req)]
-        (if (db.core/upsert! entity user-id)
-          {:status 200
-           :body {:status "OK"}}
-          {:status 500
-           :body {:error "Error updating or creating entity"}})
-        {:status 401
-         :body {:error "You must be logged in to perform this action."}}))
+     [[:put "/api/oauth/:provider/authenticate"]
+      (fn [{{:keys [provider]} :params
+            {:keys [token]} :body-params}]
+        (if-let [oauth-user-info (oauth/get-user-info (keyword provider) token)]
+          (if-let [user (db.select/select-user-with-email (oauth-user-info :email))]
+            (do
+              (when (or (not= (:name oauth-user-info) (:name user))
+                        (not= (:avatar oauth-user-info) (:avatar user)))
+                (db.core/upsert! (merge user oauth-user-info) (:id user)))
+              {:status 200
+               :body (merge user oauth-user-info)
+               :session {:user-id (user :id)}})
+            {:status 401
+             :body {:error "User has not been approved"}})
+          {:status 401
+           :body {:error "User could not be authenticated"}}))]
 
-    (PUT "/upload" req
-      (if-let [user-id (request->user-id req)]
-        (let [id (java.util.UUID/fromString (get-in req [:params "id"]))
-              {:keys [tempfile filename]} (get-in req [:params "file"])
-              image-data (darkroom/process-image! id tempfile nil user-id)]
-          {:status 200
-           :body image-data})
-        {:status 401
-         :body {:error "You must be logged in to perform this action."}}))
+     ; REQUIRE AUTH
 
-    (route/not-found "Page not found")))
+     [[:post "/api/sculptures" ]
+      (fn [request]
+        (let [{{:keys [id title slug year artist-ids]} :body-params} request]
+          (if-let [user-id (request->user-id request)]
+            (if (db.core/upsert!
+                  {:id id
+                   :type "sculpture"
+                   :slug slug
+                   :title title
+                   :year year
+                   :artist-ids artist-ids}
+                  user-id)
+              {:status 200
+               :body {:status "OK"}}
+              {:status 500
+               :body {:error "Error creating sculpture"}})
+            {:status 401
+             :body {:error "You must be logged in to perform this action."}})))]
 
+     [[:post "/api/artists"]
+      (fn [request]
+        (let [{{:keys [id name slug :as req]} :body-params} request]
+          (if-let [user-id (request->user-id req)]
+            (if (db.core/upsert!
+                  {:id id
+                   :name name
+                   :type "artist"
+                   :slug slug}
+                  user-id)
+              {:status 200
+               :body {:status "OK"}}
+              {:status 500
+               :body {:error "Error creating artist"}})
+            {:status 401
+             :body {:error "You must be logged in to perform this action."}})))]
 
-(def cookie-secret (or (:cookie-secret config)
-                       (println "WARNING: COOKIE SECRET NOT SET")))
-(def cookie-secure? (or (:cookie-secure? config) false))
-(def cookie-max-age (* 60 60 24 365))
+     [[:post "/api/photos"]
+      (fn [request]
+        (let [{{:keys [id file sculpture-id]} :body-params} request]
+          (if-let [user-id (request->user-id request)]
+            (let [id (java.util.UUID/fromString id)
+                  sculpture-id (java.util.UUID/fromString sculpture-id)
+                  {:keys [tempfile filename]} file
+                  image-data (darkroom/process-image! id tempfile sculpture-id user-id)]
+              {:status 200
+               :body image-data})
+            {:status 401
+             :body {:error "You must be logged in to perform this action."}})))
+      [wrap-multipart-params]]
 
-(def handler
-  (-> routes
-      wrap-restful-format
-      wrap-multipart-params
-      api
-      (wrap-cors :access-control-allow-origin [#".*"]
-                 :access-control-allow-methods [:get :put :post :delete])
-      (wrap-session {:store (cookie-store {:key cookie-secret})
-                     :cookie-name "sculpture"
-                     :cookie-attrs {:secure cookie-secure?
-                                    :max-age cookie-max-age}})))
+     [[:put "/api/entities"]
+      (fn [request]
+        (let [{{:keys [entity]} :body-params} request]
+          (if-let [user-id (request->user-id request)]
+            (if (db.core/upsert! entity user-id)
+              {:status 200
+               :body {:status "OK"}}
+              {:status 500
+               :body {:error "Error updating or creating entity"}})
+            {:status 401
+             :body {:error "You must be logged in to perform this action."}})))]
 
-
+     [[:put "/api/upload"]
+      (fn [request]
+        (if-let [user-id (request->user-id request)]
+          (let [id (java.util.UUID/fromString (get-in request [:params "id"]))
+                {:keys [tempfile filename]} (get-in request [:params "file"])
+                image-data (darkroom/process-image! id tempfile nil user-id)]
+            {:status 200
+             :body image-data})
+          {:status 401
+           :body {:error "You must be logged in to perform this action."}}))
+      [wrap-multipart-params]]]))
 

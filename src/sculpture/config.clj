@@ -9,7 +9,6 @@
     [:http-port integer?]
     [:environment [:enum :dev :prod]]
     [:cookie-secret string?]
-    [:cookie-secure? boolean?]
     [:db-url [:re #"^postgresql://.*$"]]
     [:mapbox-token string?]
     [:mapquest-api-key string?]

@@ -1,5 +1,6 @@
 (ns sculpture.admin.state.events
   (:require
+    [bloom.commons.tada.rpc.client :as tada.rpc]
     [clojure.string :as string]
     [cljs-uuid-utils.core :as uuid]
     [re-frame.core :refer [dispatch reg-fx] :as re-frame]
@@ -15,6 +16,7 @@
     [sculpture.admin.state.advanced-search :as advanced-search]
     [sculpture.schema.schema :as schema]))
 
+(reg-fx :tada (tada.rpc/make-dispatch {:base-path "/api/tada"}))
 (reg-fx :ajax ajax-fx)
 (reg-fx :upload upload-fx)
 (reg-fx :redirect-to redirect-to-fx)
@@ -180,13 +182,12 @@
   :sculpture.search/-remote-search!
   (fn [{} [_ query]]
     (when-not (string/blank? query)
-      {:ajax {:method :get
-              :uri "/api/graph/search"
-              :params {:query query
-                       :limit 10}
-              :on-success
+      {:tada [:search
+              {:query query
+               :limit 10}
+              {:on-success
               (fn [data]
-                (dispatch [:sculpture.search/-set-results! data]))}})))
+                (dispatch [:sculpture.search/-set-results! data]))}]})))
 
 (reg-event-fx
   :sculpture.search/-set-results!

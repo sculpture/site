@@ -71,13 +71,10 @@
   `lein repl`
 
 - In the REPL, launch the server:
-  `(start-server!)`
+  `(start!)`
 
 - If necessary, re-import database:
   `(db/reload!)`
-
-- In a second CLI, start client-side js compiler/watcher:
-  `rlwrap lein figwheel`
 
 - In browser, go to `http://localhost:2469/`
 

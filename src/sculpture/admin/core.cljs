@@ -1,4 +1,5 @@
-(ns sculpture.admin.core
+(ns ^:figwheel-hooks
+  sculpture.admin.core
   (:require
     [reagent.dom :as rdom]
     [re-frame.core :as re-frame]
@@ -23,6 +24,6 @@
   (init-router!)
   (render))
 
-(defn reload []
+(defn ^:after-load reload []
   (re-frame/clear-subscription-cache!)
   (render))

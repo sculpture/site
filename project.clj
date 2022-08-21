@@ -3,31 +3,30 @@
   :source-paths ["src"]
 
   :dependencies [; COMMON
-                 [org.clojure/clojure "1.10.1"]
-                 [io.bloomventures/commons "0.11.5"]
+                 [org.clojure/clojure "1.11.1"]
+                 [io.bloomventures/commons "0.12.1"]
+                 [io.bloomventures/omni "0.29.2"]
                  ;; [metosin/malli "0.1.0"] ;; from commons
 
                  ; CLIENT
-                 [org.clojure/clojurescript "1.10.764"]
-                 [cljs-ajax "0.8.1"]
+                 [org.clojure/clojurescript "1.11.60"]
+                 [cljs-ajax "0.8.4"] ;; in commons, but this is higher
                  [cljsjs/fuse "2.5.0-0"]
-                 [garden "1.3.10"]
+                 [garden "1.3.10"] ;; in omni, but this is higher
                  ;; [com.andrewmcveigh/cljs-time "0.5.2"] ;; from commons
                  [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]
-                 [reagent "0.10.0"]
-                 [re-frame "1.1.1"]
-                 [clj-commons/secretary "1.2.4"]
-                 [venantius/accountant "0.2.5"]
+                 [reagent "1.1.1"]
+                 [re-frame "1.2.0"]
+                 ;; [clj-commons/secretary "1.2.4"] in omni
+                 ;; [venantius/accountant "0.2.5"] in commons
                  [human-db/ui "0.0.3"]
 
                  ; SERVER
-                 [hiccup "1.0.5"]
+                 ;; [hiccup "1.0.5"] in commons
+                 [tada "0.2.2"]
                  [commons-codec "1.10"]
-                 [compojure "1.5.1"]
-                 [http-kit "2.5.0"]
-                 [javax.servlet/servlet-api "2.5"]
+                 [http-kit "2.6.0"] ;; in omni, but this is higher
                  [ring-cors "0.1.8"]
-                 [ring-middleware-format "0.7.0"]
 
                  ; DB
                  [base64-clj "0.1.1"]
@@ -37,7 +36,8 @@
                  [com.github.seancorfield/next.jdbc "1.2.761"]
                  [com.layerware/hugsql "0.5.1"]
                  [com.layerware/hugsql-adapter-next-jdbc "0.5.1"]
-                 [org.postgresql/postgresql "42.2.16"]
+                 [org.postgresql/postgresql "42.4.2"]
+                 ;; https://mvnrepository.com/artifact/net.postgis/postgis-jdbc
                  [net.postgis/postgis-jdbc "2.5.0" :exclusions [org.postgresql/postgresql]]
 
                  ; DARKROOM
@@ -46,37 +46,9 @@
                  [clj-time "0.14.0"]
                  [amazonica "0.3.157"]]
 
-  :main sculpture.server.core
+  :main sculpture.core
 
-  :plugins [[lein-figwheel "0.5.20"]
-            [lein-cljsbuild "1.1.8"]]
-
-  :figwheel {:server-port 3939
-             :reload-clj-files {:clj false
-                                :cljc true}}
-
-  :cljsbuild {:builds {:dev {:source-paths ["src"]
-                             :figwheel     {:on-jsload "sculpture.admin.core/reload"}
-                             :compiler     {:main       "sculpture.admin.core"
-                                            :asset-path "/js/dev/out"
-                                            :source-map true
-                                            :output-to  "resources/public/js/sculpture.js"
-                                            :output-dir "resources/public/js/dev/out"}}
-
-                       :prod {:source-paths ["src"]
-                              :compiler     {:optimizations :advanced
-                                             :closure-defines {goog.DEBUG false}
-                                             :main       "sculpture.admin.core"
-                                             :asset-path "/js/prod/out"
-                                             :output-to  "resources/public/js/sculpture.js"
-                                             :output-dir "resources/public/js/prod/out"
-                                             :externs ["resources/externs/leaflet.js"
-                                                       "resources/externs/stackblur.js"]
-                                             ; to debug advanced compilation issues, enable these options:
-                                             ; :source-map "resources/public/js/sculpture.js.map"
-                                             ; :pseudo-names true
-                                             ; :pretty-print true
-                                             }}}}
+  :plugins [[io.bloomventures/omni "0.29.1"]]
 
   :profiles {:test {:dependencies [[com.codeborne/phantomjsdriver "1.3.0"
                                     :exclusions [org.seleniumhq.selenium/selenium-java
@@ -87,4 +59,5 @@
                                    [clj-webdriver "0.7.2"]]}
 
              :uberjar {:aot :all
-                       :prep-tasks ["compile" ["cljsbuild" "once" "prod"]]}})
+                       :prep-tasks [["omni" "compile"]
+                                    "compile" ]}})
