@@ -47,7 +47,7 @@
 
   :main sculpture.core
 
-  :omni-config sculpture.core/omni-config
+  :omni-config sculpture.omni-config/omni-config
 
   :plugins [[io.bloomventures/omni "0.29.1"]]
 
