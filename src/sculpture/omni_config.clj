@@ -7,7 +7,9 @@
   {:omni/http-port (:http-port config)
    :omni/environment (:environment config)
    :omni/title "Sculpture"
-   :omni/cljs {:main "sculpture.admin.core"}
+   :omni/cljs {:main "sculpture.admin.core"
+               :externs ["resources/externs/leaflet.js"
+                         "resources/externs/stackblur.js"]}
    #_#_:omni/css {:tailwind? true
                   :tailwind-opts {:base-css-rules '[girouette.tw.preflight/preflight-v2_0_3]}}
    :omni/auth {:cookie {:name "sculpture"
