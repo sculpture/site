@@ -23,8 +23,16 @@
                              [:script {:type "text/javascript"}
                               "window.env = {};"
                               (for [k [:mapbox-token]]
-                                (str "window.env['" (name k) "'] = '" (config k) "';"))]]
-   :omni/js-scripts [{:src "https://unpkg.com/stackblur-canvas@1.4.0/dist/stackblur.min.js"}
-                     {:src "https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"}
-                     {:src "https://unpkg.com/leaflet-draw@0.4.10/dist/leaflet.draw-src.js"}
-                     {:src "https://unpkg.com/leaflet-draw-drag@0.4.4/dist/Leaflet.draw.drag.js"}]})
+                                (str "window.env['" (name k) "'] = '" (config k) "';"))]
+                             [:script
+                              {:type "text/javascript"
+                               :src "https://unpkg.com/stackblur-canvas@1.4.0/dist/stackblur.min.js"}]
+                              [:script
+                               {:type "text/javascript"
+                                :src "https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"}]
+                              [:script
+                               {:type "text/javascript"
+                                :src "https://unpkg.com/leaflet-draw@0.4.10/dist/leaflet.draw-src.js"}]
+                              [:script
+                               {:type "text/javascript"
+                                :src "https://unpkg.com/leaflet-draw-drag@0.4.4/dist/Leaflet.draw.drag.js"}]]})
