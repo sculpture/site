@@ -13,12 +13,17 @@
 (def queries
   [{:id :search
     :params {:query NonBlankString?
-             :limit integer?}
+             :limit pos-int?
+             ;; TODO one of the allowed types
+             :types [NonBlankString?]}
     :rest [:get "/api/graph/search"]
     :return
-    (fn [{:keys [query limit]}]
-      (db.graph/search {:query query
-                        :limit (Integer. limit)}))}])
+    (fn [{:keys [query limit types]}]
+      (let [types (set types)]
+        (->> (db.graph/search {:query query
+                               :limit (Integer. limit)})
+             (filter (fn [{:keys [type]}]
+                       (contains? types type))))))}])
 
 (def commands
   [])

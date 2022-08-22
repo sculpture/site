@@ -14,7 +14,7 @@
   [type]
   #?(:cljs
      (fn [query callback]
-       (callback @(subscribe [:sculpture.edit/related-entity-search type query])))))
+       (dispatch! [:sculpture.search/remote-search! query [type] callback]))))
 
 (def id-opts
   {:default nil

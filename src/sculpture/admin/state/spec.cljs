@@ -14,7 +14,6 @@
                                      [:subtitle [:maybe types/NonBlankString]]
                                      [:photo-id [:maybe uuid?]]
                                      [:type schema/EntityType]]]]]
-     [:fuse any?]
      [:focused? boolean?]]]
    [:active-entity-id [:maybe uuid?]]
    [:user [:maybe

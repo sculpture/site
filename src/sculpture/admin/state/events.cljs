@@ -12,7 +12,6 @@
     [sculpture.admin.state.fx.upload :refer [upload-fx]]
     [sculpture.admin.routes :as routes]
     [sculpture.admin.state.spec :as spec]
-    [sculpture.admin.state.search :as search]
     [sculpture.admin.state.advanced-search :as advanced-search]
     [sculpture.schema.schema :as schema]))
 
@@ -55,8 +54,7 @@
   (fn [_ _]
     {:db {:db/search {:query ""
                       :results nil
-                      :focused? false
-                      :fuse nil}
+                      :focused? false}
           :db/map-sculptures []
           :user nil
           :active-entity-id nil
@@ -149,19 +147,12 @@
 (reg-event-fx
   :sculpture.data/-set-data
   (fn [{db :db} [_ data]]
-    {:db (assoc db :data (key-by-id data))
-     :dispatch [:sculpture.data/-reset-search-index]}))
+    {:db (assoc db :data (key-by-id data))}))
 
 (reg-event-fx
   :sculpture.data/-add-entity
   (fn [{db :db} [_ entity]]
-    {:db (assoc-in db [:data (entity :id)] entity)
-     :dispatch [:sculpture.data/-reset-search-index]}))
-
-(reg-event-fx
-  :sculpture.data/-reset-search-index
-  (fn [{db :db} _]
-    {:db (assoc-in db [:db/search :fuse] (search/init (vals (db :data))))}))
+    {:db (assoc-in db [:data (entity :id)] entity)}))
 
 ;; sculpture.search
 
@@ -176,18 +167,20 @@
     {:db (assoc-in db [:db/search :query] query)
      :dispatch-debounce {:id :query
                          :timeout 100
-                         :dispatch [:sculpture.search/-remote-search! query]}}))
+                         :dispatch [:sculpture.search/remote-search! query
+                                    schema/entity-types
+                                    (fn [data]
+                                      (dispatch [:sculpture.search/-set-results! data]))]}}))
 
 (reg-event-fx
-  :sculpture.search/-remote-search!
-  (fn [{} [_ query]]
+  :sculpture.search/remote-search!
+  (fn [{} [_ query types callback]]
     (when-not (string/blank? query)
       {:tada [:search
               {:query query
+               :types types
                :limit 10}
-              {:on-success
-              (fn [data]
-                (dispatch [:sculpture.search/-set-results! data]))}]})))
+              {:on-success callback}]})))
 
 (reg-event-fx
   :sculpture.search/-set-results!

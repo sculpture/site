@@ -11,7 +11,6 @@
                  ; CLIENT
                  [org.clojure/clojurescript "1.11.60"]
                  [cljs-ajax "0.8.4"] ;; in commons, but this is higher
-                 [cljsjs/fuse "2.5.0-0"]
                  [garden "1.3.10"] ;; in omni, but this is higher
                  ;; [com.andrewmcveigh/cljs-time "0.5.2"] ;; from commons
                  [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]

@@ -2,8 +2,7 @@
   (:require
     [malli.core :as m]
     [re-frame.core :refer [reg-sub]]
-    [sculpture.schema.schema :as schema]
-    [sculpture.admin.state.search :as search]))
+    [sculpture.schema.schema :as schema]))
 
 (reg-sub
   :user
@@ -79,14 +78,7 @@
          (filter (fn [entity]
                    (= type (entity :type)))))))
 
-(reg-sub
-  :sculpture.edit/related-entity-search
-  (fn [db [_ type query]]
-    (->> (search/search (get-in db [:db/search :fuse]) query 20)
-         (map (fn [id]
-                (get-in db [:data id])))
-         (filter (fn [entity]
-                   (= (entity :type) type))))))
+
 
 (reg-sub
   :sculptures-for
