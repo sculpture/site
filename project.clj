@@ -9,7 +9,7 @@
                  ;; [metosin/malli "0.1.0"] ;; from commons
 
                  ; CLIENT
-                 [org.clojure/clojurescript "1.11.60"]
+                 [org.clojure/clojurescript "1.11.4"]
                  [cljs-ajax "0.8.4"] ;; in commons, but this is higher
                  [garden "1.3.10"] ;; in omni, but this is higher
                  ;; [com.andrewmcveigh/cljs-time "0.5.2"] ;; from commons
