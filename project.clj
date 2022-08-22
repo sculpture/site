@@ -47,6 +47,8 @@
 
   :main sculpture.core
 
+  :omni-config sculpture.core/omni-config
+
   :plugins [[io.bloomventures/omni "0.29.1"]]
 
   :profiles {:test {:dependencies [[com.codeborne/phantomjsdriver "1.3.0"
