@@ -9,7 +9,6 @@
     [re-frame.core :refer [dispatch reg-fx] :as re-frame]
     [malli.core :as m]
     [malli.error :as me]
-    [sculpture.admin.state.fx.redirect :refer [redirect-to-fx]]
     [sculpture.admin.state.fx.upload :refer [upload-fx]]
     [sculpture.admin.state.spec :as spec]
     [sculpture.admin.state.advanced-search :as advanced-search]
