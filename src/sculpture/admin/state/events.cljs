@@ -1,14 +1,14 @@
 (ns sculpture.admin.state.events
   (:require
+    [bloom.commons.pages :as pages]
     [bloom.commons.ajax :as ajax]
     [bloom.commons.tada.rpc.client :as tada.rpc]
+    [bloom.omni.fx.dispatch-debounce :as dispatch-debounce]
     [clojure.string :as string]
     [cljs-uuid-utils.core :as uuid]
     [re-frame.core :refer [dispatch reg-fx] :as re-frame]
     [malli.core :as m]
     [malli.error :as me]
-    [sculpture.admin.state.fx.dispatch-debounce :refer [dispatch-debounce-fx]]
-    [sculpture.admin.state.fx.ajax :refer [ajax-fx]]
     [sculpture.admin.state.fx.redirect :refer [redirect-to-fx]]
     [sculpture.admin.state.fx.upload :refer [upload-fx]]
     [sculpture.admin.state.spec :as spec]
@@ -18,8 +18,8 @@
 (reg-fx :tada (tada.rpc/make-dispatch {:base-path "/api/tada"}))
 (reg-fx :ajax ajax/request)
 (reg-fx :upload upload-fx)
-(reg-fx :redirect-to redirect-to-fx)
-(reg-fx :dispatch-debounce dispatch-debounce-fx)
+(reg-fx :redirect-to pages/navigate-to!)
+(reg-fx :dispatch-debounce dispatch-debounce/fx)
 
 (defn key-by-id [arr]
   (reduce (fn [memo a]
