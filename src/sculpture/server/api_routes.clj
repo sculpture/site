@@ -143,8 +143,8 @@
         (if-let [user-id (get-in request [:session :user-id])]
           {:status 200
            :body (db.select/select-entity-with-id "user" user-id)}
-          {:status 401
-           :body {:error "You are not logged in"}}))]
+          {:status 200
+           :body nil}))]
 
      [[:delete "/api/session"]
       (fn [_]

@@ -1,5 +1,6 @@
 (ns sculpture.admin.state.events
   (:require
+    [bloom.commons.ajax :as ajax]
     [bloom.commons.tada.rpc.client :as tada.rpc]
     [clojure.string :as string]
     [cljs-uuid-utils.core :as uuid]
@@ -15,7 +16,7 @@
     [sculpture.schema.schema :as schema]))
 
 (reg-fx :tada (tada.rpc/make-dispatch {:base-path "/api/tada"}))
-(reg-fx :ajax ajax-fx)
+(reg-fx :ajax ajax/request)
 (reg-fx :upload upload-fx)
 (reg-fx :redirect-to redirect-to-fx)
 (reg-fx :dispatch-debounce dispatch-debounce-fx)
@@ -76,7 +77,8 @@
             :uri "/api/session"
             :on-success
             (fn [data]
-              (dispatch [:sculpture.user/-handle-user-info data]))}}))
+              (when data
+                (dispatch [:sculpture.user/-handle-user-info data])))}}))
 
 (reg-event-fx
   :sculpture.user/-handle-user-info
