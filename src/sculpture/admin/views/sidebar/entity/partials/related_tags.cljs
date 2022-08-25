@@ -1,11 +1,11 @@
 (ns sculpture.admin.views.sidebar.entity.partials.related-tags
   (:require
-    [sculpture.admin.state.core :refer [subscribe]]
-    [sculpture.admin.routes :as routes]))
+    [bloom.commons.pages :as pages]
+    [sculpture.admin.state.core :refer [subscribe]]))
 
 (defn related-tag-view [tag-id]
   (let [tag @(subscribe [:get-entity tag-id])]
-    [:a.tag {:href (routes/entity-path {:id (tag :id)})}
+    [:a.tag {:href (pages/path-for [:page/entity {:id (tag :id)}])}
      (tag :name)]))
 
 (defn related-tags-view [tag-ids]

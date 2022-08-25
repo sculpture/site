@@ -21,11 +21,6 @@
             [:email types/Email]
             [:avatar types/Url]
             [:name types/NonBlankString]]]]
-   [:page [:maybe
-           [:map
-            [:type keyword?]
-            [:id {:optional true} uuid?]
-            [:edit? {:optional true} boolean?]]]]
    [:main-page [:maybe keyword?]]
    [:data [:maybe
            [:map-of uuid? schema/Entity]]]

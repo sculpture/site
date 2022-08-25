@@ -10,7 +10,6 @@
     [sculpture.admin.state.fx.ajax :refer [ajax-fx]]
     [sculpture.admin.state.fx.redirect :refer [redirect-to-fx]]
     [sculpture.admin.state.fx.upload :refer [upload-fx]]
-    [sculpture.admin.routes :as routes]
     [sculpture.admin.state.spec :as spec]
     [sculpture.admin.state.advanced-search :as advanced-search]
     [sculpture.schema.schema :as schema]))
@@ -60,7 +59,6 @@
           :active-entity-id nil
           :entity-draft nil
           :saving? false
-          :page nil
           :main-page nil
           :data nil
           :advanced-search {:conditions []}
@@ -186,14 +184,6 @@
   :sculpture.search/-set-results!
   (fn [{db :db} [_ data]]
     {:db (assoc-in db [:db/search :results] data)}))
-
-;; set-page
-
-(reg-event-fx
-  :set-page
-  (fn [{db :db} [_ page]]
-    {:db (assoc db :page page)
-     :dispatch [:sculpture.search/set-query-focused! false]}))
 
 ;; set-main-page
 

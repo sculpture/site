@@ -1,8 +1,8 @@
 (ns sculpture.admin.views.sidebar.entity.photo
   (:require
+    [bloom.commons.pages :as pages]
     [sculpture.admin.helpers :as helpers]
     [sculpture.admin.state.core :refer [subscribe]]
-    [sculpture.admin.routes :as routes]
     [sculpture.admin.views.sidebar.entity :refer [entity-view]]
     [sculpture.admin.views.sidebar.entity.partials.photos :refer [photo-view]]))
 
@@ -16,12 +16,12 @@
 
     [:div.row.user {:title "Photo by"}
      (let [user @(subscribe [:get-entity (photo :user-id)])]
-       [:a {:href (routes/entity-path {:id (user :id)})}
+       [:a {:href (pages/path-for [:page/user {:id (user :id)}])}
         (user :name)])]
 
     (when-let [sculpture @(subscribe [:get-entity (photo :sculpture-id)])]
       [:div.row.sculpture {:title "Sculpture"}
-       [:a {:href (routes/entity-path {:id (sculpture :id)})}
+       [:a {:href (pages/path-for [:page/sculpture {:id (sculpture :id)}])}
         (sculpture :title)]])
 
     [:div.row.captured-at {:title "Capture At"}

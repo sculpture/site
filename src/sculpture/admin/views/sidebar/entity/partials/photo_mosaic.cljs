@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.sidebar.entity.partials.photo-mosaic
   (:require
-    [sculpture.admin.routes :as routes]
+    [bloom.commons.pages :as pages]
     [sculpture.admin.views.sidebar.entity.partials.photos :refer [image-view]]))
 
 (defn photo-mosaic-view [photos]
@@ -23,7 +23,7 @@
                            :width "100%"}}
              (for [photo row-photos]
                ^{:key (photo :id)}
-               [:a {:href (routes/entity-path {:id (photo :id)})
+               [:a {:href (pages/path-for [:page/photo {:id (photo :id)}])
                     :style {:width (str (* 100 (/ (/ (photo :width)
                                                      (photo :height))
                                                   row-ratio)) "%")

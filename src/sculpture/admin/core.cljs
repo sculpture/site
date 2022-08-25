@@ -1,17 +1,17 @@
 (ns ^:figwheel-hooks
   sculpture.admin.core
   (:require
+    [bloom.commons.pages :as pages]
     [reagent.dom :as rdom]
     [re-frame.core :as re-frame]
     [sculpture.admin.state.core :refer [dispatch-sync!]]
     [sculpture.admin.state.events]
     [sculpture.admin.state.subs]
-    [sculpture.admin.routes]
+    [sculpture.admin.pages :refer [pages]]
     [sculpture.admin.fields.location]
     [sculpture.admin.fields.geojson]
     [sculpture.admin.fields.enumlookup]
     [sculpture.admin.fields.flexdate]
-    [sculpture.admin.router :refer [init-router!]]
     [sculpture.admin.views.app :refer [app-view]]))
 
 (enable-console-print!)
@@ -21,7 +21,7 @@
 
 (defn ^:export init []
   (dispatch-sync! [:init])
-  (init-router!)
+  (pages/initialize! pages)
   (render))
 
 (defn ^:after-load reload []

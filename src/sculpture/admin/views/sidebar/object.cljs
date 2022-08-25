@@ -1,7 +1,7 @@
 (ns sculpture.admin.views.sidebar.object
   (:require
-    [sculpture.admin.state.core :refer [subscribe]]
-    [sculpture.admin.routes :as routes]))
+    [bloom.commons.pages :as pages]
+    [sculpture.admin.state.core :refer [subscribe]]))
 
 (defmulti object-view
   (fn [entity]
@@ -51,7 +51,7 @@
 (defmethod object-view :id
   [entity-id]
   (let [entity @(subscribe [:get-entity entity-id])]
-    [:a {:href (routes/entity-path {:id (entity :id)})}
+    [:a {:href (pages/path-for [:page/entity {:id (entity :id)}])}
      (or (entity :name)
          (entity :title)
          (entity :id))]))

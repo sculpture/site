@@ -20,11 +20,6 @@
     (get-in db [:db/search :results])))
 
 (reg-sub
-  :page
-  (fn [db _]
-    (db :page)))
-
-(reg-sub
   :main-page
   (fn [db _]
     (db :main-page)))

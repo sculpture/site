@@ -1,9 +1,9 @@
 (ns sculpture.admin.views.sidebar.entity.partials.list
   (:require
     [clojure.string :as string]
+    [bloom.commons.pages :as pages]
     [sculpture.admin.helpers :as helpers]
     [sculpture.admin.state.core :refer [subscribe]]
-    [sculpture.admin.routes :as routes]
     [sculpture.admin.views.sidebar.entity.partials.photos :refer [photo-view]]))
 
 (defmulti entity-row-data :type)
@@ -45,7 +45,7 @@
 (defn row-view
   [{:keys [id photo-id type title subtitle]}]
   [:a.entity
-   {:href (routes/entity-path {:id id})
+   {:href (pages/path-for [:page/entity {:id id}])
     :class type}
    [photo-view {:photo {:id photo-id}
                 :size :thumb}]

@@ -4,7 +4,6 @@
     [humandb.ui.field :refer [field]]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.cdn :as cdn]
-    [sculpture.admin.routes :as routes]
     [sculpture.schema.schema :as schema]))
 
 (defn key->title [k]

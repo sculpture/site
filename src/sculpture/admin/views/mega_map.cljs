@@ -1,9 +1,8 @@
 (ns sculpture.admin.views.mega-map
   (:require
+    [bloom.commons.pages :as pages]
     [releaflet.map :as leaflet]
     [sculpture.admin.state.core :refer [dispatch!]]
-    [sculpture.admin.routes :as routes]
-    [sculpture.admin.router :as router]
     [sculpture.admin.state.core :refer [subscribe]]))
 
 (defn fudge [n]
@@ -21,7 +20,7 @@
                                          :type :icon
                                          :popup (sculpture :title)
                                          :on-click (fn []
-                                                     (router/go-to! (routes/entity-path {:id (sculpture :id)})))})))
+                                                     (pages/navigate-to! [:page/sculpture {:id (sculpture :id)}]))})))
                                (remove nil?))]
     [:div.mega-map
      [leaflet/map-view

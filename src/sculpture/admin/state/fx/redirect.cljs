@@ -1,6 +1,6 @@
 (ns sculpture.admin.state.fx.redirect
   (:require
-    [sculpture.admin.router :as router]))
+    [bloom.commons.pages :as pages]))
 
 (defn redirect-to-fx [path]
-  (router/go-to! path))
+  (pages/navigate-to! path))

@@ -1,8 +1,8 @@
 (ns sculpture.admin.views.sidebar.entity.sculpture
   (:require
     [clojure.string :as string]
+    [bloom.commons.pages :as pages]
     [sculpture.admin.helpers :as helpers]
-    [sculpture.admin.routes :as routes]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
     [sculpture.admin.views.sidebar.entity :refer [entity-view]]
     [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [photo-mosaic-view]]
@@ -24,7 +24,7 @@
              (interpose
                [:span ", "]
                (for [artist artists]
-                 [:a {:href (routes/entity-path {:id (artist :id)})} (artist :name)]))))
+                 [:a {:href (pages/path-for [:page/artist {:id (artist :id)}])} (artist :name)]))))
 
      [:div.year (sculpture :date)]]]
 
@@ -56,7 +56,7 @@
 
     (when-let [city @(subscribe [:get-entity (sculpture :city-id)])]
       [:div.row.city {:title "City"}
-       [:a {:href (routes/entity-path {:id (city :id)})}
+       [:a {:href (pages/path-for [:page/city {:id (city :id)}])}
         (interpose ", " [(city :city) (city :region) (city :country)])]])
 
     (let [regions @(subscribe [:get-entities (sculpture :region-ids)])]
@@ -65,7 +65,7 @@
                   (for [region (sort-by :area regions)]
                     ^{:key (region :id)}
                     [:a
-                     {:href (routes/entity-path {:id (region :id)})}
+                     {:href (pages/path-for [:page/region {:id (region :id)}])}
                      (region :name)]))])
 
     (let [regions @(subscribe [:get-entities (sculpture :nearby-region-ids)])]
@@ -74,7 +74,7 @@
                   (for [region (sort-by :area regions)]
                     ^{:key (region :id)}
                     [:a
-                     {:href (routes/entity-path {:id (region :id)})}
+                     {:href (pages/path-for [:page/region {:id (region :id)}])}
                      (region :name)]))])
 
     (when (seq (sculpture :commissioned-by))

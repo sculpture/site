@@ -1,7 +1,7 @@
 (ns sculpture.admin.views.sidebar
   (:require
+    [bloom.commons.pages :as pages]
     [sculpture.admin.state.core :refer [subscribe dispatch!]]
-    [sculpture.admin.routes :as routes]
     [sculpture.admin.views.sidebar.search :refer [query-view results-view]]
     [sculpture.admin.views.sidebar.entity :refer [entity-view]]
     [sculpture.admin.views.sidebar.entity.sculpture]
@@ -21,17 +21,17 @@
      [entity-view entity]]))
 
 (defn sidebar-view []
-  (let [page @(subscribe [:page])
+  (let [[page-id page-params] (pages/->args @pages/current-page)
         entity-id (when
-                    (= :entity (:type page))
-                    (page :id))
+                    (not= :page/root page-id)
+                    (:id page-params))
         typing-query? @(subscribe [:sculpture.search/query-focused?])
         query @(subscribe [:sculpture.search/query])]
     [:div.sidebar
       [query-view]
 
-      (when (not= :root (:type page))
-        [:a.back.button {:href (routes/root-path)}])
+      (when (not= :page/root page-id)
+        [:a.back.button {:href (pages/path-for [:page/root])}])
 
       [:div.content
        (cond
