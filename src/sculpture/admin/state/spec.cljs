@@ -16,11 +16,11 @@
                                      [:type schema/EntityType]]]]]
      [:focused? boolean?]]]
    [:active-entity-id [:maybe uuid?]]
-   [:user [:maybe
-           [:map
-            [:email types/Email]
-            [:avatar types/Url]
-            [:name types/NonBlankString]]]]
+   [:db/user [:maybe
+              [:map
+               [:email types/Email]
+               [:avatar types/Url]
+               [:name types/NonBlankString]]]]
    [:main-page [:maybe keyword?]]
    [:data [:maybe
            [:map-of uuid? schema/Entity]]]

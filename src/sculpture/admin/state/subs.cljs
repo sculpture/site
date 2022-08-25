@@ -7,7 +7,7 @@
 (reg-sub
   :user
   (fn [db _]
-    (db :user)))
+    (db :db/user)))
 
 (reg-sub
   :sculpture.search/query

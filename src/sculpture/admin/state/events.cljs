@@ -55,7 +55,7 @@
                       :results nil
                       :focused? false}
           :db/map-sculptures []
-          :user nil
+          :db/user nil
           :active-entity-id nil
           :entity-draft nil
           :saving? false
@@ -81,7 +81,7 @@
 (reg-event-fx
   :sculpture.user/-handle-user-info
   (fn [{db :db} [_ user]]
-    {:db (assoc db :user user)}))
+    {:db (assoc db :db/user user)}))
 
 (defn message-event-handler [e]
   (let [token (.-data e)]
@@ -114,7 +114,7 @@
   (fn [{db :db} _]
     {:ajax {:method :delete
             :uri "/api/session"}
-     :db (assoc db :user nil)
+     :db (assoc db :db/user nil)
      :dispatch [:set-main-page nil]}))
 
 ;; sculpture.data
