@@ -9,13 +9,12 @@ WITH search_results AS (
     string_agg(distinct(artists.name), ', ') AS subtitle,
     (array_agg(photos.id))[1] AS "photo-id"
   FROM
-    sculptures, artists_sculptures, artists, photos
+    sculptures
+    LEFT JOIN artists_sculptures ON artists_sculptures."sculpture-id" = sculptures.id
+    LEFT JOIN artists ON artists.id = artists_sculptures."artist-id"
+    LEFT JOIN photos ON photos."sculpture-id" = sculptures.id
   WHERE
-    sculptures.title ILIKE concat('%',:query,'%') AND
-    -- joins
-    sculptures.id = artists_sculptures."sculpture-id" AND
-    artists.id = artists_sculptures."artist-id" AND
-    photos."sculpture-id" = sculptures.id
+    sculptures.title ILIKE concat('%',:query,'%')
   GROUP BY
    sculptures.id
 
@@ -41,13 +40,12 @@ WITH search_results AS (
     NULL as subtitle,
     (array_agg(photos.id))[1] AS "photo-id"
   FROM
-    artists, artists_sculptures, sculptures, photos
+    artists
+    LEFT JOIN artists_sculptures ON artists_sculptures."artist-id" = artists.id
+    LEFT JOIN sculptures ON sculptures.id = artists_sculptures."sculpture-id"
+    LEFT JOIN photos ON photos."sculpture-id" = sculptures.id
   WHERE
-    artists.name ILIKE concat('%',:query,'%') AND
-    -- joins
-    artists.id = artists_sculptures."artist-id" AND
-    sculptures.id = artists_sculptures."sculpture-id" AND
-    photos."sculpture-id" = sculptures.id
+    artists.name ILIKE concat('%',:query,'%')
   GROUP BY
     artists.id
 
