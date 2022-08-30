@@ -1,64 +1,82 @@
 (ns sculpture.admin.state.advanced-search
   (:require
-    [clojure.string :as string]))
+    [re-frame.core :refer [dispatch reg-sub]]
+    [sculpture.admin.state.util :refer [reg-event-fx]]))
 
-(defn get-results [db]
-  (let [conditions (get-in db [:advanced-search :conditions])
-        condition (first conditions)
-        entity-filter (fn [entity]
-                        (every? true?
-                                (map (fn [condition]
-                                       (let [entity-value (entity (condition :key))
-                                             condition-value (condition :value)]
-                                         (case (condition :option)
-                                           :nil?
-                                           (nil? entity-value)
+(defn vec-remove
+  "remove elem in coll"
+  [coll pos]
+  (vec (concat (subvec coll 0 pos) (subvec coll (inc pos)))))
 
-                                           :includes?
-                                           (and
-                                             (string? entity-value)
-                                             (string? condition-value)
-                                             (string/includes? entity-value condition-value))
-                                           :equals?
-                                           (= entity-value condition-value)
-                                           :before?
-                                           (and
-                                             entity-value
-                                             condition-value
-                                             (< entity-value condition-value))
-                                           :after?
-                                           (and
-                                             entity-value
-                                             condition-value
-                                             (> entity-value condition-value))
-                                           :less-than?
-                                           (and
-                                             entity-value
-                                             condition-value
-                                             (< entity-value condition-value))
-                                           :greater-than?
-                                           (and
-                                             entity-value
-                                             condition-value
-                                             (> entity-value condition-value))
-                                           :empty?
-                                           (empty? entity-value)
+(reg-event-fx
+  :state.advanced-search/clear!
+  (fn [{db :db} _]
+    {:db (assoc-in db [:db/advanced-search] nil)}))
 
-                                           :contains?
-                                           (contains? (set entity-value) condition-value)
-                                           :re-matches?
-                                           (and
-                                             (string? entity-value)
-                                             (string? condition-value)
-                                             (not (nil? (re-matches (re-pattern condition-value) entity-value))))
+(reg-event-fx
+  :state.advanced-search/set-entity-type!
+  (fn [{db :db} [_ entity-type]]
+    {:db (-> db
+             (assoc-in [:db/advanced-search :db.advanced-search/entity-type] entity-type)
+             (assoc-in [:db/advanced-search :db.advanced-search/conditions] []))}))
 
-                                           true)))
-                                     conditions)))]
-    (if (and (seq conditions)
-          (every? identity (map :key conditions))
-          (every? identity (map :option conditions)))
-      (->> db
-           :data
-           vals
-           (filter entity-filter))
-      [])))
+(reg-event-fx
+  :state.advanced-search/add-condition!
+  (fn [{db :db} _]
+    {:db (update-in db [:db/advanced-search :db.advanced-search/conditions]
+                    (fnil conj [])
+                    {:key nil
+                     :option nil
+                     :value nil})}))
+
+(reg-event-fx
+  :state.advanced-search/remove-condition!
+  (fn [{db :db} [_ index]]
+    {:db (update-in db [:db/advanced-search :db.advanced-search/conditions]
+                    vec-remove index)}))
+
+(reg-event-fx
+  :state.advanced-search/update-condition!
+  (fn [{db :db} [_ index k v]]
+    {:db (assoc-in db [:db/advanced-search :db.advanced-search/conditions index k] v)}))
+
+(reg-event-fx
+  :state.advanced-search/search!
+  (fn [{db :db} _]
+    {:tada [:advanced-search
+            {:entity-type (get-in db [:db/advanced-search :db.advanced-search/entity-type])
+             :conditions (get-in db [:db/advanced-search :db.advanced-search/conditions])}
+            {:on-success
+             (fn [data]
+               (dispatch [::store-results! data]))}]}))
+
+(reg-event-fx
+  ::store-results!
+  (fn [{db :db} [_ data]]
+    {:db (assoc-in db [:db/advanced-search :db.advanced-search/results] data)}))
+
+(reg-event-fx
+  :state.advanced-search/go!
+  (fn [{db :db} [_ entity-type conditions]]
+    {:db (-> db
+             (assoc-in [:db/advanced-search :db.advanced-search/conditions] conditions)
+             (assoc-in [:db/advanced-search :db.advanced-search/entity-type] entity-type))
+     :dispatch-n [[:state.advanced-search/search!]
+                  [:state.core/set-main-page! :main-page/advanced-search]]}))
+
+;; SUBS
+
+(reg-sub
+  :state.advanced-search/entity-type
+  (fn [db _]
+    (get-in db [:db/advanced-search :db.advanced-search/entity-type])))
+
+(reg-sub
+  :state.advanced-search/conditions
+  (fn [db _]
+    (get-in db [:db/advanced-search :db.advanced-search/conditions])))
+
+(reg-sub
+  :state.advanced-search/results
+  (fn [db _]
+    (get-in db [:db/advanced-search :db.advanced-search/results])))

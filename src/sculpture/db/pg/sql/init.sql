@@ -2,8 +2,8 @@
 -- :command :execute
 BEGIN;
 
-CREATE EXTENSION IF NOT EXISTS "postgis";
-CREATE EXTENSION IF NOT EXISTS "postgis_topology";
+--CREATE EXTENSION IF NOT EXISTS "postgis";
+--CREATE EXTENSION IF NOT EXISTS "postgis_topology";
 
 CREATE TABLE IF NOT EXISTS cities (
   -- required:
@@ -86,6 +86,9 @@ CREATE TABLE IF NOT EXISTS regions (
 
 CREATE INDEX regions_slug ON regions(lower(slug));
 CREATE INDEX regions_gix ON regions USING GIST ( shape );
+-- in theory, should be possible???
+-- https://postgis.net/docs/manual-3.0/ST_DWithin.html
+-- CREATE INDEX regions_gix_nearby ON regions USING GIST ( ST_Expand(shape , 100::float8) );
 
 CREATE TABLE IF NOT EXISTS users (
   -- required:

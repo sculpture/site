@@ -33,6 +33,11 @@
               :out out-file})
       out-file)))
 
+#_(convert! (clojure.java.io/file "./dev-resources/color-test.jpeg")
+            {:maxsize 1000
+             :quality 90
+             :sharpen false})
+
 (defn extract-colors
   "Given a file, returns list of top 3 colors in HEX"
   [file]
@@ -52,12 +57,16 @@
         (->> (map (fn [result]
                     (second (re-matches #".*(#[0-9A-F]{6}).*" result))))))))
 
+#_(extract-colors (clojure.java.io/file "./dev-resources/color-test.jpeg"))
+
 (defn extract-dimensions [file]
   (with-programs [identify]
     (let [[w h] (-> (identify "-ping" "-format" "%w %h" (.getPath file))
         (string/split #" "))]
       {:width (Integer. w)
        :height (Integer. h)})))
+
+#_(extract-dimensions (clojure.java.io/file "./dev-resources/color-test.jpeg"))
 
 (defn extract-created-at [file]
   (with-programs [identify]
@@ -78,6 +87,8 @@
              tc/to-date)
         (catch java.lang.IllegalArgumentException e))
       (java.util.Date. (.lastModified file)))))
+
+#_(extract-created-at (clojure.java.io/file "./dev-resources/color-test.jpeg"))
 
 (defn- raw-gps-to-float [coords ref]
   (let [numbers (->> (string/split coords #",")
@@ -103,3 +114,5 @@
         {:latitude (raw-gps-to-float latitude latitude-ref)
          :longitude (raw-gps-to-float longitude longitude-ref)}))
     (catch java.lang.Exception e)))
+
+#_(extract-location (clojure.java.io/file "./dev-resources/color-test.jpeg"))

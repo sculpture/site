@@ -6,7 +6,7 @@
     [sculpture.db.core :as db]
     [sculpture.db.pg.select :as db.select]))
 
-(defn upload-image! [id file]
+(defn convert-and-upload-image! [id file]
   (let [file-name (str id ".jpg")]
     (doseq [[folder convert-opts] [["preload/" {:maxsize 40 :quality 5}]
                                    ["thumb/" {:maxsize 100 :quality 75 :sharpen true}]
@@ -29,23 +29,10 @@
    :dimensions (convert/extract-dimensions file)
    :location (convert/extract-location file)})
 
-(defn process-image! [id file sculpture-id user-id]
-  {:pre [(uuid? id)
-         (or (uuid? sculpture-id) (nil? sculpture-id))
-         (uuid? user-id)]}
-  (upload-image! id file)
-  (let [image-data (extract-data file)]
-    (db/upsert! {:id id
-                 :type "photo"
-                 :user-id user-id
-                 :colors (vec (image-data :colors))
-                 :captured-at (image-data :created-at)
-                 :width (get-in image-data [:dimensions :width])
-                 :height (get-in image-data [:dimensions :height])
-                 :location (image-data :location)
-                 :sculpture-id sculpture-id}
-                user-id))
-  (db.select/select-entity-with-id "photo" id))
+(defn process-image! [id file]
+  {:pre [(uuid? id)]}
+  (convert-and-upload-image! id file)
+  (extract-data file))
 
 (defn delete! [id]
   (doseq [folder ["preload/" "thumb/" "medium/" "large/" "original/"]]

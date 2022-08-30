@@ -2,7 +2,9 @@
   (:require
     [clojure.string :as string]
     [tada.events.core :as tada]
-    [sculpture.db.pg.graph :as db.graph]))
+    [sculpture.db.pg.graph :as db.graph]
+    [sculpture.db.pg.select :as db.select]
+    [sculpture.server.advanced-search :as advanced-search]))
 
 ;; for now, we have to use data-specs
 (defn NonBlankString? [s]
@@ -19,11 +21,22 @@
     :rest [:get "/api/graph/search"]
     :return
     (fn [{:keys [query limit types]}]
-      (let [types (set types)]
-        (->> (db.graph/search {:query query
-                               :limit (Integer. limit)})
-             (filter (fn [{:keys [type]}]
-                       (contains? types type))))))}])
+      (db.select/search {:query query
+                        :types types
+                        :limit (Integer. limit)}))}
+
+
+   {:id :advanced-search
+    :params {;; TODO one of the allowed types
+             :entity-type NonBlankString?
+             ;; TODO spec this out
+             :conditions any?}
+    :rest [:post "/api/graph/advanced-search"]
+    :return
+    (fn [{:keys [entity-type conditions]}]
+      (advanced-search/search
+        entity-type
+        conditions))}])
 
 (def commands
   [])

@@ -1,5 +1,6 @@
 (ns sculpture.server.api-routes
   (:require
+    [bloom.commons.uuid :as uuid]
     [bloom.commons.tada.rpc.server :as tada.rpc]
     [ring.middleware.multipart-params :refer [wrap-multipart-params]]
     [sculpture.config :refer [config]]
@@ -59,6 +60,11 @@
         {:status 200
          :body (db.select/entity-counts)})]
 
+     [[:post "/api/eql"]
+      (fn [{{:keys [identifier pattern]} :body-params}]
+        {:status 200
+         :body (db.graph/query identifier pattern)})]
+
      [[:get "/api/entities"]
       (fn [_]
         {:status 200
@@ -78,11 +84,6 @@
       (fn [{{:keys [slug]} :params}]
         {:status 200
          :body (db.select/select-sculptures-for-artist slug)})]
-
-     [[:get "/api/graph/sculptures"]
-      (fn [_]
-        {:status 200
-         :body (db.graph/select)})]
 
      [[:get "/api/sculptures/random"]
       (fn [_]
@@ -224,20 +225,6 @@
             {:status 401
              :body {:error "You must be logged in to perform this action."}})))]
 
-     [[:post "/api/photos"]
-      (fn [request]
-        (let [{{:keys [id file sculpture-id]} :body-params} request]
-          (if-let [user-id (request->user-id request)]
-            (let [id (java.util.UUID/fromString id)
-                  sculpture-id (java.util.UUID/fromString sculpture-id)
-                  {:keys [tempfile filename]} file
-                  image-data (darkroom/process-image! id tempfile sculpture-id user-id)]
-              {:status 200
-               :body image-data})
-            {:status 401
-             :body {:error "You must be logged in to perform this action."}})))
-      [wrap-multipart-params]]
-
      [[:put "/api/entities"]
       (fn [request]
         (let [{{:keys [entity]} :body-params} request]
@@ -250,15 +237,53 @@
             {:status 401
              :body {:error "You must be logged in to perform this action."}})))]
 
+     [[:post "/api/photos"]
+      (fn [request]
+        (let [{{:keys [id file sculpture-id]} :body-params} request]
+          (if-let [user-id (request->user-id request)]
+            (let [id (java.util.UUID/fromString id)
+                  sculpture-id (java.util.UUID/fromString sculpture-id)
+                  {:keys [tempfile filename]} file
+                  image-data (darkroom/process-image! id tempfile)]
+              (db.core/upsert! {:photo/id id
+                                :photo/type "photo"
+                                :photo/user-id user-id
+                                :photo/colors (vec (image-data :colors))
+                                :photo/captured-at (image-data :created-at)
+                                :photo/width (get-in image-data [:dimensions :width])
+                                :photo/height (get-in image-data [:dimensions :height])
+                                :photo/location (image-data :location)
+                                :photo/sculpture-id sculpture-id}
+                               user-id)
+              {:status 200
+               :body {:photo-id id}})
+            {:status 401
+             :body {:error "You must be logged in to perform this action."}})))
+      [wrap-multipart-params]]
+
      [[:put "/api/upload"]
       (fn [request]
         (if-let [user-id (request->user-id request)]
           (let [id (java.util.UUID/fromString (get-in request [:params "id"]))
                 {:keys [tempfile filename]} (get-in request [:params "file"])
-                image-data (darkroom/process-image! id tempfile nil user-id)]
+                image-data (darkroom/process-image! id tempfile)]
+            (db.core/upsert!
+              {:photo/id id
+               :photo/type "photo"
+               :photo/user-id user-id
+               :photo/colors (vec (image-data :colors))
+               :photo/captured-at (image-data :created-at)
+               :photo/width (get-in image-data [:dimensions :width])
+               :photo/height (get-in image-data [:dimensions :height])
+               :photo/location (image-data :location)
+               :photo/sculpture-id nil}
+              user-id)
             {:status 200
-             :body image-data})
+             :body {:photo-id id}})
           {:status 401
            :body {:error "You must be logged in to perform this action."}}))
-      [wrap-multipart-params]]]))
+      [wrap-multipart-params]]
 
+     [[:any "/api/*"]
+      (fn [_]
+        {:status 400})]]))

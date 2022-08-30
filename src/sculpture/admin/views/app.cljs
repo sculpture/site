@@ -1,6 +1,6 @@
 (ns sculpture.admin.views.app
   (:require
-    [sculpture.admin.state.core :refer [subscribe dispatch! dispatch-sync!]]
+    [sculpture.admin.state.api :refer [subscribe dispatch! dispatch-sync!]]
     [sculpture.admin.views.styles :refer [styles-view]]
     [sculpture.admin.views.mega-map :refer [mega-map-view]]
     [sculpture.admin.views.sidebar :refer [sidebar-view]]
@@ -8,17 +8,17 @@
 
 (defn new-entity-button-view []
   [:button.menu {:on-click (fn [_]
-                             (dispatch! [:set-main-page :actions]))}])
+                             (dispatch! [:state.core/set-main-page! :main-page/actions]))}])
 
 (defn toolbar-view []
-  (if-let [user @(subscribe [:user])]
+  (if-let [user @(subscribe [:state.auth/user])]
     [:div.toolbar
      [new-entity-button-view]
      [:img.avatar {:src (user :avatar)}]]
     [:div.toolbar
      [:button.auth
       {:on-click (fn []
-                   (dispatch-sync! [:sculpture.user/authenticate]))}]]))
+                   (dispatch-sync! [:state.auth/start-oauth!]))}]]))
 
 (defn app-view []
   [:div.app

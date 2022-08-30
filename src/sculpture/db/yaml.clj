@@ -1,17 +1,13 @@
 (ns sculpture.db.yaml
   (:require
-    [clojure.string :as string]
     [yaml.writer]
     [yaml.reader]))
 
 ; Specification for YAML files:
-;   - one file per entity type
-;   - file name is plural of entity type, ex. sculptures.yml
-;   - file contains multiple YAML docs (one for each entity)
-;   - entities are ordered by :id (ascending)
+;   - one folder per entity type
+;   - file name is uuid of entity id
 ;   - every entity must have, at minimum:
 ;      - :id UUID
-;      - :type string
 ;   - keys within entity are ordered alphabetically, descending
 ;      - except for a few keys which are given preference (ex. :id, :type)
 ;   - UUIDs are stored as strings
@@ -86,16 +82,10 @@
   (yaml.writer/encode [data]
     (into-sorted-map data)))
 
-(defn many-from-string
-  "Given a string containing multiple yaml docs, returns list of corresponding maps"
-  [s]
-  (->> (yaml.reader/parse-documents s)
-       ; yaml reader returns ordered-maps; convert to regular maps
-       (map (partial into {}))))
-
 (defn from-string
   [s]
-  (into {} (yaml.reader/parse-string s)))
+  (->> (yaml.reader/parse-string s)
+       (into {})))
 
 (defn to-string
   [entity]
@@ -106,11 +96,3 @@
            (into {}))
       (yaml.writer/generate-string :dumper-options {:flow-style :block})))
 
-(defn many-to-string
-  "Given a list of maps, returns string containing multiple yaml docs"
-  [entities]
-  (->> entities
-       (sort-by :id)
-       (map to-string)
-       (string/join "---\n")
-       (str "---\n")))

@@ -2,11 +2,10 @@
   (:require
     [bloom.commons.pages :as pages]
     [sculpture.admin.helpers :as helpers]
-    [sculpture.admin.state.core :refer [subscribe]]
-    [sculpture.admin.views.sidebar.entity :refer [entity-view]]
+    [sculpture.admin.views.sidebar.entity :refer [entity-handler]]
     [sculpture.admin.views.sidebar.entity.partials.photos :refer [photo-view]]))
 
-(defmethod entity-view "photo"
+(defn photo-entity-view
   [photo]
   [:div.photo.entity
    [photo-view {:photo photo
@@ -15,23 +14,23 @@
    [:div.meta
 
     [:div.row.user {:title "Photo by"}
-     (let [user @(subscribe [:get-entity (photo :user-id)])]
-       [:a {:href (pages/path-for [:page/user {:id (user :id)}])}
-        (user :name)])]
+     (let [user (:photo/user photo)]
+       [:a {:href (pages/path-for [:page/user {:id (:user/id user)}])}
+        (:user/name user)])]
 
-    (when-let [sculpture @(subscribe [:get-entity (photo :sculpture-id)])]
+    (when-let [sculpture (:photo/sculpture photo)]
       [:div.row.sculpture {:title "Sculpture"}
-       [:a {:href (pages/path-for [:page/sculpture {:id (sculpture :id)}])}
-        (sculpture :title)]])
+       [:a {:href (pages/path-for [:page/sculpture {:id (:sculpture/id sculpture)}])}
+        (:sculpture/title sculpture)]])
 
-    [:div.row.captured-at {:title "Capture At"}
-     (helpers/format-date (photo :captured-at) "yyyy-MM-dd")]
+    [:div.row.captured-at {:title "Captured At"}
+     (helpers/format-date (:photo/captured-at photo) "yyyy-MM-dd")]
 
     [:div.row.dimensions {:title "Dimensions"}
-     (photo :width) "px" " × " (photo :height) "px"]
+     (:photo/width photo) "px" " × " (:photo/height photo) "px"]
 
     [:div.row.colors {:title "Colors"}
-     (for [color (photo :colors)]
+     (for [color (:photo/colors photo)]
        ^{:key color}
        [:div.color
         [:div.swatch {:style {:background-color color
@@ -39,3 +38,19 @@
                               :height "1em"
                               :display "inline-block"}}]
         [:div.name color]])]]])
+
+(defmethod entity-handler :photo
+  [_ photo-id]
+  {:identifier {:photo/id photo-id}
+   :pattern [:photo/id
+             :photo/captured-at
+             :photo/width
+             :photo/height
+             :photo/colors
+             {:photo/sculpture
+              [:sculpture/id
+               :sculpture/title]}
+             {:photo/user
+              [:user/id
+               :user/name]}]
+   :view photo-entity-view})

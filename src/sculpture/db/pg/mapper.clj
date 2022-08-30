@@ -3,7 +3,8 @@
     [next.jdbc.result-set :refer [ReadableColumn]]
     [next.jdbc.date-time] ;; requiring this auto-converts datetimes
     [sculpture.json :as json]
-    [sculpture.schema.schema :as schema]))
+    [sculpture.schema.schema :as schema]
+    [sculpture.schema.util :as schema.util]))
 
 (defn parse-pg-geography [v]
   (let [geometry (.getGeometry v)]
@@ -47,35 +48,58 @@
     (update obj k f)
     obj))
 
+(defn remove-namespaces [entity]
+  (->> entity
+       (map (fn [[k v]]
+              [(keyword (name k)) v]))
+       (into {})))
+
+#_(remove-namespaces {:foo/bar 123})
+
+(defn add-type [entity]
+  (assoc entity :entity/type (schema.util/entity-type entity)))
+
 ; ->db
 
-(defmulti ->db :type)
+(defn tee [x] (prn x ) x)
+
+(defmulti ->db (fn [entity]
+                 (schema.util/entity-type entity)))
 
 (defmethod ->db :default
   [entity]
-  (merge (schema/->blank-entity (entity :type))
-         entity))
+  (-> (schema/->blank-entity (schema.util/entity-type entity))
+      (merge entity)
+      (add-type)
+      (remove-namespaces)))
 
 (defmethod ->db "sculpture"
   [sculpture]
   (-> (schema/->blank-entity "sculpture")
       (merge sculpture)
-      (assoc :location-lng (:longitude (sculpture :location)))
-      (assoc :location-lat (:latitude (sculpture :location)))
-      (assoc :location-precision (:precision (sculpture :location)))
+      (add-type)
+      (remove-namespaces)
+      (assoc :location-lng (:longitude (:sculpture/location sculpture)))
+      (assoc :location-lat (:latitude (:sculpture/location sculpture)))
+      (assoc :location-precision (:precision (:sculpture/location sculpture)))
       (dissoc :location)))
 
 (defmethod ->db "photo"
   [photo]
-  (-> (schema/->blank-entity (photo :type))
+  (-> (schema/->blank-entity "photo")
       (merge photo)
-      (update :colors json/encode)))
+      (add-type)
+      (remove-namespaces)
+      (update :colors (fn [c]
+                        (when c
+                          (json/encode c))))))
 
 (defmethod ->db "region"
   [region]
-  (-> region
-      (assoc :shape (region :geojson))
-      (dissoc :geojson)))
+  (-> (schema/->blank-entity "region")
+      (merge region)
+      (add-type)
+      (remove-namespaces)))
 
 ; db->
 

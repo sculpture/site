@@ -6,12 +6,12 @@
 (defn photo-mosaic-view [photos]
   [:div.mosaic {:style {:width "100%"
                         :overflow "hidden"}}
-
    (map-indexed
      (fn [index row-photos]
        (let [row-ratio (apply +
-                         (map (fn [p]
-                                (/ (:width p) (:height p)))
+                         (map (fn [photo]
+                                (/ (:photo/width photo)
+                                   (:photo/height photo)))
                               row-photos))]
          (when (seq row-photos)
            ^{:key index}
@@ -22,10 +22,10 @@
                            :height "100%"
                            :width "100%"}}
              (for [photo row-photos]
-               ^{:key (photo :id)}
-               [:a {:href (pages/path-for [:page/photo {:id (photo :id)}])
-                    :style {:width (str (* 100 (/ (/ (photo :width)
-                                                     (photo :height))
+               ^{:key (:photo/id photo)}
+               [:a {:href (pages/path-for [:page/photo {:id (:photo/id photo)}])
+                    :style {:width (str (* 100 (/ (/ (:photo/width photo)
+                                                     (:photo/height photo))
                                                   row-ratio)) "%")
                             :height "100%"
                             :display "inline-block"

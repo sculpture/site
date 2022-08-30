@@ -32,12 +32,16 @@
                  [io.forward/yaml "1.0.10"]
                  [metosin/jsonista "0.2.7"]
                  [hikari-cp "2.13.0"]
+                 [camel-snake-kebab "0.4.3"]
                  [com.github.seancorfield/next.jdbc "1.2.761"]
-                 [com.layerware/hugsql "0.5.1"]
-                 [com.layerware/hugsql-adapter-next-jdbc "0.5.1"]
+                 [com.layerware/hugsql "0.5.3"]
+                 [com.layerware/hugsql-adapter-next-jdbc "0.5.3"]
                  [org.postgresql/postgresql "42.4.2"]
                  ;; https://mvnrepository.com/artifact/net.postgis/postgis-jdbc
                  [net.postgis/postgis-jdbc "2.5.0" :exclusions [org.postgresql/postgresql]]
+                 [com.github.seancorfield/honeysql "2.3.911"]
+                 [com.wsscode/pathom3 "2021.07.10-1-alpha"]
+
 
                  ; DARKROOM
                  [clj-commons/conch "0.9.2"]

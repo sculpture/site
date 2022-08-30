@@ -75,3 +75,4 @@
     (println "Complete")
     (reset! filename->sha (get-shas (file-seq temp-dir)))
     temp-dir))
+

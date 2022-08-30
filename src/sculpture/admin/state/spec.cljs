@@ -16,30 +16,37 @@
                                      [:type schema/EntityType]]]]]
      [:focused? boolean?]]]
    [:active-entity-id [:maybe uuid?]]
+   [:db/advanced-search
+    [:maybe
+     [:map
+      [:db.advanced-search/entity-type schema/EntityType]
+      [:db.advanced-search/conditions {:optional true} any?] ;; TODO
+      [:db.advanced-search/results {:optional true}
+       [:sequential any?]] ;; TODO
+      ]]]
    [:db/user [:maybe
               [:map
                [:email types/Email]
                [:avatar types/Url]
                [:name types/NonBlankString]]]]
-   [:main-page [:maybe keyword?]]
-   [:data [:maybe
-           [:map-of uuid? schema/Entity]]]
+   [:db/main-page [:maybe keyword?]]
    [:saving? boolean?]
-   [:entity-draft
+   [:db/entity-draft
     ;; validation of entity draft is done seperately
     [:maybe any?]]
-   [:mega-map [:map
-               [:dirty? boolean?]
-               [:center {:optional true}
-                [:map
-                 [:longitude types/Longitude]
-                 [:latitude types/Latitude]]]
-               [:zoom-level {:optional true} int?]
-               [:markers {:optional true}
-                [:sequential
-                 [:map
-                  [:type keyword?]
-                  [:bound? boolean?]
-                  [:geojson types/GeoJson]
-                  [:shapes {:optional true}
-                   [:sequential any?]]]]]]]])
+   [:db/mega-map [:map
+                  [:sculptures any?] ;; TODO
+                  [:dirty? boolean?]
+                  [:center {:optional true}
+                   [:map
+                    [:longitude types/Longitude]
+                    [:latitude types/Latitude]]]
+                  [:zoom-level {:optional true} int?]
+                  [:markers {:optional true}
+                   [:sequential
+                    [:map
+                     [:type keyword?]
+                     [:bound? boolean?]
+                     [:geojson types/GeoJson]
+                     [:shapes {:optional true}
+                      [:sequential any?]]]]]]]])

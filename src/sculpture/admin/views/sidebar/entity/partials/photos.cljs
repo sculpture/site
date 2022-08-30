@@ -7,12 +7,12 @@
   (if (= size :thumb)
     [:div.image
      [:img {:src (cdn/image-url photo size)}]]
-    ^{:key (photo :id)}
     [progressive-image-view {:url-large (cdn/image-url photo size)
                              :url-preview (cdn/image-url photo :preload)
-                             :color (get-in photo [:colors 0])
-                             :width (photo :width)
-                             :height (photo :height)}]))
+                             ;; colors were imported backwards?
+                             :color (last (:photo/colors photo))
+                             :width (:photo/width photo)
+                             :height (:photo/height photo)}]))
 
 (defn photo-view [{:keys [photo size on-click]}]
   [:div.photo {:on-click (or on-click (fn []))}

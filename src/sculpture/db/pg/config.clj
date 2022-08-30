@@ -2,7 +2,6 @@
   (:require
     [hugsql.core :as hugsql]
     [hugsql.adapter.next-jdbc :as next-adapter]
-    [next.jdbc.result-set :as rs]
     [hikari-cp.core :as hikari]
     [sculpture.config :refer [config]]))
 

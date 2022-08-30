@@ -1,5 +1,6 @@
 (ns sculpture.db.pg.select
   (:require
+   [clojure.string :as string]
    [hugsql.core :as hugsql]
    [sculpture.db.pg.config :refer [db-spec]]
    [sculpture.db.pg.mapper :refer [db->]]))
@@ -22,6 +23,26 @@
 
 (defn entity-counts []
   (-entity-counts @db-spec))
+
+(defn search
+  [{:keys [query limit types]}]
+  (if (string/blank? query)
+    (throw (ex-info "Query must not be nil or blank" {}))
+    (->> (-search
+           @db-spec
+           {:query query
+            :limit limit
+            :types types})
+         (map db->))))
+
+#_(search {:query "Wood"
+           :types ["sculpture" "artist"]})
+#_(search {:query "John"
+           :types ["artist"]
+           :limit 1})
+#_(search {:query "Can"
+           :types ["nationality"]
+           :limit 5})
 
 ; sculptures
 
@@ -108,6 +129,8 @@
          :id id}
         {:quoting :ansi})
       db->))
+
+#_(select-entity-with-id "sculpture" #uuid "b81e6250-e5b1-4777-8705-6427a39de80b")
 
 (defn select-entity-with-slug [entity-type slug]
   (-> (-select-entity-with-slug

@@ -22,7 +22,6 @@
     - [clojurescript](https://clojurescript.org/)
     - [re-frame](https://github.com/Day8/re-frame) / [reagent](https://github.com/reagent-project/reagent) / [react](https://facebook.github.io/react/) for client side state + UI
     - [garden](https://github.com/noprompt/garden) for CSS
-    - [fuse](http://fusejs.io/) for client-side search index
 
 
 
@@ -33,7 +32,7 @@
  - java
  - leiningen
  - imagemagick
- - mozjpeg (or, just cjpeg)
+ - mozjpeg
  - postgres w/ postgis
 
 

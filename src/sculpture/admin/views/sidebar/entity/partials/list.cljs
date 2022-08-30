@@ -2,11 +2,15 @@
   (:require
     [clojure.string :as string]
     [bloom.commons.pages :as pages]
+    [sculpture.admin.pages :refer [entity-type->page-id]]
     [sculpture.admin.helpers :as helpers]
-    [sculpture.admin.state.core :refer [subscribe]]
     [sculpture.admin.views.sidebar.entity.partials.photos :refer [photo-view]]))
 
-(defmulti entity-row-data :type)
+(defmulti entity-row-data (fn [entity]
+                           (or (:type entity)
+                               (cond
+                                 (entity :artist/id) "artist"
+                                 (entity :sculpture/id) "sculpture"))))
 
 (defmethod entity-row-data "city"
   [city]
@@ -26,13 +30,11 @@
 
 (defmethod entity-row-data "sculpture"
   [sculpture]
-  (let [photos (subscribe [:photos-for-sculpture (sculpture :id)])
-        artists (subscribe [:get-entities (sculpture :artist-ids)])]
-    {:title (sculpture :title)
-     :subtitle (string/join ", " (map :name @artists))
-     :id (sculpture :id)
-     :photo-id (:id (first @photos))
-     :type "sculpture"}))
+  {:title (:sculpture/title sculpture)
+   :subtitle (string/join ", " (map :artist/name (:sculpture/artists sculpture)))
+   :id (:sculpture/id sculpture)
+   :photo-id (:photo/id (first (:sculpture/photos sculpture)))
+   :type "sculpture"})
 
 (defmethod entity-row-data :default
   [entity]
@@ -45,9 +47,9 @@
 (defn row-view
   [{:keys [id photo-id type title subtitle]}]
   [:a.entity
-   {:href (pages/path-for [:page/entity {:id id}])
+   {:href (pages/path-for [(entity-type->page-id type) {:id id}])
     :class type}
-   [photo-view {:photo {:id photo-id}
+   [photo-view {:photo {:photo/id photo-id}
                 :size :thumb}]
    [:div.h1 title]
    [:div.h2 subtitle]])
@@ -59,5 +61,6 @@
 (defn entity-list-view [entities]
   [:div.entity-list
    (for [entity entities]
-     ^{:key (entity :id)}
+     ^{:key (or (:id entity)
+                (:sculpture/id entity))}
      [entity-row-view entity])])

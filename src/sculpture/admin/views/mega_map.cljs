@@ -2,25 +2,23 @@
   (:require
     [bloom.commons.pages :as pages]
     [releaflet.map :as leaflet]
-    [sculpture.admin.state.core :refer [dispatch!]]
-    [sculpture.admin.state.core :refer [subscribe]]))
+    [sculpture.admin.state.api :refer [subscribe dispatch!]]))
 
 (defn fudge [n]
   (+ n
      (- (* 0.0001 (rand)) 0.00005)))
 
 (defn mega-map-view []
-  (let [config @(subscribe [:sculpture.mega-map/config])
-        sculptures @(subscribe [:sculpture.mega-map/sculptures])
-        sculpture-markers (->> sculptures
+  (let [config @(subscribe [:state.mega-map/config])
+        sculpture-markers (->> (:sculptures config)
                                (map (fn [sculpture]
-                                      (when (sculpture :location)
-                                        {:location {:longitude (fudge (:longitude (sculpture :location)))
-                                                    :latitude (fudge (:latitude (sculpture :location)))}
+                                      (when (:sculpture/location sculpture)
+                                        {:location {:longitude (fudge (:longitude (:sculpture/location sculpture)))
+                                                    :latitude (fudge (:latitude (:sculpture/location sculpture)))}
                                          :type :icon
-                                         :popup (sculpture :title)
+                                         :popup (:sculpture/title sculpture)
                                          :on-click (fn []
-                                                     (pages/navigate-to! [:page/sculpture {:id (sculpture :id)}]))})))
+                                                     (pages/navigate-to! [:page/sculpture {:id (:sculpture/id sculpture)}]))})))
                                (remove nil?))]
     [:div.mega-map
      [leaflet/map-view
@@ -31,7 +29,7 @@
          :center {:latitude 51
                   :longitude -37.8}
          :on-view-change (fn []
-                           (dispatch! [:sculpture.mega-map/mark-as-dirty]))
+                           (dispatch! [:state.mega-map/mark-as-dirty!]))
          :shapes (if (config :markers)
                    (concat sculpture-markers (config :markers))
                    sculpture-markers)}

@@ -23,6 +23,8 @@ CREATE VIEW extended_sculptures AS (
   LEFT JOIN materials_sculptures ON materials_sculptures."sculpture-id" = sculptures.id
   LEFT JOIN regions ON ST_Covers(regions.shape, sculptures.location)
   LEFT JOIN regions AS "nearby-regions" ON ST_DWithin("nearby-regions".shape, sculptures.location, 100) AND ST_Distance("nearby-regions".shape, sculptures.location) > 0
+--  LEFT JOIN regions AS "nearby-regions" ON ST_DWithin("nearby-regions".shape, sculptures.location, 100) AND NOT(ST_Covers(regions.shape, sculptures.location))
+ -- LEFT JOIN regions AS "nearby-regions" ON ST_DWithin("nearby-regions".shape, sculptures.location, 100)
   LEFT JOIN photos ON photos."sculpture-id" = sculptures.id
   LEFT JOIN materials ON materials_sculptures."material-id" = materials.id
   LEFT JOIN "sculptures_sculpture-tags" ON "sculptures_sculpture-tags"."sculpture-id" = sculptures.id
@@ -41,14 +43,17 @@ CREATE VIEW artists_with_related_ids AS (
     array_agg(distinct "artists_artist-tags"."artist-tag-id") AS "tag-ids",
     json_agg(distinct "nationalities") AS "nationalities",
     array_agg(distinct "artists_nationalities"."nationality-id") AS "nationality-ids",
+    json_agg(distinct "sculptures") AS "sculptures",
+    array_agg(distinct "sculptures".id) AS "sculpture-ids",
     count("artists_sculptures"."sculpture-id") AS "sculpture-count"
   FROM
     artists
+  LEFT JOIN "artists_sculptures" ON "artists_sculptures"."artist-id" = "artists".id
+  LEFT JOIN "sculptures" ON "sculptures".id = "artists_sculptures"."sculpture-id"
   LEFT JOIN "artists_artist-tags" ON "artists_artist-tags"."artist-id" = "artists".id
   LEFT JOIN "artists_nationalities" ON "artists_nationalities"."artist-id" = "artists".id
   LEFT JOIN "nationalities" ON "artists_nationalities"."nationality-id" = "nationalities".id
   LEFT JOIN "artist-tags" ON "artists_artist-tags"."artist-tag-id" = "artist-tags".id
-  LEFT JOIN "artists_sculptures" ON "artists_sculptures"."artist-id" = "artists".id
   GROUP BY
     artists.id
 );
@@ -133,5 +138,80 @@ CREATE VIEW "sculpture-tags_with_counts" AS (
   GROUP BY
     "sculpture-tags".id
 );
+
+
+-- compatibility layer
+
+DROP VIEW IF EXISTS sculpture;
+CREATE VIEW sculpture AS (
+  SELECT * FROM sculptures
+);
+
+DROP VIEW IF EXISTS artist;
+CREATE VIEW artist AS (
+  SELECT * FROM artists
+);
+
+DROP VIEW IF EXISTS "artist_tag";
+CREATE VIEW "artist_tag" AS (
+  SELECT * FROM "artist-tags"
+);
+
+DROP VIEW IF EXISTS city;
+CREATE VIEW city AS (
+  SELECT * FROM cities
+);
+
+DROP VIEW IF EXISTS category;
+CREATE VIEW category AS (
+  SELECT * FROM categories
+);
+
+DROP VIEW IF EXISTS region;
+CREATE VIEW region AS (
+  SELECT * FROM regions
+);
+
+DROP VIEW IF EXISTS material;
+CREATE VIEW material AS (
+  SELECT * FROM materials
+);
+
+DROP VIEW IF EXISTS nationality;
+CREATE VIEW nationality AS (
+  SELECT * FROM nationalities
+);
+
+DROP VIEW IF EXISTS photo;
+CREATE VIEW photo AS (
+  SELECT * FROM photos
+);
+
+DROP VIEW IF EXISTS region_tag;
+CREATE VIEW region_tag AS (
+  SELECT * FROM "region-tags"
+);
+
+DROP VIEW IF EXISTS sculpture_tag;
+CREATE VIEW sculpture_tag AS (
+  SELECT * FROM "sculpture-tags"
+);
+
+DROP VIEW IF EXISTS regions_region_tags;
+CREATE VIEW regions_region_tags AS (
+  SELECT * FROM "regions_region-tags"
+);
+
+DROP VIEW IF EXISTS sculptures_sculpture_tags;
+CREATE VIEW sculptures_sculpture_tags AS (
+  SELECT * FROM "sculptures_sculpture-tags"
+);
+
+DROP VIEW IF EXISTS artists_artist_tags;
+CREATE VIEW artists_artist_tags AS (
+  SELECT * FROM "artists_artist-tags"
+);
+
+
 
 COMMIT;

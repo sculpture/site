@@ -49,7 +49,7 @@
 
 (def RelatedIds
   ;; TODO distinct
-  [:vector uuid?])
+  [:sequential uuid?])
 
 (def GeoJson
   ;; TODO

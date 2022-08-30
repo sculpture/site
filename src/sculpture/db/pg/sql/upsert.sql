@@ -36,13 +36,13 @@ RETURNING true;
 -- :name -upsert-region!
 -- :command :returning-execute
 INSERT INTO regions ("id", "type", "name", "slug", "shape")
-VALUES (:id, :type, :name, :slug, ST_GeomFromGeoJSON(:shape))
+VALUES (:id, :type, :name, :slug, ST_GeomFromGeoJSON(:geojson))
 ON CONFLICT (id) DO
 UPDATE
 SET
   "name" = :name,
   "slug" = :slug,
-  "shape" = ST_GeomFromGeoJSON(:shape)
+  "shape" = ST_GeomFromGeoJSON(:geojson)
 WHERE "regions".id = :id
 RETURNING true;
 

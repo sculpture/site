@@ -1,47 +1,69 @@
 (ns sculpture.admin.views.sidebar.entity.artist
  (:require
-   [sculpture.admin.state.core :refer [subscribe]]
-   [sculpture.admin.views.sidebar.entity :refer [entity-view]]
+   [sculpture.admin.views.sidebar.entity :refer [entity-handler]]
    [sculpture.admin.views.sidebar.entity.partials.related-sculptures :refer [related-sculptures-view]]
-   [sculpture.admin.views.sidebar.entity.partials.related-tags :refer [related-tags-view]]
-   [sculpture.admin.views.sidebar.entity.partials.related-nationalities :refer [related-nationalities-view]]
+   [sculpture.admin.views.sidebar.entity.partials.related :refer [related-view]]
    [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [photo-mosaic-view]]))
 
-(defmethod entity-view "artist"
+(defn artist-entity-view
   [artist]
   [:div.artist.entity
-   [photo-mosaic-view @(subscribe [:sculpture-photos-for
-                                   (fn [sculpture]
-                                     (contains? (set (sculpture :artist-ids))
-                                                (artist :id)))])]
+   [photo-mosaic-view (->> (:artist/sculptures artist)
+                           (mapcat :sculpture/photos))]
    [:div.info
-    [:h1 (artist :name)]
-    (when (artist :birth-date)
+    [:h1 (:artist/name artist)]
+    (when (:artist/birth-date artist)
       [:h2 [:div.year
-            (artist :birth-date)
-            (when (artist :death-date)
-              (str "–" (artist :death-date)))]])]
+            (:artist/birth-date artist)
+            (when (:artist/death-date artist)
+              (str "–" (:artist/death-date artist)))]])]
    [:div.meta
-    (when (artist :link-wikipedia)
+    (when (:artist/link-wikipedia artist)
       [:div.row.wikipedia {:title "Wikipedia Link"}
-       [:a.link {:href (artist :link-wikipedia)} "Wikipedia"]])
-    (when (artist :link-website)
+       [:a.link {:href (:artist/link-wikipedia artist)} "Wikipedia"]])
+    (when (:artist/link-website artist)
       [:div.row.website {:title "Website Link"}
-       [:a.link {:href (artist :link-website)} "Website"]])
-    (when (seq (artist :tag-ids))
+       [:a.link {:href (:artist/link-website artist)} "Website"]])
+    (when (seq (:artist/artist-tags artist))
       [:div.row.tags {:title "Tags"}
-       [related-tags-view (artist :tag-ids)]])
-    (when (artist :gender)
+       [related-view {:entity-type :artist-tag
+                      :label-key :artist-tag/name}
+        (:artist/artist-tags artist)]])
+    (when (:artist/gender artist)
       [:div.row.gender {:title "Gender"}
-       (artist :gender)])
-    (when (artist :nationality-ids)
+       (:artist/gender artist)])
+    (when (:artist/nationalities artist)
       [:div.row.nationalities {:title "Nationality"}
-       [related-nationalities-view (artist :nationality-ids)]])]
+       [related-view {:entity-type :nationality
+                      :label-key :nationality/demonym}
+        (:artist/nationalities artist)]])]
    [:div.related
     [:h2 "Sculptures"]
-    [related-sculptures-view @(subscribe [:sculptures-for
-                                          (fn [sculpture]
-                                            (contains? (set (sculpture :artist-ids))
-                                                       (artist :id)))])]]])
+    [related-sculptures-view (:artist/sculptures artist)]]])
 
+(defmethod entity-handler :artist
+  [_ artist-id]
+  {:identifier {:artist/id artist-id}
+   :pattern [:artist/id
+             :artist/name
+             :artist/birth-date
+             :artist/link-wikipedia
+             :artist/link-website
+             :artist/gender
+             {:artist/artist-tags [:artist-tag/id
+                                   :artist-tag/name]}
+             {:artist/nationalities
+              [:nationality/id
+               :nationality/demonym]}
+             {:artist/sculptures
+              [:sculpture/id
+               :sculpture/title
+               {:sculpture/photos
+                [:photo/id
+                 :photo/width
+                 :photo/height
+                 :photo/colors]}
+               {:sculpture/artists
+                [:artist/name]}]}]
+   :view artist-entity-view})
 

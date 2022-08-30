@@ -1,12 +1,15 @@
 (ns sculpture.admin.pages
   (:require
-    [sculpture.admin.state.core :refer [dispatch!]]
+    [sculpture.admin.state.api :refer [dispatch!]]
     [sculpture.schema.schema :as schema]))
 
 (defn view [])
 
 (defn on-enter! []
-  (dispatch! [:sculpture-set-query-focused! false]))
+  (dispatch! [:state.search/set-query-focused! false]))
+
+(defn entity-type->page-id [entity-type]
+  (keyword "page" entity-type))
 
 (def pages
   (concat
@@ -16,17 +19,10 @@
       :page/path "/"
       :page/on-enter (fn [_]
                        (on-enter!))}
-
-     {:page/id :page/entity
-      :page/view #'view
-      :page/path "/entity/:id"
-      :page/parameters [:map
-                        [:id uuid?]]
-      :page/on-enter (fn [_]
-                       (on-enter!))}]
+     ]
 
   (for [entity-type schema/entity-types]
-    {:page/id (keyword "page" entity-type)
+    {:page/id (entity-type->page-id entity-type)
      :page/view #'view
      :page/path (str "/" entity-type "/:id")
      :page/parameters [:map

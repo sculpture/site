@@ -2,12 +2,30 @@
   (:require
     [sculpture.admin.views.sidebar.object :refer [object-view]]))
 
-(defmulti entity-view :type)
+(defmulti entity-handler identity)
 
-(defmethod entity-view :default
-  [entity]
-  [:div.entity
-   [:div.info
-    [object-view entity]]])
+(defmethod entity-handler :default
+  [type id]
+  {:identifier {(keyword (name type) "id") id}
+   :pattern (case type
+              :user
+              [:user/id
+               :user/name]
+              :nationality
+              [:nationality/id
+               :nationality/demonym]
+              :category
+              [:category/id
+               :category/name]
+              :artist-tag
+              [:artist-tag/id
+               :artist-tag/name]
+              :region-tag
+              [:region-tag/id
+               :region-tag/name])
+   :view (fn [entity]
+           [:div.entity
+            [:div.info
+             [object-view entity]]])})
 
 

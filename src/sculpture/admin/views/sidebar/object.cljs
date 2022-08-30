@@ -1,20 +1,17 @@
-(ns sculpture.admin.views.sidebar.object
-  (:require
-    [bloom.commons.pages :as pages]
-    [sculpture.admin.state.core :refer [subscribe]]))
+(ns sculpture.admin.views.sidebar.object)
 
 (defmulti object-view
   (fn [entity]
     (or (when (map? entity) :map)
-        (when (vector? entity) :vector)
+        (when (sequential? entity) :sequential)
         (when (and
                 (string? entity)
                 (re-matches #"http.*" entity))
           :link)
         (when (and
-                (string? entity)
-                (= 36 (count entity))
-                (re-matches #"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}" entity))
+                (uuid? entity)
+                #_(= 36 (count entity))
+                #_(re-matches #"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}" entity))
           :id)
         (when (string? entity) :string))))
 
@@ -33,7 +30,7 @@
        [:td
         [object-view v]]])]])
 
-(defmethod object-view :vector
+(defmethod object-view :sequential
   [entity]
   [:div
    (for [o entity]
@@ -50,8 +47,4 @@
 
 (defmethod object-view :id
   [entity-id]
-  (let [entity @(subscribe [:get-entity entity-id])]
-    [:a {:href (pages/path-for [:page/entity {:id (entity :id)}])}
-     (or (entity :name)
-         (entity :title)
-         (entity :id))]))
+  [:div entity-id])
