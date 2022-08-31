@@ -2,15 +2,13 @@
   (:require
     [bloom.commons.pages :as pages]
     [sculpture.admin.views.sidebar.entity :refer [entity-handler]]
-    [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [photo-mosaic-view]]
+    [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [sculpture-mosaic-view]]
     [sculpture.admin.views.sidebar.entity.partials.related-sculptures :refer [related-sculptures-view]]))
 
 (defn sculpture-tag-entity-view
   [tag]
   [:div.tag.entity
-   [photo-mosaic-view (->> (:sculpture-tag/sculptures tag)
-                           (map :sculpture/photos)
-                           (map first))]
+   [sculpture-mosaic-view (:sculpture-tag/sculptures tag)]
 
    [:div.info
     [:h1 (:sculpture-tag/name tag)]

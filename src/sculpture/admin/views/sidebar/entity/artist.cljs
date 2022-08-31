@@ -3,14 +3,12 @@
    [sculpture.admin.views.sidebar.entity :refer [entity-handler]]
    [sculpture.admin.views.sidebar.entity.partials.related-sculptures :refer [related-sculptures-view]]
    [sculpture.admin.views.sidebar.entity.partials.related :refer [related-view]]
-   [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [photo-mosaic-view]]))
+   [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [sculpture-mosaic-view]]))
 
 (defn artist-entity-view
   [artist]
   [:div.artist.entity
-   [photo-mosaic-view (->> (:artist/sculptures artist)
-                           (map :sculpture/photos)
-                           (map first))]
+   [sculpture-mosaic-view (:artist/sculptures artist)]
    [:div.info
     [:h1 (:artist/name artist)]
     (when (:artist/birth-date artist)

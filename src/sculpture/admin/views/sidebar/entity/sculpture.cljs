@@ -11,7 +11,10 @@
   [sculpture]
   [:div.sculpture.entity
 
-   [photo-mosaic-view (:sculpture/photos sculpture)]
+   [photo-mosaic-view (->> (:sculpture/photos sculpture)
+                           (map (fn [photo]
+                                  {:link (pages/path-for [:page/photo {:id (:photo/id photo)}])
+                                   :photo photo})))]
 
    [:div.info
     [:h1 (:sculpture/title sculpture)]

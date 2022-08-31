@@ -1,15 +1,13 @@
 (ns sculpture.admin.views.sidebar.entity.material
   (:require
     [sculpture.admin.views.sidebar.entity :refer [entity-handler]]
-    [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [photo-mosaic-view]]
+    [sculpture.admin.views.sidebar.entity.partials.photo-mosaic :refer [sculpture-mosaic-view]]
     [sculpture.admin.views.sidebar.entity.partials.related-sculptures :refer [related-sculptures-view]]))
 
 (defn material-entity-view
   [material]
   [:div.material.entity
-   [photo-mosaic-view (->> (:material/sculptures material)
-                           (map :sculpture/photos)
-                           (map first))]
+   [sculpture-mosaic-view (:material/sculptures material)]
    [:div.info
     [:h1 (:material/name material)]
     [:h2 "Material"]]
