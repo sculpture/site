@@ -8,7 +8,8 @@
   [city]
   [:div.city.entity
    [photo-mosaic-view (->> (:city/sculptures city)
-                           (mapcat :sculpture/photos))]
+                           (map :sculpture/photos)
+                           (map first))]
 
    [:div.info
     [:h1 (:city/city city) ", " (:city/region city) ", " (:city/country city)]

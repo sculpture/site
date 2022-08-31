@@ -9,7 +9,8 @@
   [artist]
   [:div.artist.entity
    [photo-mosaic-view (->> (:artist/sculptures artist)
-                           (mapcat :sculpture/photos))]
+                           (map :sculpture/photos)
+                           (map first))]
    [:div.info
     [:h1 (:artist/name artist)]
     (when (:artist/birth-date artist)

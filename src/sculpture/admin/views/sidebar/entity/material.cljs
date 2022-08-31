@@ -8,7 +8,8 @@
   [material]
   [:div.material.entity
    [photo-mosaic-view (->> (:material/sculptures material)
-                           (mapcat :sculpture/photos))]
+                           (map :sculpture/photos)
+                           (map first))]
    [:div.info
     [:h1 (:material/name material)]
     [:h2 "Material"]]

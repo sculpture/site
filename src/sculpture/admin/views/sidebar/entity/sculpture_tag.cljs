@@ -9,7 +9,8 @@
   [tag]
   [:div.tag.entity
    [photo-mosaic-view (->> (:sculpture-tag/sculptures tag)
-                           (mapcat :sculpture/photos))]
+                           (map :sculpture/photos)
+                           (map first))]
 
    [:div.info
     [:h1 (:sculpture-tag/name tag)]
