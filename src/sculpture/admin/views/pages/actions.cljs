@@ -3,7 +3,7 @@
     [sculpture.admin.state.api :refer [dispatch!]]))
 
 (defn actions-view []
-  [:div.actions
+  [:div.page.actions
    [:div.header
     [:h1 "Administrative Actions"]
     [:button.close {:on-click (fn [_]

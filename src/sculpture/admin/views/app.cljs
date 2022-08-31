@@ -23,7 +23,8 @@
 (defn app-view []
   [:div.app
    [styles-view]
-   [mega-map-view]
+   [:div.main
+    [sidebar-view]
+    [mega-map-view]]
    [toolbar-view]
-   [sidebar-view]
    [page-view]])

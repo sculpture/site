@@ -10,23 +10,18 @@
 (defn page-view []
   (case @(subscribe [:state.core/main-page])
     :main-page/regions
-    [:div.main
-     [regions-view]]
+    [regions-view]
 
     :main-page/edit
-    [:div.main
-     [entity-editor-view @(subscribe [:state.edit/entity-draft])]]
+    [entity-editor-view @(subscribe [:state.edit/entity-draft])]
 
     :main-page/actions
-    [:div.main
-     [actions-view]]
+    [actions-view]
 
     :main-page/upload
-    [:div.main
-     [upload-view]]
+    [upload-view]
 
     :main-page/advanced-search
-    [:div.main
-     [advanced-search-view]]
+    [advanced-search-view]
 
     nil))

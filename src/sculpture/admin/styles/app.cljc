@@ -17,37 +17,39 @@
 
 (def app-styles
   [:>.app
-   [:>.mega-map
+
+   [:>.main
     {:width "100vw"
-     :height "100vh"}]
+     :height "100vh"
+     :display "flex"}
+
+    [:>.sidebar
+     {:min-width "19em"
+      :width "40%"
+      :height "100vh"
+      :display "flex"
+      :flex-direction "column"}
+
+     [:>a.back
+      (side-button \uf0d9 :left)]
+
+     search-query-styles
+
+     [:>.content
+      {:overflow-y "auto"}
+
+      search-result-styles
+      entity-styles
+      entity-list-styles]]
+
+    [:>.mega-map
+     {:height "100vh"
+      :flex-grow 1
+      :width "60%"}]]
 
    toolbar-styles
 
-   [:>.sidebar
-    {:position "absolute"
-     :left "2em"
-     :top 0
-     :min-width "19em"
-     :width "30%"
-     :max-height "100vh"
-     :z-index 1000
-     :display "flex"
-     :flex-direction "column"}
-    (floating-box)
-
-    [:>a.back
-     (side-button \uf0d9 :left)]
-
-    search-query-styles
-
-    [:>.content
-     {:overflow-y "auto"}
-
-     search-result-styles
-     entity-styles
-     entity-list-styles]]
-
-   [:>.main
+   [:>.page
     {:position "absolute"
      :top 0
      :left "30%"
@@ -59,36 +61,35 @@
      :box-sizing "border-box"}
     (floating-box)
 
-    [:>div
-     [:>.header
-      {:display "flex"
-       :padding "0.75rem"
-       :background colors/accent-color
-       :color "white"
-       :align-items "center"
-       :height "2rem"}
+    [:>.header
+     {:display "flex"
+      :padding "0.75rem"
+      :background colors/accent-color
+      :color "white"
+      :align-items "center"
+      :height "2rem"}
 
-      [:>h1
-       {:font-size "1.2em"
-        :flex-grow 2}]
+     [:>h1
+      {:font-size "1.2em"
+       :flex-grow 2}]
 
-      [:>button.close
-       (button :secondary)]
+     [:>button.close
+      (button :secondary)]
 
-      [:>button.save
-       {:margin-left "1em"}
-       (button :primary)]]
+     [:>button.save
+      {:margin-left "1em"}
+      (button :primary)]]
 
-     [:>.content
-      {:display "flex"
-       :flex-direction "column"
-       :align-items "center"
-       :padding "1em"}
+    [:>.content
+     {:display "flex"
+      :flex-direction "column"
+      :align-items "center"
+      :padding "1em"}
 
-      [:>button
-       (button :secondary)
-       {:width "13em"
-        :margin "1em"}]]]
+     [:>button
+      (button :secondary)
+      {:width "13em"
+       :margin "1em"}]]
 
     [:>.page.actions]
 

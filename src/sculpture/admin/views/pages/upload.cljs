@@ -28,7 +28,7 @@
                    (reset! stage :error)
                    (reset! error e))]
     (fn []
-      [:div.upload
+      [:div.page.upload
        [:div.header
         [:h1 "Upload Photo"]
         [:button.close {:on-click (fn [_]

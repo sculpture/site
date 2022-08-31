@@ -26,7 +26,7 @@
     (let [invalid-fields @(subscribe [:state.edit/invalid-fields])
           entity-type (schema.util/entity-type entity)
           default-entity (schema.util/default-entity entity-type)]
-      [:div.entity.edit
+      [:div.page.entity.edit
        [:div.header
         [:h1 "Editing " (schema.util/label entity)]
         [:button.close
