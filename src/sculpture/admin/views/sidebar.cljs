@@ -47,9 +47,6 @@
     [:div.sidebar
       [query-view]
 
-      (when (not= :page/root page-id)
-        [:a.back.button {:href (pages/path-for [:page/root])}])
-
       [:div.content
        (cond
          (and typing-query? (seq query))
