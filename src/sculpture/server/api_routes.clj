@@ -1,8 +1,10 @@
 (ns sculpture.server.api-routes
   (:require
+    [clojure.edn :as edn]
     [bloom.commons.uuid :as uuid]
     [bloom.commons.tada.rpc.server :as tada.rpc]
     [ring.middleware.multipart-params :refer [wrap-multipart-params]]
+    [ring.util.codec :refer [url-decode]]
     [sculpture.config :refer [config]]
     [sculpture.darkroom.core :as darkroom]
     [sculpture.db.core :as db.core]
@@ -61,9 +63,19 @@
          :body (db.select/entity-counts)})]
 
      [[:post "/api/eql"]
-      (fn [{{:keys [identifier pattern]} :body-params}]
-        {:status 200
-         :body (db.graph/query identifier pattern)})]
+      (fn [{:keys [body-params form-params]} ]
+        (let [params (or body-params
+                         form-params)
+              {:keys [identifier pattern]} params]
+          {:status 200
+           :body (db.graph/query identifier pattern)}))]
+
+     [[:get "/api/eql"]
+      (fn [{{:keys [identifier pattern]} :params}]
+        (let [identifier (edn/read-string (url-decode identifier))
+              pattern (edn/read-string (url-decode pattern))]
+          {:status 200
+           :body (db.graph/query identifier pattern)}))]
 
      [[:get "/api/entities"]
       (fn [_]
