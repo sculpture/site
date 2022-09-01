@@ -230,12 +230,12 @@
                                                                          :category/name]
                                                                         (fn [entities]
                                                                           (->> entities
-                                                                                (sort-by :category/name)
-                                                                                (map (fn [entity]
-                                                                                        [(:category/id entity)
-                                                                                          (:category/name entity)]))
-                                                                                (into {})
-                                                                                (reset! categories)))])))
+                                                                               (sort-by :category/name)
+                                                                               (map (fn [entity]
+                                                                                      [(:category/id entity)
+                                                                                       (:category/name entity)]))
+                                                                               (into {})
+                                                                               (reset! categories)))])))
                                                :clj nil)})})
 
     "sculpture"
