@@ -13,7 +13,7 @@
                               :region/area
                               :region/geojson]
                              (fn [data]
-                               (reset! regions (:regions data)))])]
+                               (reset! regions data))])]
       [:div.page.regions
        [:div.header
         [:h1 "Regions"]

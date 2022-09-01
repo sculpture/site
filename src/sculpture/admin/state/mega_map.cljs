@@ -14,7 +14,7 @@
                                :sculpture/title]}
             :on-success
             (fn [data]
-              (dispatch [::set-map-sculptures! (:sculptures data)]))}}))
+              (dispatch [::set-map-sculptures! data]))}}))
 
 (reg-event-fx
   ::set-map-sculptures!

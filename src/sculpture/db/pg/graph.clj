@@ -25,6 +25,9 @@
             :artist/bio
             :artist/birth-date
             :artist/death-date]
+   :artist-tag [:artist-tag/id
+                :artist-tag/name
+                :artist-tag/slug]
    :category [:category/id
               :category/slug
               :category/name]
@@ -36,6 +39,10 @@
    :material [:material/id
               :material/name
               :material/slug]
+   :nationality [:nationality/id
+                 :nationality/nation
+                 :nationality/demonym
+                 :nationality/slug]
    :photo [:photo/id
            :photo/captured-at
            :photo/user-id
@@ -46,9 +53,10 @@
    :region [:region/id
             :region/name
             :region/slug
-            :region/geojson
-            :region/area
-            :region/points-count]
+            :region/geojson ]
+   :region-tag [:region-tag/id
+                :region-tag/name
+                :region-tag/slug]
    :sculpture [:sculpture/id
                :sculpture/title
                :sculpture/slug
@@ -59,19 +67,35 @@
                :sculpture/location
                :sculpture/location-precision
                :sculpture/link-wikipedia
-               :sculpture/city-id]})
-
+               :sculpture/city-id]
+   :sculpture-tag [:sculpture-tag/id
+                   :sculpture-tag/name
+                   :sculpture-tag/slug
+                   :sculpture-tag/category-id]
+   :user [:user/id
+          :user/email
+          :user/name
+          :user/avatar]})
 
 ;; artist
 
-(pco/defresolver artists []
+(pco/defresolver artists [env _]
   {::pco/input []
    ::pco/output [{:artists (table-columns :artist)}]}
-  {:artists
-   (execute! (sql/format {:select :*
-                          :from :artist}))})
+  (let [gender (:gender (pco/params env))]
+    {:artists
+     (execute! (sql/format {:select :*
+                            :from :artist
+                            :where (cond
+                                     gender
+                                     [:= :artist/gender gender]
+                                     :else
+                                     [])}))}))
 
 #_(artists)
+
+#_(peql/process (pci/register artists)
+                '[(:artists {:gender "female"})])
 
 (pco/defresolver artist-by-id [{:artist/keys [id]}]
   {::pco/input [:artist/id]
@@ -81,6 +105,15 @@
                                 :where [:= :artist/id id]}))))
 
 #_(artist-by-id {:artist/id #uuid "f01c816e-53e3-4023-85a5-21c300a9b6b3"})
+
+(pco/defresolver artist-by-slug [{:artist/keys [slug]}]
+  {::pco/input [:artist/slug]
+   ::pco/output (table-columns :artist)}
+  (first (execute! (sql/format {:select :*
+                                :from :artist
+                                :where [:= :artist/slug slug]}))))
+
+#_(artist-by-slug {:artist/slug "kosso-eloul"})
 
 (pco/defresolver artist-artist-tags [{:artist/keys [id]}]
   {::pco/input [:artist/id]
@@ -113,14 +146,16 @@
 (pco/defresolver artist-sculptures [{:artist/keys [id]}]
   {::pco/input [:artist/id]
    ::pco/output [{:artist/sculptures [:sculpture/id]}
-                 :artist/sculpture-ids]}
+                 :artist/sculpture-ids
+                 :artist/sculpture-count]}
   (let [ids (->> (execute! (sql/format {:select [[[:raw "\"sculpture-id\""] :sculpture-id]]
                                         :from [:artists-sculptures]
                                         :where [:= [:raw "\"artist-id\""] id]}))
                  (map (fn [r]
                         {:sculpture/id (:artists-sculptures/sculpture-id r)})))]
   {:artist/sculptures ids
-   :artist/sculpture-ids (map :sculpture/id ids)}))
+   :artist/sculpture-ids (map :sculpture/id ids)
+   :artist/sculpture-count (count ids)}))
 
 #_(artist-sculptures {:artist/id #uuid "f01c816e-53e3-4023-85a5-21c300a9b6b3"})
 
@@ -128,14 +163,34 @@
 
 (pco/defresolver artist-tag-by-id [{:artist-tag/keys [id]}]
   {::pco/input [:artist-tag/id]
-   ::pco/output [:artist-tag/id
-                 :artist-tag/name
-                 :artist-tag/slug]}
+   ::pco/output (table-columns :artist-tag)}
   (first (execute! (sql/format {:select :*
                                 :from :artist-tag
                                 :where [:= :artist-tag/id id]}))))
 
 #_(artist-tag-by-id {:artist-tag/id #uuid "af620c73-e4a8-460f-aec9-cec3014e9689"})
+
+(pco/defresolver artist-tag-by-slug [{:artist-tag/keys [slug]}]
+  {::pco/input [:artist-tag/slug]
+   ::pco/output (table-columns :artist-tag)}
+  (first (execute! (sql/format {:select :*
+                                :from :artist-tag
+                                :where [:= :artist-tag/slug slug]}))))
+
+#_(artist-tag-by-slug {:artist-tag/slug "famous"})
+
+(pco/defresolver artist-tag-artists [{:artist-tag/keys [id]}]
+  {::pco/input [:artist-tag/id]
+   ::pco/output [{:artist-tag/artists [:artist/id]}]}
+  (let [ids (->> (execute! (sql/format {:select [[[:raw "\"artist-id\""] :artist-id]]
+                                        :from [:artists-artist-tags]
+                                        :where [:= [:raw "\"artist-tag-id\""] id]}))
+                 (map (fn [r]
+                        {:artist/id (:artists-artist-tags/artist-id r)})))]
+    {:artist-tag/artists ids}))
+
+
+#_(artist-tag-artists {:artist-tag/id #uuid "af620c73-e4a8-460f-aec9-cec3014e9689"})
 
 ;; category
 
@@ -157,6 +212,25 @@
 
 #_(category-by-id {:category/id #uuid "2108c78a-fad9-4f34-8326-e748c3d03c05"})
 
+(pco/defresolver category-by-slug [{:category/keys [slug]}]
+  {::pco/input [:category/slug]
+   ::pco/output (table-columns :category)}
+  (first (execute! (sql/format {:select :*
+                                :from :category
+                                :where [:= :category/slug slug]}))))
+
+#_(category-by-slug {:category/slug "sculpture-form"})
+
+(pco/defresolver category-sculpture-tags [{:category/keys [id]}]
+  {::pco/input [:category/id]
+   ::pco/output [{:category/sculpture-tags (table-columns :sculpture-tag)}]}
+  {:category/sculpture-tags
+   (execute! (sql/format {:select :*
+                          :from :sculpture-tag
+                          :where [:= [:raw "\"category-id\""] id]}))})
+
+#_(category-sculpture-tags {:category/id #uuid "2108c78a-fad9-4f34-8326-e748c3d03c05"})
+
 ;; city
 
 (pco/defresolver cities []
@@ -171,22 +245,32 @@
 (pco/defresolver city-by-id [{:city/keys [id]}]
   {::pco/input [:city/id]
    ::pco/output (table-columns :city)}
-  (first (execute! (sql/format {:select [:*]
-                                :from [:city]
+  (first (execute! (sql/format {:select :*
+                                :from :city
                                 :where [:= :id id]
                                 :limit 1}))))
 
 #_(city-by-id {:city/id #uuid "2a8b5ff3-81c9-4adf-8220-9d60723176e1"})
 
+(pco/defresolver city-by-slug [{:city/keys [slug]}]
+  {::pco/input [:city/slug]
+   ::pco/output (table-columns :city)}
+  (first (execute! (sql/format {:select :*
+                                :from :city
+                                :where [:= :slug slug]
+                                :limit 1}))))
+
+#_(city-by-slug {:city/slug "warsaw-poland"})
+
 (pco/defresolver city-sculptures [{:city/keys [id]}]
   {::pco/input [:city/id]
-   ::pco/output [{:city/sculptures [:sculpture/id]}
+   ::pco/output [{:city/sculptures (table-columns :sculpture)}
                  :city/sculpture-ids]}
-  (let [ids (execute! (sql/format {:select :id
-                                   :from :sculpture
-                                   :where [:= [:raw "\"city-id\""] id]}))]
-  {:city/sculptures ids
-   :city/sculpture-ids (map :sculpture/id ids)}))
+  (let [sculptures (execute! (sql/format {:select :*
+                                          :from :sculpture
+                                          :where [:= [:raw "\"city-id\""] id]}))]
+    {:city/sculptures (map fix-sculpture sculptures)
+     :city/sculpture-ids (map :sculpture/id sculptures)}))
 
 #_(city-sculptures {:city/id #uuid "2a8b5ff3-81c9-4adf-8220-9d60723176e1"})
 
@@ -210,33 +294,72 @@
 
 #_(material-by-id {:material/id #uuid "75dfd552-d16c-4149-9a5e-78848b93d168"})
 
+(pco/defresolver material-by-slug [{:material/keys [slug]}]
+  {::pco/input [:material/slug]
+   ::pco/output (table-columns :material)}
+  (first (execute! (sql/format {:select :*
+                                :from :material
+                                :where [:= :material/slug slug]}))))
+
+#_(material-by-slug {:material/slug "bronze"})
+
 (pco/defresolver material-sculptures [{:material/keys [id]}]
   {::pco/input [:material/id]
    ::pco/output [{:material/sculptures [:sculpture/id]}
-                 :materia/sculpture-ids]}
+                 :material/sculpture-ids
+                 :material/sculpture-count]}
   (let [ids (->> (execute! (sql/format {:select [[[:raw "\"sculpture-id\""] :sculpture-id]]
                                         :from [:materials-sculptures]
                                         :where [:= [:raw "\"material-id\""] id]}))
                  (map (fn [r]
                         {:sculpture/id (:materials-sculptures/sculpture-id r)})))]
     {:material/sculptures ids
-     :material/sculpture-ids (map :sculpture/id ids)}))
+     :material/sculpture-ids (map :sculpture/id ids)
+     :material/sculpture-count (count ids)}))
 
 #_(material-sculptures {:material/id #uuid "75dfd552-d16c-4149-9a5e-78848b93d168"})
 
 ;; nationality
 
+(pco/defresolver nationalities []
+  {::pco/input []
+   ::pco/output [{:nationalities (table-columns :nationality)}]}
+  {:nationalities (execute! (sql/format {:select :*
+                                         :from :nationality}))})
+
+#_(nationalities)
+
 (pco/defresolver nationality-by-id [{:nationality/keys [id]}]
   {::pco/input [:nationality/id]
-   ::pco/output [:nationality/id
-                 :nationality/nation
-                 :nationality/demonym
-                 :nationality/slug]}
+   ::pco/output (table-columns :nationality)}
   (first (execute! (sql/format {:select :*
                                 :from :nationality
                                 :where [:= :nationality/id id]}))))
 
 #_(nationality-by-id {:nationality/id #uuid "9e5ed9ce-cb55-4441-b1c2-5da71d7f3baa"})
+
+(pco/defresolver nationality-by-slug [{:nationality/keys [slug]}]
+  {::pco/input [:nationality/slug]
+   ::pco/output (table-columns :nationality)}
+  (first (execute! (sql/format {:select :*
+                                :from :nationality
+                                :where [:= :nationality/slug slug]}))))
+
+#_(nationality-by-slug {:nationality/slug "canadian"})
+
+(pco/defresolver nationality-artists [{:nationality/keys [id]}]
+  {::pco/input [:nationality/id]
+   ::pco/output [{:nationality/artists [:artist/id]}
+                 :nationality/artist-ids]}
+  (let [ids (->> (execute! (sql/format {:select [[[:raw "\"artist-id\""] :artist-id]]
+                                        :from [:artists-nationalities]
+                                        :where [:= [:raw "\"nationality-id\""] id]}))
+                 (map (fn [r]
+                        {:artist/id (:artists-nationalities/artist-id r)})))]
+    {:nationality/artists ids
+     :nationality/artist-ids (map :artist/id ids)}))
+
+#_(nationality-artists {:nationality/id #uuid "9e5ed9ce-cb55-4441-b1c2-5da71d7f3baa"})
 
 ;; photo
 
@@ -277,7 +400,9 @@
 
 (pco/defresolver regions []
   {::pco/input []
-   ::pco/output [{:regions (table-columns :region)}]}
+   ::pco/output [{:regions (into (table-columns :region)
+                                 [:region/area
+                                  :region/points-count])}]}
   {:regions
    (->> (execute! (sql/format {:select [:*
                                         [[:ST_AsGeoJSON :region/shape]
@@ -291,7 +416,9 @@
 
 (pco/defresolver region-by-id [{:region/keys [id]}]
   {::pco/input [:region/id]
-   ::pco/output (table-columns :region)}
+   ::pco/output (into (table-columns :region)
+                             [:region/area
+                              :region/points-count])}
   (-> (first (execute! (sql/format {:select [:*
                                              [[:ST_AsGeoJSON :region/shape]
                                               :geojson]
@@ -303,6 +430,44 @@
       fix-region))
 
 #_(region-by-id {:region/id #uuid "bf27a5bb-93fe-4f6c-8fe7-db7b23ec8e39"})
+
+(pco/defresolver region-by-slug [{:region/keys [slug]}]
+  {::pco/input [:region/slug]
+   ::pco/output (into (table-columns :region)
+                      [:region/area
+                       :region/points-count])}
+  (-> (first (execute! (sql/format {:select [:*
+                                             [[:ST_AsGeoJSON :region/shape]
+                                              :geojson]
+                                             [[:Round [:/ [:ST_Area :region/shape] 1000]] :area]
+                                             [[:ST_NPoints [:cast :region/shape :geometry]] :points-count]]
+                                    :from :region
+                                    :where [:= :slug slug]
+                                    :limit 1})))
+      fix-region))
+
+#_(region-by-slug {:region/slug "toronto"})
+
+(pco/defresolver region-parent-region [{:region/keys [id]}]
+  {::pco/input [:region/id]
+   ::pco/output [{:region/parent-region (table-columns :region)}]}
+  {:region/parent-region (first (execute! (sql/format {:select :*
+                                                       :from :region
+                                                       :left-join [[:region :parent]
+                                                                   [:= :parent/id
+                                                                    {:select :ancestor/id
+                                                                     :from [[:region :ancestor]]
+                                                                     :where [:and
+                                                                             [:!= :region/id :ancestor/id]
+                                                                             [:raw "region.shape::geometry @ ancestor.shape::geometry" ]
+                                                                             [:ST_CoveredBy
+                                                                              [:ST_Centroid [:cast :region/shape :geometry]]
+                                                                              [:cast :ancestor/shape :geometry]]]
+                                                                     :order-by [[[:ST_Area [:cast :ancestor/shape :geometry]]]]
+                                                                     :limit 1}]]
+                                                       :where [:= :region/id id]})))})
+
+#_(region-parent-region {:region/id #uuid "bf27a5bb-93fe-4f6c-8fe7-db7b23ec8e39"})
 
 (pco/defresolver region-region-tags [{:region/keys [id]}]
   {::pco/input [:region/id]
@@ -321,17 +486,19 @@
 (pco/defresolver region-sculptures [{:region/keys [id]}]
   {::pco/input [:region/id]
    ::pco/output [{:region/sculptures [:sculpture/id]}
-                 :region/sculpture-ids]}
-  (let [ids (execute! (sql/format {:select :sculpture/id
-                                   :from :sculpture
-                                   :where [:ST_DWithin
-                                           {:select :region.shape
-                                            :from :region
-                                            :where [:= :region/id id]}
-                                           :sculpture.location
-                                           100]}))]
-    {:region/sculptures ids
-     :region/sculpture-ids (map :sculpture/id ids)}))
+                 :region/sculpture-ids
+                 :region/sculpture-count]}
+  (let [sculptures (execute! (sql/format {:select :*
+                                          :from :sculpture
+                                          :where [:ST_DWithin
+                                                  {:select :region.shape
+                                                   :from :region
+                                                   :where [:= :region/id id]}
+                                                  :sculpture.location
+                                                  100]}))]
+    {:region/sculptures (map fix-sculpture sculptures)
+     :region/sculpture-ids (map :sculpture/id sculptures)
+     :region/sculpture-count (count sculptures)}))
 
 #_(region-sculptures {:region/id #uuid "bf27a5bb-93fe-4f6c-8fe7-db7b23ec8e39"})
 
@@ -339,14 +506,21 @@
 
 (pco/defresolver region-tag-by-id [{:region-tag/keys [id]}]
   {::pco/input [:region-tag/id]
-   ::pco/output [:region-tag/id
-                 :region-tag/name
-                 :region-tag/slug]}
+   ::pco/output (table-columns :region-tag)}
   (first (execute! (sql/format {:select :*
                                 :from :region-tag
                                 :where [:= :region-tag/id id]}))))
 
 #_(region-tag-by-id {:region-tag/id #uuid "c6980378-c006-49d9-a681-effc4d36aea9"})
+
+(pco/defresolver region-tag-by-slug [{:region-tag/keys [slug]}]
+  {::pco/input [:region-tag/slug]
+   ::pco/output (table-columns :region-tag)}
+  (first (execute! (sql/format {:select :*
+                                :from :region-tag
+                                :where [:= :region-tag/slug slug]}))))
+
+#_(region-tag-by-slug {:region-tag/slug "city"})
 
 ;; sculpture
 
@@ -356,14 +530,27 @@
         (s :sculpture/location-precision))
       (dissoc :sculpture/location-precision)))
 
-(pco/defresolver sculptures []
+(pco/defresolver sculptures [env _]
   {::pco/input []
    ::pco/output [{:sculptures (table-columns :sculpture)}]}
   {:sculptures
-   (map fix-sculpture (execute! (sql/format {:select :*
-                                             :from :sculpture})))})
+   (let [decade (:decade (pco/params env))]
+     (->> (execute! (sql/format (cond
+                                  decade
+                                  (let [date-start (str (/ decade 10) "*")
+                                        date-end (str (+ decade 9) "-12-31")]
+                                    {:select :*
+                                     :from :sculpture
+                                     :where [:between :sculpture/date date-start date-end]})
+                                  :else
+                                  {:select :*
+                                   :from :sculpture})))
+          (map fix-sculpture)))})
 
 #_(sculptures)
+
+#_(peql/process (pci/register sculptures)
+                '[(:sculptures {:decade 1960})])
 
 (pco/defresolver sculpture-by-id [{:sculpture/keys [id]}]
   {::pco/input [:sculpture/id]
@@ -373,6 +560,15 @@
                                                :where [:= :sculpture/id id]})))))
 
 #_(sculpture-by-id {:sculpture/id #uuid "f6687354-9e7c-4cb2-a644-14e1cf96fc34"})
+
+(pco/defresolver sculpture-by-slug [{:sculpture/keys [slug]}]
+  {::pco/input [:sculpture/slug]
+   ::pco/output (table-columns :sculpture)}
+  (fix-sculpture (first (execute! (sql/format {:select :*
+                                               :from :sculpture
+                                               :where [:= :sculpture/slug slug]})))))
+
+#_(sculpture-by-slug {:sculpture/slug "braha"})
 
 (pco/defresolver sculpture-artists [{:sculpture/keys [id]}]
   {::pco/input [:sculpture/id]
@@ -411,46 +607,38 @@
 
 (pco/defresolver sculpture-nearby-regions [{:sculpture/keys [location]}]
   {::pco/input [:sculpture/location]
-   ::pco/output [{:sculpture/nearby-regions [:region/id]}
+   ::pco/output [{:sculpture/nearby-regions (table-columns :region)}
                  :sculpture/nearby-region-ids]}
-  (let [ids (execute! (sql/format {:select [:id
-                                            [[:ST_Distance
-                                              :region/shape
-                                              [:ST_MakePoint
-                                               (:longitude location)
-                                               (:latitude location)]] :distance]]
-                                   :from :region
-                                   :where [:and
-                                           [:ST_DWithin
-                                            :region/shape
-                                            [:ST_MakePoint
-                                             (:longitude location)
-                                             (:latitude location)]
-                                            100]
-                                           [:>
-                                            [:ST_Distance
-                                             :region/shape
-                                             [:ST_MakePoint
-                                              (:longitude location)
-                                              (:latitude location)]]
-                                            0]]
-                                   :order-by [:distance]}))]
-  {:sculpture/nearby-regions ids
-   :sculpture/nearby-region-ids (map :region/id ids)}))
+  (let [regions (execute! (sql/format {:select :*
+                                       :from :region
+                                       :where [:and
+                                               [:ST_DWithin
+                                                :region/shape
+                                                [:ST_MakePoint
+                                                 (:longitude location)
+                                                 (:latitude location)]
+                                                100]
+                                               [:>
+                                                [:ST_Distance
+                                                 :region/shape
+                                                 [:ST_MakePoint
+                                                  (:longitude location)
+                                                  (:latitude location)]]
+                                                0]]
+                                       :order-by [[[:ST_Distance
+                                                    :region/shape
+                                                    [:ST_MakePoint
+                                                     (:longitude location)
+                                                     (:latitude location)]]]]}))]
+  {:sculpture/nearby-regions (map fix-region regions)
+   :sculpture/nearby-region-ids (map :region/id regions)}))
 
 #_(sculpture-nearby-regions {:sculpture/location {:latitude 43.66576
                                                   :longitude -79.38785}})
 
 (pco/defresolver sculpture-photos [{:sculpture/keys [id]}]
   {::pco/input [:sculpture/id]
-   ::pco/output [{:sculpture/photos
-                  [:photo/id
-                   :photo/captured-at
-                   :photo/user-id
-                   :photo/colors
-                   :photo/width
-                   :photo/height
-                   :photo/sculpture-id]}
+   ::pco/output [{:sculpture/photos (table-columns :photo)}
                  :sculpture/photo-ids]}
   (let [photos (execute! (sql/format {:select :*
                                       :from :photo
@@ -464,17 +652,17 @@
   {::pco/input [:sculpture/location]
    ::pco/output [{:sculpture/regions [:region/id]}
                  :sculpture/region-ids]}
-  (let [ids (execute! (sql/format {:select [:id
-                                            [[:ST_Area [:ST_Envelope [:cast :region/shape :geometry]]] :size]]
-                                   :from :region
-                                   :where [:ST_Covers
-                                           :region/shape
-                                           [:ST_MakePoint
-                                            (:longitude location)
-                                            (:latitude location)]]
-                                   :order-by [:size]}))]
-    {:sculpture/regions ids
-     :sculpture/region-ids (map :region/id ids)}))
+  (let [regions (execute! (sql/format {:select [:*
+                                                [[:ST_Area [:ST_Envelope [:cast :region/shape :geometry]]] :size]]
+                                       :from :region
+                                       :where [:ST_Covers
+                                               :region/shape
+                                               [:ST_MakePoint
+                                                (:longitude location)
+                                                (:latitude location)]]
+                                       :order-by [:size]}))]
+    {:sculpture/regions (map fix-region regions)
+     :sculpture/region-ids (map :region/id regions)}))
 
 #_(sculpture-regions {:sculpture/location {:latitude 43.6442
                                            :longitude -79.38771}})
@@ -496,32 +684,42 @@
 
 (pco/defresolver sculpture-tag-by-id [{:sculpture-tag/keys [id]}]
   {::pco/input [:sculpture-tag/id]
-   ::pco/output [:sculpture-tag/id
-                 :sculpture-tag/name
-                 :sculpture-tag/slug
-                 :sculpture-tag/category-id
-                 {:sculpture-tag/category [:category/id]}]}
-  (let [e (first (execute! (sql/format {:select :*
-                                        :from :sculpture-tag
-                                        :where [:= :sculpture-tag/id id]
-                                        :limit 1})))]
-    (assoc e
-      :sculpture-tag/category
-      {:category/id (:sculpture-tag/category-id e)})))
+   ::pco/output (table-columns :sculpture-tag)}
+  (first (execute! (sql/format {:select :*
+                                :from :sculpture-tag
+                                :where [:= :sculpture-tag/id id]
+                                :limit 1}))))
 
 #_(sculpture-tag-by-id {:sculpture-tag/id #uuid "521f00f2-f976-4b69-89cf-6e8db0c94f29"})
+
+(pco/defresolver sculpture-tag-by-slug [{:sculpture-tag/keys [slug]}]
+  {::pco/input [:sculpture-tag/slug]
+   ::pco/output (table-columns :sculpture-tag)}
+  (first (execute! (sql/format {:select :*
+                                :from :sculpture-tag
+                                :where [:= :sculpture-tag/slug slug]
+                                :limit 1}))))
+
+#_(sculpture-tag-by-slug {:sculpture-tag/slug "red"})
+
+(pco/defresolver sculpture-tag-category [{:sculpture-tag/keys [category-id]}]
+  {::pco/input [:sculpture-tag/category-id]
+   ::pco/output [{:sculpture-tag/category [:category/id]}]}
+  {:sculpture-tag/category {:category/id category-id}})
 
 (pco/defresolver sculpture-tag-sculptures [{:sculpture-tag/keys [id]}]
   {::pco/input [:sculpture-tag/id]
    ::pco/output [{:sculpture-tag/sculptures [:sculpture/id]}
-                 :sculpture-tag/sculpture-ids]}
+                 :sculpture-tag/sculpture-ids
+                 :sculpture-tag/sculpture-count]}
   (let [ids (->> (execute! (sql/format {:select [[[:raw "\"sculpture-id\""] :sculpture-id]]
                                         :from [:sculptures-sculpture-tags]
                                         :where [:= [:raw "\"sculpture-tag-id\""] id]}))
                  (map (fn [r]
                         {:sculpture/id (:sculptures-sculpture-tags/sculpture-id r)})))]
     {:sculpture-tag/sculptures ids
-     :sculpture-tag/sculpture-ids (map :sculpture/id ids)}))
+     :sculpture-tag/sculpture-ids (map :sculpture/id ids)
+     :sculpture-tag/sculpture-count (count ids)}))
 
 #_(sculpture-tag-sculptures {:sculpture-tag/id #uuid "521f00f2-f976-4b69-89cf-6e8db0c94f29"})
 
@@ -529,13 +727,11 @@
 
 (pco/defresolver user-by-id [{:user/keys [id]}]
   {::pco/input [:user/id]
-   ::pco/output [:user/id
-                 :user/email
-                 :user/name
-                 :user/avatar]}
+   ::pco/output (table-columns :user)}
   (let [p (first (execute! (sql/format {:select :*
                                         :from :users
                                         :where [:= :users/id id]})))]
+    ;; postgres doesn't allow a :user table
     (set/rename-keys p {:users/id :user/id
                         :users/email :user/email
                         :users/avatar :user/avatar
@@ -546,27 +742,36 @@
 (def indexes
   (pci/register [artists
                  artist-by-id
+                 artist-by-slug
                  artist-artist-tags
                  artist-nationalities
                  artist-sculptures
 
                  ;; artist-tags
                  artist-tag-by-id
+                 artist-tag-by-slug
+                 artist-tag-artists
 
                  categories
                  category-by-id
+                 category-by-slug
+                 category-sculpture-tags
 
                  cities
                  city-by-id
+                 city-by-slug
                  city-sculptures
 
                  materials
                  material-by-id
+                 material-by-slug
                  material-sculptures
 
                  ;; nationalities
+                 nationalities
                  nationality-by-id
-                 ;; nationality-artists
+                 nationality-by-slug
+                 nationality-artists
 
                  photos
                  photo-by-id
@@ -575,15 +780,19 @@
 
                  regions
                  region-by-id
+                 region-by-slug
+                 region-parent-region
                  region-region-tags
                  region-sculptures
 
                  ;; region-tags
                  region-tag-by-id
+                 region-tag-by-slug
                  ;; region-tag-regions
 
                  sculptures
                  sculpture-by-id
+                 sculpture-by-slug
                  sculpture-artists
                  sculpture-city
                  sculpture-materials
@@ -594,6 +803,8 @@
 
                  ;; sculpture-tags
                  sculpture-tag-by-id
+                 sculpture-tag-by-slug
+                 sculpture-tag-category
                  sculpture-tag-sculptures
 
                  ;; users
@@ -620,7 +831,9 @@
     (map? query-id-or-identifier)
     (peql/process indexes query-id-or-identifier pattern)
     (keyword? query-id-or-identifier)
-    (peql/process indexes [{query-id-or-identifier pattern}])))
+    (query-id-or-identifier (peql/process indexes [{query-id-or-identifier pattern}]))
+    (nil? pattern)
+    (peql/process indexes query-id-or-identifier)))
 
 
 #_(query :regions [:region/name])
@@ -633,3 +846,5 @@
 
 #_(query {:artist/id #uuid "f01c816e-53e3-4023-85a5-21c300a9b6b3"}
          [:artist/artist-tag-ids])
+
+#_(query '[{(:sculptures {:decade 1960}) [:sculpture/id]}] nil)
