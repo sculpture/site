@@ -50,7 +50,7 @@
                          {:status 200
                           :body (db.select/select-all-with-type entity-type)})]
 
-                      [[:get (str "/api/" entity-type "s/:id-or-slug")]
+                      [[:get (str "/api/" plural "/:id-or-slug")]
                        (fn [{{:keys [id-or-slug]} :params}]
                          (single-entity-response entity-type id-or-slug))]]))))
 
