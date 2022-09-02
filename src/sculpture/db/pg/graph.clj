@@ -77,6 +77,25 @@
           :user/name
           :user/avatar]})
 
+(defn fix-sculpture [sculpture]
+  (-> sculpture
+      (assoc-in [:sculpture/location :precision]
+        (sculpture :sculpture/location-precision))
+      (dissoc :sculpture/location-precision)))
+
+(defn fix-region [region]
+  (-> region
+      (set/rename-keys {:geojson :region/geojson
+                        :area :region/area
+                        :points-count :region/points-count})))
+
+(defn fix-user [user]
+  ;; postgres doesn't allow a :user table
+  (set/rename-keys user {:users/id :user/id
+                         :users/email :user/email
+                         :users/avatar :user/avatar
+                         :users/name :user/name}))
+
 ;; artist
 
 (pco/defresolver artists [env _]
@@ -160,6 +179,15 @@
 #_(artist-sculptures {:artist/id #uuid "f01c816e-53e3-4023-85a5-21c300a9b6b3"})
 
 ;; artist-tag
+
+(pco/defresolver artist-tags []
+  {::pco/input []
+   ::pco/output [{:artist-tags (table-columns :artist-tag)}]}
+  {:artist-tags
+   (execute! (sql/format {:select :*
+                          :from :artist-tag}))})
+
+#_(artist-tags)
 
 (pco/defresolver artist-tag-by-id [{:artist-tag/keys [id]}]
   {::pco/input [:artist-tag/id]
@@ -392,11 +420,7 @@
 
 ;; region
 
-(defn fix-region [region]
-  (-> region
-      (set/rename-keys {:geojson :region/geojson
-                        :area :region/area
-                        :points-count :region/points-count})))
+
 
 (pco/defresolver regions []
   {::pco/input []
@@ -504,6 +528,15 @@
 
 ;; region-tag
 
+(pco/defresolver region-tags []
+  {::pco/input []
+   ::pco/output [{:region-tags (table-columns :region-tag)}]}
+  {:region-tags
+   (execute! (sql/format {:select :*
+                          :from :region-tag}))})
+
+#_(region-tags)
+
 (pco/defresolver region-tag-by-id [{:region-tag/keys [id]}]
   {::pco/input [:region-tag/id]
    ::pco/output (table-columns :region-tag)}
@@ -522,13 +555,23 @@
 
 #_(region-tag-by-slug {:region-tag/slug "city"})
 
+(pco/defresolver region-tag-regions [{:region-tag/keys [id]}]
+  {::pco/input [:region-tag/id]
+   ::pco/output [{:region-tag/regions [:region/id]}
+                 :region-tag/region-ids]}
+  (let [ids (->> (execute! (sql/format {:select [[[:raw "\"region-id\""] :region-id]]
+                                        :from :regions-region-tags
+                                        :where [:= [:raw "\"region-tag-id\""] id]}))
+                 (map (fn [r]
+                        (set/rename-keys r {:regions-region-tags/region-id :region/id}))))]
+    {:region-tag/regions ids
+     :region-tag/region-ids (map :region/id ids)}))
+
+#_(region-tag-regions {:region-tag/id #uuid "c6980378-c006-49d9-a681-effc4d36aea9"})
+
 ;; sculpture
 
-(defn fix-sculpture [s]
-  (-> s
-      (assoc-in [:sculpture/location :precision]
-        (s :sculpture/location-precision))
-      (dissoc :sculpture/location-precision)))
+
 
 (pco/defresolver sculptures [env _]
   {::pco/input []
@@ -682,6 +725,14 @@
 
 ;; sculpture-tag
 
+(pco/defresolver sculpture-tags []
+  {::pco/input []
+   ::pco/output [{:sculpture-tags (table-columns :sculpture-tag)}]}
+  {:sculpture-tags (execute! (sql/format {:select :*
+                                          :from :sculpture-tag}))})
+
+#_(sculpture-tags)
+
 (pco/defresolver sculpture-tag-by-id [{:sculpture-tag/keys [id]}]
   {::pco/input [:sculpture-tag/id]
    ::pco/output (table-columns :sculpture-tag)}
@@ -725,19 +776,33 @@
 
 ;; user
 
+(pco/defresolver users []
+  {::pco/input []
+   ::pco/output [{:users (table-columns :user)}]}
+  {:users (->> (execute! (sql/format {:select :*
+                                      :from :users}))
+               (map fix-user))})
+
+#_(users)
+
 (pco/defresolver user-by-id [{:user/keys [id]}]
   {::pco/input [:user/id]
    ::pco/output (table-columns :user)}
-  (let [p (first (execute! (sql/format {:select :*
-                                        :from :users
-                                        :where [:= :users/id id]})))]
-    ;; postgres doesn't allow a :user table
-    (set/rename-keys p {:users/id :user/id
-                        :users/email :user/email
-                        :users/avatar :user/avatar
-                        :users/name :user/name})))
+  (fix-user (first (execute! (sql/format {:select :*
+                                          :from :users
+                                          :where [:= :users/id id]})))))
 
 #_(user-by-id {:user/id #uuid "013ec717-531b-4b30-bacf-8a07f33b0d43"})
+
+(pco/defresolver user-photos [{:user/keys [id]}]
+  {::pco/input [:user/id]
+   ::pco/output [{:user/photos [:photo/id]}]}
+  {:user/photos
+   (execute! (sql/format {:select :*
+                          :from :photo
+                          :where [:= [:raw "\"user-id\""] id]}))})
+
+#_(user-photos)
 
 (def indexes
   (pci/register [artists
@@ -747,7 +812,7 @@
                  artist-nationalities
                  artist-sculptures
 
-                 ;; artist-tags
+                 artist-tags
                  artist-tag-by-id
                  artist-tag-by-slug
                  artist-tag-artists
@@ -767,7 +832,6 @@
                  material-by-slug
                  material-sculptures
 
-                 ;; nationalities
                  nationalities
                  nationality-by-id
                  nationality-by-slug
@@ -785,10 +849,10 @@
                  region-region-tags
                  region-sculptures
 
-                 ;; region-tags
+                 region-tags
                  region-tag-by-id
                  region-tag-by-slug
-                 ;; region-tag-regions
+                 region-tag-regions
 
                  sculptures
                  sculpture-by-id
@@ -801,15 +865,15 @@
                  sculpture-regions
                  sculpture-sculpture-tags
 
-                 ;; sculpture-tags
+                 sculpture-tags
                  sculpture-tag-by-id
                  sculpture-tag-by-slug
                  sculpture-tag-category
                  sculpture-tag-sculptures
 
-                 ;; users
+                 users
                  user-by-id
-                 ;; user-photos
+                 user-photos
                  ]))
 
 ;; smart-map-interface
@@ -835,7 +899,6 @@
     (nil? pattern)
     (peql/process indexes query-id-or-identifier)))
 
-
 #_(query :regions [:region/name])
 
 #_(query {:sculpture/id #uuid "0ef9c6f1-a415-45b2-9afd-925c00ff7955"}
@@ -848,3 +911,14 @@
          [:artist/artist-tag-ids])
 
 #_(query '[{(:sculptures {:decade 1960}) [:sculpture/id]}] nil)
+
+#_(do
+    (require '[com.wsscode.pathom.viz.ws-connector.core :as pvc])
+    (require [com.wsscode.pathom.viz.ws-connector.pathom3 :as p.connector])
+
+    (let [env (p.connector/connect-env
+                  (pci/register indexes)
+                  {::pvc/parser-id :sculpture})]
+        (peql/process env
+                        {:photo/id #uuid "153b622b-3c43-4474-987b-6997913684df"}
+                        [{:photo/user [{:user/photos [:photo/colors]}]}])))
