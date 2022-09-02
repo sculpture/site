@@ -55,7 +55,8 @@
 
   :plugins [[io.bloomventures/omni "0.29.1"]]
 
-  :profiles {:test {:dependencies [[com.codeborne/phantomjsdriver "1.3.0"
+  :profiles {:dev {:dependencies [[com.wsscode/pathom-viz-connector "2022.02.14"]]}
+             :test {:dependencies [[com.codeborne/phantomjsdriver "1.3.0"
                                     :exclusions [org.seleniumhq.selenium/selenium-java
                                                  org.seleniumhq.selenium/selenium-server
                                                  org.seleniumhq.selenium/selenium-remote-driver]]
