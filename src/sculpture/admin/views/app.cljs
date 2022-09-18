@@ -14,7 +14,7 @@
   (if-let [user @(subscribe [:state.auth/user])]
     [:div.toolbar
      [new-entity-button-view]
-     [:img.avatar {:src (user :avatar)}]]
+     [:img.avatar {:src (:user/avatar user)}]]
     [:div.toolbar
      [:button.auth
       {:on-click (fn []

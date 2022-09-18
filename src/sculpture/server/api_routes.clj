@@ -10,6 +10,7 @@
     [sculpture.db.core :as db.core]
     [sculpture.db.pg.select :as db.select]
     [sculpture.db.pg.graph :as db.graph]
+    [sculpture.db.plain :as db.plain]
     [sculpture.db.pg.util :as db.util]
     [sculpture.server.geocode :as geocode]
     [sculpture.server.oauth :as oauth]
@@ -155,7 +156,9 @@
       (fn [request]
         (if-let [user-id (get-in request [:session :user-id])]
           {:status 200
-           :body (db.select/select-entity-with-id "user" user-id)}
+           :body (db.plain/add-namespaces
+                   (db.select/select-entity-with-id "user" user-id)
+                   "user")}
           {:status 200
            :body nil}))]
 
@@ -186,14 +189,18 @@
       (fn [{{:keys [provider]} :params
             {:keys [token]} :body-params}]
         (if-let [oauth-user-info (oauth/get-user-info (keyword provider) token)]
-          (if-let [user (db.select/select-user-with-email (oauth-user-info :email))]
-            (do
-              (when (or (not= (:name oauth-user-info) (:name user))
-                        (not= (:avatar oauth-user-info) (:avatar user)))
-                (db.core/upsert! (merge user oauth-user-info) (:id user)))
+          (if-let [user (db.plain/add-namespaces
+                          (db.select/select-user-with-email (:email oauth-user-info))
+                          "user")]
+            (let [updated-user (merge user
+                                      {:user/name (:name oauth-user-info)
+                                       :user/avatar (:avatar oauth-user-info)})]
+              (when (or (not= (:name oauth-user-info) (:user/name user))
+                        (not= (:avatar oauth-user-info) (:user/avatar user)))
+                (db.core/upsert! updated-user (:user/id user)))
               {:status 200
-               :body (merge user oauth-user-info)
-               :session {:user-id (user :id)}})
+               :body updated-user
+               :session {:user-id (:user/id user)}})
             {:status 401
              :body {:error "User has not been approved"}})
           {:status 401
