@@ -1,5 +1,6 @@
 (ns sculpture.admin.views.pages.actions
   (:require
+    [bloom.commons.uuid :as uuid]
     [sculpture.admin.state.api :refer [dispatch!]]))
 
 (defn actions-view []
@@ -40,52 +41,16 @@
 
     [:h2 "Create New"]
 
-    [:button
-     {:on-click (fn [_]
-                  (dispatch! [:state.edit/create-entity! {:type "sculpture"}]))}
-     "+ Sculpture"]
-
-    [:button
-     {:on-click (fn [_]
-                  (dispatch! [:state.edit/create-entity! {:type "artist"}]))}
-     "+ Artist"]
-
-    [:button
-     {:on-click (fn [_]
-                  (dispatch! [:state.edit/create-entity! {:type "city"}]))}
-     "+ City"]
-
-    [:button
-     {:on-click (fn [_]
-                  (dispatch! [:state.edit/create-entity! {:type "region"}]))}
-     "+ Region"]
+    (for [entity-type ["sculpture" "artist" "city" "region" "material" "sculpture-tag"
+                       "nationality" "artist-tag" "region-tag"]]
+      ^{:key entity-type}
+      [:button
+       {:on-click (fn [_]
+                    (dispatch! [:state.edit/create-entity!
+                                {(keyword entity-type "id") (uuid/random)}]))}
+       "+ " entity-type])
 
     [:button
      {:on-click (fn [_]
                   (dispatch! [:state.core/set-main-page! :main-page/upload]))}
-     "+ Photo"]
-
-    [:button
-     {:on-click (fn [_]
-                  (dispatch! [:state.edit/create-entity! {:type "material"}]))}
-     "+ Material"]
-
-    [:button
-     {:on-click (fn [_]
-                  (dispatch! [:state.edit/create-entity! {:type "sculpture-tag"}]))}
-     "+ Sculpture Tag"]
-
-    [:button
-     {:on-click (fn [_]
-                  (dispatch! [:state.edit/create-entity! {:type "nationality"}]))}
-     "+ Nationality"]
-
-    [:button
-     {:on-click (fn [_]
-                  (dispatch! [:state.edit/create-entity! {:type "artist-tag"}]))}
-     "+ Artist Tag"]
-
-    [:button
-     {:on-click (fn [_]
-                  (dispatch! [:state.edit/create-entity! {:type "region-tag"}]))}
-     "+ Region Tag"]]])
+     "+ Photo"]]])

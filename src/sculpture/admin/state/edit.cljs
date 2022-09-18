@@ -70,8 +70,7 @@
 (reg-event-fx
   :state.edit/create-entity!
   (fn [{db :db} [_ entity]]
-    {:db (assoc db :db/entity-draft (merge {:id (uuid/make-random-uuid)}
-                                           entity))
+    {:db (assoc db :db/entity-draft entity)
      :dispatch [:state.core/set-main-page! :main-page/edit]}))
 
 (reg-event-fx
