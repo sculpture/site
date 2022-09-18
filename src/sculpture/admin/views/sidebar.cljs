@@ -28,7 +28,7 @@
       [(:view c) @entity])))
 
 (defn active-entity-view [page-id entity-id]
-  [:div.active-entity
+  [:<>
    (when @(subscribe [:state.auth/user])
      [:button.edit {:on-click (fn [_]
                                 (dispatch! [:state.edit/view-entity!
@@ -47,16 +47,15 @@
     [:div.sidebar
       [query-view]
 
-      [:div.content
-       (cond
-         (and typing-query? (seq query))
-         [results-view]
+      (cond
+        (and typing-query? (seq query))
+        [results-view]
 
-         entity-id
-         [active-entity-view page-id entity-id]
+        entity-id
+        [active-entity-view page-id entity-id]
 
-         (seq query)
-         [results-view]
+        (seq query)
+        [results-view]
 
-         :else
-         [:div])]]))
+        :else
+        [:div])]))

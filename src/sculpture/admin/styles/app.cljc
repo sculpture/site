@@ -28,19 +28,16 @@
       :width "40%"
       :height "100vh"
       :display "flex"
-      :flex-direction "column"}
+      :flex-direction "column"
+      :position "relative"}
 
      [:>a.back
       (side-button \uf0d9 :left)]
 
      search-query-styles
-
-     [:>.content
-      {:overflow-y "auto"}
-
-      search-result-styles
-      entity-styles
-      entity-list-styles]]
+     search-result-styles
+     entity-styles
+     entity-list-styles]
 
     [:>.mega-map
      {:height "100vh"

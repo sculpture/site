@@ -6,12 +6,13 @@
    [sculpture.admin.styles.colors :as colors]))
 
 (def entity-styles
-  [:>.active-entity
-
+  [
    [:>button.edit
+    {:z-index 1000}
     (side-button \uf040 :right)]
 
    [:>.entity
+    {:overflow-y "auto"}
 
     [:>.info
      {:padding "1.5em"
