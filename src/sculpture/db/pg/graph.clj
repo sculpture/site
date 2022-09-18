@@ -917,8 +917,8 @@
     (require [com.wsscode.pathom.viz.ws-connector.pathom3 :as p.connector])
 
     (let [env (p.connector/connect-env
-                  (pci/register indexes)
-                  {::pvc/parser-id :sculpture})]
-        (peql/process env
-                        {:photo/id #uuid "153b622b-3c43-4474-987b-6997913684df"}
-                        [{:photo/user [{:user/photos [:photo/colors]}]}])))
+                (pci/register indexes)
+                {:com.wsscode.pathom.viz.ws-connector.core/parser-id :sculpture})]
+      (peql/process env
+                    {:photo/id #uuid "153b622b-3c43-4474-987b-6997913684df"}
+                    [{:photo/user [{:user/photos [:photo/colors]}]}])))
