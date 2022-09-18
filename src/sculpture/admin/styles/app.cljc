@@ -49,7 +49,7 @@
    [:>.page
     {:position "absolute"
      :top 0
-     :left "30%"
+     :left "40%"
      :margin-left "6em"
      :right "8em"
      :z-index 1000

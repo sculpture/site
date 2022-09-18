@@ -4,8 +4,7 @@
     [sculpture.admin.styles.button :refer [button tiny-button]]))
 
 (def editor-styles
-  [:>.edit
-   {:position "relative"}
+  [:&.edit
 
    [:>table
     {:width "100%"
