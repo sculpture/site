@@ -24,11 +24,7 @@
       [:db.advanced-search/results {:optional true}
        [:sequential any?]] ;; TODO
       ]]]
-   [:db/user [:maybe
-              [:map
-               [:email types/Email]
-               [:avatar types/Url]
-               [:name types/NonBlankString]]]]
+   [:db/user [:maybe (schema/SpecFor "user")]]
    [:db/main-page [:maybe keyword?]]
    [:saving? boolean?]
    [:db/entity-draft

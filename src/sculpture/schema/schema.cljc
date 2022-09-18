@@ -1,6 +1,10 @@
 (ns sculpture.schema.schema
+  #?(:cljs
+     (:require-macros
+       [sculpture.schema.schema :refer [intern-entity-type-specs!]]))
   (:require
     [sculpture.schema.types :as types]
+    [camel-snake-kebab.core :as csk]
     #?@(:cljs
          [[sculpture.admin.state.api :refer [dispatch!]]])))
 
@@ -391,3 +395,7 @@
              keys
              (map (fn [k]
                     [k (->malli-spec k)])))))
+
+(def SpecFor
+  (memoize ->malli-spec))
+
