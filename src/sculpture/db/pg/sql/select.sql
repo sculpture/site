@@ -26,12 +26,17 @@ WITH search_results AS (
     'sculpture-tag' AS type,
     "sculpture-tags".name AS title,
     NULL as subtitle,
-    NULL as "photo-id"
+    (array_agg(photos.id))[1] AS "photo-id"
   FROM
     "sculpture-tags"
+    LEFT JOIN "sculptures_sculpture-tags" ON "sculptures_sculpture-tags"."sculpture-tag-id" = "sculpture-tags".id
+    LEFT JOIN sculptures ON sculptures.id = "sculptures_sculpture-tags"."sculpture-id"
+    LEFT JOIN photos ON photos."sculpture-id" = sculptures.id
   WHERE
     'sculpture-tag' IN (:v*:types) AND
     "sculpture-tags".name ILIKE concat('%',:query,'%')
+  GROUP BY
+    "sculpture-tags".id
 
   UNION
 
@@ -59,12 +64,17 @@ WITH search_results AS (
     'material' AS type,
     materials.name AS title,
     NULL as subtitle,
-    NULL as "photo-id"
+    (array_agg(photos.id))[1] AS "photo-id"
   FROM
     materials
+    LEFT JOIN materials_sculptures ON materials_sculptures."material-id" = materials.id
+    LEFT JOIN sculptures ON sculptures.id = materials_sculptures."sculpture-id"
+    LEFT JOIN photos ON photos."sculpture-id" = sculptures.id
   WHERE
     'material' IN (:v*:types) AND
     materials.name ILIKE concat('%',:query,'%')
+  GROUP BY
+    materials.id
 
   UNION
 
@@ -115,12 +125,16 @@ WITH search_results AS (
     'city' AS type,
     cities.city AS title,
     concat(cities.region, ', ', cities.country) as subtitle,
-    NULL as "photo-id"
+    (array_agg(photos.id))[1] AS "photo-id"
   FROM
     cities
+    LEFT JOIN sculptures ON sculptures."city-id" = cities.id
+    LEFT JOIN photos ON photos."sculpture-id" = sculptures.id
   WHERE
     'city' IN (:v*:types) AND
     cities.city ILIKE concat('%',:query,'%')
+  GROUP BY
+    cities.id
 
   UNION
 
