@@ -46,7 +46,9 @@
        [:>.image
 
         [:>img
-         {:width height
+         {:object-position "top"
+          :object-fit "cover"
+          :width height
           :height height}]]]
 
       [:>.h1
