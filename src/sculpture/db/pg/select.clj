@@ -30,7 +30,19 @@
     (throw (ex-info "Query must not be nil or blank" {}))
     (->> (-search
            @db-spec
+           ;; given input "a canadian monument"
            {:query query
+            ;; will be: "*a canadian monument*
+            :ilike-query query
+            ;; will be: "a* & canadian* & monument*"
+            :raw-tsquery (-> query
+                             (string/split #" ")
+                             (->>
+                               (map (fn [s]
+                                      (str s ":*")))
+                               (string/join "&")))
+            ;; will be: "canad* & monum*" (stemming stop words)
+            :parsed-tsquery query
             :limit limit
             :types types})
          (map db->))))
@@ -39,9 +51,27 @@
            :types ["sculpture" "artist"]})
 #_(search {:query "John"
            :types ["artist"]
-           :limit 1})
+           :limit 5})
 #_(search {:query "Can"
            :types ["nationality"]
+           :limit 5})
+#_(search {:query "end"
+           :types ["sculpture"]
+           :limit 5})
+#_(search {:query "connection" ;; stemming
+           :types ["sculpture"]
+           :limit 5})
+#_(search {:query "canad"
+           :types ["sculpture"]
+           :limit 5})
+#_(search {:query "canad monum"
+           :types ["sculpture"]
+           :limit 5})
+#_(search {:query "canadian bear"
+           :types ["sculpture"]
+           :limit 5})
+#_(search {:query "elo"
+           :types ["sculpture"]
            :limit 5})
 
 ; sculptures
