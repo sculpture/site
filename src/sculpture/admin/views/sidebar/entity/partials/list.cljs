@@ -9,8 +9,10 @@
 (defmulti entity-row-data (fn [entity]
                            (or (:type entity)
                                (cond
-                                 (entity :artist/id) "artist"
-                                 (entity :sculpture/id) "sculpture"))))
+                                 (entity :artist/id)
+                                 "artist"
+                                 (entity :sculpture/id)
+                                 "sculpture"))))
 
 (defmethod entity-row-data "city"
   [city]
@@ -35,6 +37,14 @@
    :id (:sculpture/id sculpture)
    :photo-id (:photo/id (first (:sculpture/photos sculpture)))
    :type "sculpture"})
+
+(defmethod entity-row-data "artist"
+  [artist]
+  {:title (:artist/name artist)
+   :subtitle ""
+   :id (:artist/id artist)
+   :photo-id (:photo/id (first (:sculpture/photos (first (:artist/sculptures artist)))))
+   :type "artist"})
 
 (defmethod entity-row-data :default
   [entity]
@@ -62,5 +72,6 @@
   [:div.entity-list
    (for [entity entities]
      ^{:key (or (:id entity)
+                (:artist/id entity)
                 (:sculpture/id entity))}
      [entity-row-view entity])])

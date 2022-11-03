@@ -44,4 +44,5 @@
    (->> sculptures
         (map (fn [sculpture]
                {:link (pages/path-for [:page/sculpture {:id (:sculpture/id sculpture)}])
-                :photo (first (:sculpture/photos sculpture))})))])
+                :photo (first (:sculpture/photos sculpture))}))
+        (filter :photo))])
