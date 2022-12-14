@@ -1,8 +1,8 @@
 (ns sculpture.admin.cdn)
 
 (def photo-host
-   #_"https://s3-ca-central-1.amazonaws.com/sculpture-photos/"
-   "https://1510904592.rsc.cdn77.org/")
+   "https://s3-ca-central-1.amazonaws.com/sculpture-photos/"
+   #_"https://1510904592.rsc.cdn77.org/")
 
 (defn image-url [{:photo/keys [id] :as photo} size]
   (if id
