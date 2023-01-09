@@ -94,6 +94,7 @@
 (defn tag-ids-opts-for [entity-type]
   {:default []
    :spec types/RelatedIds
+   :optional true
    :input {:type :multi-lookup
            :optional true
            :on-find (lookup-on-find
@@ -171,6 +172,7 @@
                            :length :long}}
       ;; related:
       :artist/nationality-ids {:default []
+                               :optional true
                                :spec types/RelatedIds
                                :input {:type :multi-lookup
                                        :optional true
