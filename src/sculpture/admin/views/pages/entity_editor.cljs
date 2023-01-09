@@ -16,10 +16,7 @@
       (string/replace #"Id" "ID")))
 
 (defn field-opts [field type]
-  (let [opts (get-in schema/schema [type field :input] {})]
-    (if (fn? opts)
-      (opts)
-      opts)))
+  (get-in schema/schema [type field :input] {}))
 
 (defn entity-editor-view [entity]
   (when entity

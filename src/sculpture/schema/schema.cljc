@@ -220,23 +220,24 @@
                                   :optional true
                                   :spec [:maybe uuid?]
                                   ;; wrap in a function so sub can be called later
-                                  :input (fn []
-                                           {:type :enum-lookup
-                                            :options
-                                            #?(:cljs (let [categories (atom nil)]
-                                                       (->> (dispatch! [:state.core/remote-eql!
-                                                                        :categories
-                                                                        [:category/id
-                                                                         :category/name]
-                                                                        (fn [entities]
-                                                                          (->> entities
-                                                                               (sort-by :category/name)
-                                                                               (map (fn [entity]
-                                                                                      [(:category/id entity)
-                                                                                       (:category/name entity)]))
-                                                                               (into {})
-                                                                               (reset! categories)))])))
-                                               :clj nil)})})
+                                  :input {:type :enum-lookup
+                                          :options
+                                          #?(:cljs
+                                             (fn [callback]
+                                               (dispatch! [:state.core/remote-eql!
+                                                           :categories
+                                                           [:category/id
+                                                            :category/name]
+                                                           (fn [entities]
+                                                             (->> entities
+                                                                  (sort-by :category/name)
+                                                                  (map (fn [entity]
+                                                                         [(:category/id entity)
+                                                                          (:category/name entity)]))
+                                                                  (into {})
+                                                                  callback))]))
+
+                                             :clj nil)}})
 
     "sculpture"
     (array-map
