@@ -19,10 +19,7 @@
                :category/name]
               :artist-tag
               [:artist-tag/id
-               :artist-tag/name]
-              :region-tag
-              [:region-tag/id
-               :region-tag/name])
+               :artist-tag/name])
    :view (fn [entity]
            [:div.entity
             [:div.info

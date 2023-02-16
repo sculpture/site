@@ -11,6 +11,8 @@
                                (cond
                                  (entity :artist/id)
                                  "artist"
+                                 (entity :region/id)
+                                 "region"
                                  (entity :sculpture/id)
                                  "sculpture"))))
 
@@ -37,6 +39,14 @@
    :id (:sculpture/id sculpture)
    :photo-id (:photo/id (first (:sculpture/photos sculpture)))
    :type "sculpture"})
+
+(defmethod entity-row-data "region"
+  [region]
+  {:title (:region/name region)
+   :subtitle ""
+   :id (:region/id region)
+   :photo-id nil
+   :type "region"})
 
 (defmethod entity-row-data "artist"
   [artist]
@@ -73,5 +83,6 @@
    (for [entity entities]
      ^{:key (or (:id entity)
                 (:artist/id entity)
-                (:sculpture/id entity))}
+                (:sculpture/id entity)
+                (:region-tag/id entity))}
      [entity-row-view entity])])
