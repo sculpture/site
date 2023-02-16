@@ -1,11 +1,7 @@
 (ns sculpture.admin.views.sidebar.entity.region-tag
   (:require
-    [bloom.commons.pages :as pages]
-    [sculpture.admin.state.api :refer [dispatch!]]
     [sculpture.admin.views.sidebar.entity :refer [entity-handler]]
-    [sculpture.admin.views.sidebar.entity.partials.list :refer [entity-list-view]]
-    [sculpture.admin.views.sidebar.entity.partials.related-sculptures :refer [related-sculptures-view]]
-    [sculpture.admin.views.sidebar.entity.partials.map :refer [map-view]]))
+    [sculpture.admin.views.sidebar.entity.partials.list :refer [entity-list-view]]))
 
 (defn region-tag-entity-view
   [region-tag]

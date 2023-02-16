@@ -9,6 +9,7 @@
     [sculpture.admin.views.sidebar.entity.sculpture]
     [sculpture.admin.views.sidebar.entity.region]
     [sculpture.admin.views.sidebar.entity.region-tag]
+    [sculpture.admin.views.sidebar.entity.artist-tag]
     [sculpture.admin.views.sidebar.entity.city]
     [sculpture.admin.views.sidebar.entity.nationality]
     [sculpture.admin.views.sidebar.entity.artist]

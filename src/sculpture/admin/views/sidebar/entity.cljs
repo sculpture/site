@@ -16,10 +16,7 @@
                :nationality/demonym]
               :category
               [:category/id
-               :category/name]
-              :artist-tag
-              [:artist-tag/id
-               :artist-tag/name])
+               :category/name])
    :view (fn [entity]
            [:div.entity
             [:div.info
