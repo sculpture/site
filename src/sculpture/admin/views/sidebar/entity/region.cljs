@@ -1,5 +1,6 @@
 (ns sculpture.admin.views.sidebar.entity.region
   (:require
+    [bloom.commons.pages :as pages]
     [sculpture.admin.state.api :refer [dispatch!]]
     [sculpture.admin.views.sidebar.entity :refer [entity-handler]]
     [sculpture.admin.views.sidebar.entity.partials.related-sculptures :refer [related-sculptures-view]]
@@ -20,6 +21,15 @@
                           :geojson (js/JSON.parse (:region/geojson region))}]}])
    [:div.info
     [:h1 (:region/name region)]]
+   [:div.meta
+    (when (seq (:region/region-tags region))
+      [:div.row.tags {:title "Tags"}
+       [:div.tags
+        (interpose ", "
+                   (for [region-tag (:region/region-tags region)]
+                     ^{:key (:region-tag/id region-tag)}
+                     [:a.tag {:href (pages/path-for [:page/region-tag {:id (:region-tag/id region-tag)}])}
+                      (:region-tag/name region-tag)]))]])]
    [:div.related
     [:h2 "Sculptures"]
     [related-sculptures-view (:region/sculptures region)]]])
@@ -30,6 +40,9 @@
    :pattern [:region/id
              :region/name
              :region/geojson
+             {:region/region-tags
+              [:region-tag/id
+               :region-tag/name]}
              {:region/sculptures
               [:sculpture/id
                :sculpture/title
