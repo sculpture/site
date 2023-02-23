@@ -1,4 +1,6 @@
 /.idea
+/.lsp
+/.calva
 *.iml
 *.log
 /target
