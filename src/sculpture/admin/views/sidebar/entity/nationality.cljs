@@ -24,14 +24,15 @@
   {:identifier {:nationality/id nationality-id}
    :pattern [:nationality/id
              :nationality/demonym
-             {:nationality/artists [:artist/id
-                                    :artist/name
-                                    {:artist/sculptures ;; TODO {:limit 1}
-                                     [:sculpture/id
-                                      {:sculpture/photos
-                                       [:photo/id
-                                        :photo/width
-                                        :photo/height
-                                        :photo/colors]}]}]}]
+             {:nationality/artists
+              [:artist/id
+               :artist/name
+               {:artist/sculptures ;; TODO {:limit 1}
+                [:sculpture/id
+                 {:sculpture/photos
+                  [:photo/id
+                   :photo/width
+                   :photo/height
+                   :photo/colors]}]}]}]
    :view nationality-entity-view})
 
