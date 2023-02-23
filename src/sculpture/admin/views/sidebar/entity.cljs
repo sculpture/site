@@ -8,9 +8,6 @@
   [type id]
   {:identifier {(keyword (name type) "id") id}
    :pattern (case type
-              :user
-              [:user/id
-               :user/name]
               :nationality
               [:nationality/id
                :nationality/demonym]
