@@ -42,7 +42,7 @@
     [:h2 "Create New"]
 
     (for [entity-type ["sculpture" "artist" "city" "region" "material" "sculpture-tag"
-                       "nationality" "artist-tag" "region-tag"]]
+                       "nationality" "artist-tag" "region-tag" "category"]]
       ^{:key entity-type}
       [:button
        {:on-click (fn [_]
