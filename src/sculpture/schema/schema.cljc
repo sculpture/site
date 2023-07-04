@@ -4,24 +4,8 @@
     #?@(:cljs
          [[sculpture.admin.state.api :refer [dispatch!]]])))
 
-(declare label-key)
-
-(defn lookup-on-find
-  [entity-type]
-  #?(:cljs
-     (fn [id callback]
-       (dispatch! [:state.core/remote-eql!
-                   {(keyword entity-type "id") id}
-                   [(label-key entity-type)]
-                   (fn [e]
-                     (callback
-                       {:title ((label-key entity-type) e)}))]))))
-
-(defn lookup-on-search
-  [entity-type]
-  #?(:cljs
-     (fn [query callback]
-       (dispatch! [:state.search/remote-search! query [entity-type] callback]))))
+(declare lookup-on-find)
+(declare lookup-on-search)
 
 (def id-opts
   {:default nil
@@ -410,10 +394,6 @@
   (zipmap (map :entity/id entities)
           (map :entity/id-plural entities)))
 
-(def label-key
-  (zipmap (map :entity/id entities)
-          (map :entity/label-key entities)))
-
 (def id-key
   (zipmap (map :entity/id entities)
           (map :entity/id-key entities)))
@@ -429,6 +409,23 @@
 
 (defn types []
   (keys schema))
+
+(defn lookup-on-find
+  [entity-type]
+  #?(:cljs
+     (fn [id callback]
+       (dispatch! [:state.core/remote-eql!
+                   {(get-in by-id [entity-type :entity/id]) id}
+                   [(get-in by-id [entity-type :entity/label-key])]
+                   (fn [e]
+                     (callback
+                       {:title ((get-in by-id [entity-type :entity/label-key]) e)}))]))))
+
+(defn lookup-on-search
+  [entity-type]
+  #?(:cljs
+     (fn [query callback]
+       (dispatch! [:state.search/remote-search! query [entity-type] callback]))))
 
 (defn ->malli-spec [entity-type]
   (into [:map]
