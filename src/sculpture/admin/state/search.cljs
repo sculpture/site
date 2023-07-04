@@ -14,12 +14,13 @@
   :state.search/set-query!
   (fn [{db :db} [_ query]]
     {:db (assoc-in db [:db/search :query] query)
-     :dispatch-debounce {:id :query
-                         :timeout 100
-                         :dispatch [:state.search/remote-search! query
-                                    schema/entity-types
-                                    (fn [data]
-                                      (dispatch [::set-results! data]))]}}))
+     :dispatch-debounce
+     {:id :query
+      :timeout 100
+      :dispatch [:state.search/remote-search! query
+                 schema/entity-types
+                 (fn [data]
+                   (dispatch [::set-results! data]))]}}))
 
 (reg-event-fx
   :state.search/remote-search!
