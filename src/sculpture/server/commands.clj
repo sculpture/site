@@ -22,9 +22,8 @@
     :return
     (fn [{:keys [query limit types]}]
       (db.select/search {:query query
-                        :types types
-                        :limit (Integer. limit)}))}
-
+                         :types types
+                         :limit (Integer. limit)}))}
 
    {:id :advanced-search
     :params {;; TODO one of the allowed types
