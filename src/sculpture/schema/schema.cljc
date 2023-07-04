@@ -11,7 +11,7 @@
   #?(:cljs
      (fn [id callback]
        (dispatch! [:state.core/remote-eql!
-                   {(get-in by-id [entity-type :entity/id]) id}
+                   {(get-in by-id [entity-type :entity/id-key]) id}
                    [(get-in by-id [entity-type :entity/label-key])]
                    (fn [e]
                      (callback
