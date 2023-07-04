@@ -2,6 +2,7 @@
   (:require
     [reagent.core :as r]
     [clojure.string :as string]
+    [sculpture.schema.schema :as schema]
     [sculpture.admin.state.api :refer [subscribe dispatch!]]
     [sculpture.admin.views.sidebar.entity.partials.list :refer [row-view]]))
 
@@ -43,14 +44,7 @@
        (for [[type results] grouped-results]
          ^{:key type}
          [:div.group {:class (str type)}
-          [:h2 (case (str type)
-                 "city" "Cities"
-                 "nationality" "Nationalities"
-                 "sculpture-tag" "Sculpture Tags"
-                 ;; else
-                 (-> (str type)
-                     (string/capitalize)
-                     (str "s")))]
+          [:h2  (get-in schema/by-id [type :entity/label-plural])]
           [:div.entity-list
            (for [result results]
              ^{:key (:id result)}

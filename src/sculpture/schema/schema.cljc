@@ -60,8 +60,10 @@
   ;; using array-maps, for order of keys displayed in editor
   [{:entity/id "artist-tag"
     :entity/id-plural "artist-tags"
-    :entity/label-key :artist-tag/name
     :entity/id-key :artist-tag/id
+    :entity/label "Artist Tag"
+    :entity/label-plural "Artist Tags"
+    :entity/label-key :artist-tag/name
     :entity/spec
     (array-map
       :artist-tag/id id-opts
@@ -72,8 +74,10 @@
 
    {:entity/id "nationality"
     :entity/id-plural "nationalities"
-    :entity/label-key :nationality/demonym
     :entity/id-key :nationality/id
+    :entity/label "Nationality"
+    :entity/label-plural "Nationalities"
+    :entity/label-key :nationality/demonym
     :entity/spec
     (array-map
       :nationality/id id-opts
@@ -87,8 +91,10 @@
 
    {:entity/id "artist"
     :entity/id-plural "artists"
-    :entity/label-key :artist/name
     :entity/id-key :artist/id
+    :entity/label "Artist"
+    :entity/label-plural "Artists"
+    :entity/label-key :artist/name
     :entity/spec
     (array-map
       :artist/id id-opts
@@ -135,8 +141,10 @@
 
    {:entity/id "city"
     :entity/id-plural "cities"
-    :entity/label-key :city/city
     :entity/id-key :city/id
+    :entity/label "City"
+    :entity/label-plural "Cities"
+    :entity/label-key :city/city
     :entity/spec
     (array-map
       :city/id id-opts
@@ -153,8 +161,10 @@
 
    {:entity/id "material"
     :entity/id-plural "materials"
-    :entity/label-key :material/name
     :entity/id-key :material/id
+    :entity/label "Material"
+    :entity/label-plural "Materials"
+    :entity/label-key :material/name
     :entity/spec
     (array-map
       :material/id id-opts
@@ -165,8 +175,10 @@
 
    {:entity/id "category"
     :entity/id-plural "categories"
-    :entity/label-key :category/name
     :entity/id-key :category/id
+    :entity/label "Category"
+    :entity/label-plural "Categories"
+    :entity/label-key :category/name
     :entity/spec
     (array-map
       :category/id id-opts
@@ -177,8 +189,10 @@
 
    {:entity/id "sculpture-tag"
     :entity/id-plural "sculpture-tags"
-    :entity/label-key :sculpture-tag/name
     :entity/id-key :sculpture-tag/id
+    :entity/label "Sculpture Tag"
+    :entity/label-plural "Sculpture Tags"
+    :entity/label-key :sculpture-tag/name
     :entity/spec
     (array-map
       :sculpture-tag/id id-opts
@@ -211,8 +225,10 @@
 
    {:entity/id "sculpture"
     :entity/id-plural "sculptures"
-    :entity/label-key :sculpture/title
     :entity/id-key :sculpture/id
+    :entity/label "Sculpture"
+    :entity/label-plural "Sculptures"
+    :entity/label-key :sculpture/title
     :entity/spec
     (array-map
       :sculpture/id id-opts
@@ -269,8 +285,10 @@
 
    {:entity/id "region"
     :entity/id-plural "regions"
-    :entity/label-key :region/name
     :entity/id-key :region/id
+    :entity/label "Region"
+    :entity/label-plural "Regions"
+    :entity/label-key :region/name
     :entity/spec
     (array-map
       :region/id id-opts
@@ -292,8 +310,10 @@
 
    {:entity/id "region-tag"
     :entity/id-plural "region-tags"
-    :entity/label-key :region-tag/name
     :entity/id-key :region-tag/id
+    :entity/label "Region Tag"
+    :entity/label-plural "Region Tags"
+    :entity/label-key :region-tag/name
     :entity/spec
     (array-map
       :region-tag/id id-opts
@@ -304,8 +324,10 @@
 
    {:entity/id "user"
     :entity/id-plural "users"
-    :entity/label-key :user/name
     :entity/id-key :user/id
+    :entity/label "User"
+    :entity/label-plural "Users"
+    :entity/label-key :user/name
     :entity/spec
     (array-map
       :user/id id-opts
@@ -325,8 +347,10 @@
 
    {:entity/id "photo"
     :entity/id-plural "photos"
-    :entity/label-key :photo/id
     :entity/id-key :photo/id
+    :entity/label "Photo"
+    :entity/label-plural "Photos"
+    :entity/label-key :photo/id
     :entity/spec
     (array-map
       :photo/id id-opts
@@ -356,6 +380,10 @@
                            :input {:type :single-lookup
                                    :on-find (lookup-on-find "sculpture")
                                    :on-search (lookup-on-search "sculpture")}})}])
+
+(def by-id
+  (zipmap (map :entity/id entities)
+          entities))
 
 (def schema
   (->> entities
