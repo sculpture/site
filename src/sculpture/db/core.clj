@@ -46,7 +46,9 @@
 #_(import-from-dir! "export-data")
 
 (defn export-to-dir! [dir]
-  (->> (db.select/select-all)
+  (->> schema/types
+       (map db.select/select-all-with-type)
+       (apply concat)
        (take 2)
        (map plain/add-namespaces)
        (plain/save-many! dir)))

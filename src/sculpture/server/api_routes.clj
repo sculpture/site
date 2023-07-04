@@ -78,11 +78,6 @@
           {:status 200
            :body (db.graph/query identifier pattern)}))]
 
-     [[:get "/api/entities"]
-      (fn [_]
-        {:status 200
-         :body (db.select/select-all)})]
-
      [[:get "/api/regions/:slug/sculptures"]
       (fn [{{:keys [slug]} :params}]
         {:status 200

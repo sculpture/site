@@ -168,22 +168,6 @@
     (select-entity-with-id entity-type (java.util.UUID/fromString id-or-slug))
     (select-entity-with-slug entity-type id-or-slug)))
 
-(defn select-all []
-  (->> ["user"
-        "material"
-        "city"
-        "category"
-        "nationality"
-        "artist-tag"
-        "sculpture-tag"
-        "region-tag"
-        "photo"
-        "region"
-        "artist"
-        "sculpture"]
-       (map select-all-with-type)
-       (apply concat)))
-
 ; misc
 
 (defn select-random-sculpture-slug []
