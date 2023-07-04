@@ -4,8 +4,24 @@
     #?@(:cljs
          [[sculpture.admin.state.api :refer [dispatch!]]])))
 
-(declare lookup-on-find)
-(declare lookup-on-search)
+(declare by-id)
+
+(defn lookup-on-find
+  [entity-type]
+  #?(:cljs
+     (fn [id callback]
+       (dispatch! [:state.core/remote-eql!
+                   {(get-in by-id [entity-type :entity/id]) id}
+                   [(get-in by-id [entity-type :entity/label-key])]
+                   (fn [e]
+                     (callback
+                       {:title ((get-in by-id [entity-type :entity/label-key]) e)}))]))))
+
+(defn lookup-on-search
+  [entity-type]
+  #?(:cljs
+     (fn [query callback]
+       (dispatch! [:state.search/remote-search! query [entity-type] callback]))))
 
 (def id-opts
   {:default nil
@@ -418,23 +434,6 @@
 
 (defn types []
   (keys schema))
-
-(defn lookup-on-find
-  [entity-type]
-  #?(:cljs
-     (fn [id callback]
-       (dispatch! [:state.core/remote-eql!
-                   {(get-in by-id [entity-type :entity/id]) id}
-                   [(get-in by-id [entity-type :entity/label-key])]
-                   (fn [e]
-                     (callback
-                       {:title ((get-in by-id [entity-type :entity/label-key]) e)}))]))))
-
-(defn lookup-on-search
-  [entity-type]
-  #?(:cljs
-     (fn [query callback]
-       (dispatch! [:state.search/remote-search! query [entity-type] callback]))))
 
 (defn ->malli-spec [entity-type]
   (into [:map]
