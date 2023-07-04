@@ -146,16 +146,27 @@
          :body {:geojson (db.util/simplify-geojson geojson)}})]
 
      ; SESSION
-
      [[:get "/api/session"]
       (fn [request]
-        (if-let [user-id (get-in request [:session :user-id])]
-          {:status 200
-           :body (db.plain/add-namespaces
-                   (db.select/select-entity-with-id "user" user-id)
-                   "user")}
-          {:status 200
-           :body nil}))]
+        (case (:environment config)
+          :dev
+          (let [user (db.plain/add-namespaces
+                       (db.select/select-entity-with-id
+                         "user"
+                         #uuid "013ec717-531b-4b30-bacf-8a07f33b0d43")
+                       "user")]
+            {:status 200
+             :session {:user-id (:user/id user)}
+             :body user})
+
+          :prod
+          (if-let [user-id (get-in request [:session :user-id])]
+            {:status 200
+             :body (db.plain/add-namespaces
+                     (db.select/select-entity-with-id "user" user-id)
+                     "user")}
+            {:status 200
+             :body nil})))]
 
      [[:delete "/api/session"]
       (fn [_]
