@@ -4,70 +4,7 @@
     #?@(:cljs
          [[sculpture.admin.state.api :refer [dispatch!]]])))
 
-(def entities
-  [{:entity/id "artist"
-    :entity/plural "artists"
-    :entity/label-key :artist/name
-    :entity/id-key :artist/id}
-   {:entity/id "artist-tag"
-    :entity/plural "artist-tags"
-    :entity/label-key :artist-tag/name
-    :entity/id-key :artist-tag/id}
-   {:entity/id "category"
-    :entity/plural "categories"
-    :entity/label-key :category/name
-    :entity/id-key :category/id}
-   {:entity/id "city"
-    :entity/plural "cities"
-    :entity/label-key :city/city
-    :entity/id-key :city/id}
-   {:entity/id "material"
-    :entity/plural "materials"
-    :entity/label-key :material/name
-    :entity/id-key :material/id}
-   {:entity/id "nationality"
-    :entity/plural "nationalities"
-    :entity/label-key :nationality/demonym
-    :entity/id-key :nationality/id}
-   {:entity/id "photo"
-    :entity/plural "photos"
-    :entity/label-key :photo/id
-    :entity/id-key :photo/id}
-   {:entity/id "region"
-    :entity/plural "regions"
-    :entity/label-key :region/name
-    :entity/id-key :region/id}
-   {:entity/id "region-tag"
-    :entity/plural "region-tags"
-    :entity/label-key :region-tag/name
-    :entity/id-key :region-tag/id}
-   {:entity/id "sculpture"
-    :entity/plural "sculptures"
-    :entity/label-key :sculpture/title
-    :entity/id-key :sculpture/id}
-   {:entity/id "sculpture-tag"
-    :entity/plural "sculpture-tags"
-    :entity/label-key :sculpture-tag/name
-    :entity/id-key :sculpture-tag/id}
-   {:entity/id "user"
-    :entity/plural "users"
-    :entity/label-key :user/name
-    :entity/id-key :user/id}])
-
-(def entity-types
-  (set (map :entity/id entities)))
-
-(def pluralize
-  (zipmap (map :entity/id entities)
-          (map :entity/plural entities)))
-
-(def label-key
-  (zipmap (map :entity/id entities)
-          (map :entity/label-key entities)))
-
-(def id-key
-  (zipmap (map :entity/id entities)
-          (map :entity/id-key entities)))
+(declare label-key)
 
 (defn lookup-on-find
   [entity-type]
@@ -97,9 +34,6 @@
    :spec types/Slug
    :input {:type :string}})
 
-(def EntityType
-  (into [:enum] entity-types))
-
 (defn tag-ids-opts-for [entity-type]
   {:default []
    :spec types/RelatedIds
@@ -121,20 +55,26 @@
                           "artist" "artist-tag"
                           nil))}})
 
-(def schema
-  ;; using array-maps so that order of keys is preserved
-  ;; on the top-level, for 'order of insertion into db'
-  ;; within each type, for 'order of display in editor'
-  (array-map
-    "artist-tag"
+(def entities
+  ;; top-level order determines 'order of insertion into db'
+  ;; using array-maps, for order of keys displayed in editor
+  [{:entity/id "artist-tag"
+    :entity/plural "artist-tags"
+    :entity/label-key :artist-tag/name
+    :entity/id-key :artist-tag/id
+    :entity/spec
     (array-map
       :artist-tag/id id-opts
       :artist-tag/slug slug-opts
       :artist-tag/name {:default ""
                         :spec types/NonBlankString
-                        :input {:type :string}})
+                        :input {:type :string}})}
 
-    "nationality"
+   {:entity/id "nationality"
+    :entity/plural "nationalities"
+    :entity/label-key :nationality/demonym
+    :entity/id-key :nationality/id
+    :entity/spec
     (array-map
       :nationality/id id-opts
       :nationality/slug slug-opts
@@ -143,9 +83,13 @@
                            :input {:type :string}}
       :nationality/demonym {:default ""
                             :spec types/NonBlankString
-                            :input {:type :string}})
+                            :input {:type :string}})}
 
-    "artist"
+   {:entity/id "artist"
+    :entity/plural "artists"
+    :entity/label-key :artist/name
+    :entity/id-key :artist/id
+    :entity/spec
     (array-map
       :artist/id id-opts
       :artist/slug slug-opts
@@ -187,9 +131,13 @@
                                        :optional true
                                        :on-find (lookup-on-find "nationality")
                                        :on-search (lookup-on-search "nationality")}}
-      :artist/artist-tag-ids (tag-ids-opts-for "artist"))
+      :artist/artist-tag-ids (tag-ids-opts-for "artist"))}
 
-    "city"
+   {:entity/id "city"
+    :entity/plural "cities"
+    :entity/label-key :city/city
+    :entity/id-key :city/id
+    :entity/spec
     (array-map
       :city/id id-opts
       :city/slug slug-opts
@@ -201,25 +149,37 @@
                     :input {:type :string}}
       :city/country {:default ""
                      :spec types/NonBlankString
-                     :input {:type :string}})
+                     :input {:type :string}})}
 
-    "material"
+   {:entity/id "material"
+    :entity/plural "materials"
+    :entity/label-key :material/name
+    :entity/id-key :material/id
+    :entity/spec
     (array-map
       :material/id id-opts
       :material/slug slug-opts
       :material/name {:default ""
                       :spec types/NonBlankString
-                      :input {:type :string}})
+                      :input {:type :string}})}
 
-    "category"
+   {:entity/id "category"
+    :entity/plural "categories"
+    :entity/label-key :category/name
+    :entity/id-key :category/id
+    :entity/spec
     (array-map
       :category/id id-opts
       :category/slug slug-opts
       :category/name {:default ""
                       :spec types/NonBlankString
-                      :input {:type :string}})
+                      :input {:type :string}})}
 
-    "sculpture-tag"
+   {:entity/id "sculpture-tag"
+    :entity/plural "sculpture-tags"
+    :entity/label-key :sculpture-tag/name
+    :entity/id-key :sculpture-tag/id
+    :entity/spec
     (array-map
       :sculpture-tag/id id-opts
       :sculpture-tag/slug slug-opts
@@ -247,10 +207,13 @@
                                                                           (:category/name entity)]))
                                                                   (into {})
                                                                   callback))]))
+                                             :clj nil)}})}
 
-                                             :clj nil)}})
-
-    "sculpture"
+   {:entity/id "sculpture"
+    :entity/plural "sculptures"
+    :entity/label-key :sculpture/title
+    :entity/id-key :sculpture/id
+    :entity/spec
     (array-map
       :sculpture/id id-opts
       :sculpture/slug slug-opts
@@ -302,17 +265,13 @@
                                :spec types/RelatedIds
                                :input {:type :multi-lookup
                                        :on-find (lookup-on-find "material")
-                                       :on-search (lookup-on-search "material")}})
+                                       :on-search (lookup-on-search "material")}})}
 
-    "region-tag"
-    (array-map
-      :region-tag/id id-opts
-      :region-tag/slug slug-opts
-      :region-tag/name {:default ""
-                        :spec types/NonBlankString
-                        :input {:type :string}})
-
-    "region"
+   {:entity/id "region"
+    :entity/plural "regions"
+    :entity/label-key :region/name
+    :entity/id-key :region/id
+    :entity/spec
     (array-map
       :region/id id-opts
       :region/slug slug-opts
@@ -329,9 +288,25 @@
                                             #?(:cljs
                                                (dispatch! [:state.edit/get-shape! query callback])))}}
       ;; related:
-      :region/region-tag-ids (tag-ids-opts-for "region"))
+      :region/region-tag-ids (tag-ids-opts-for "region"))}
 
-    "user"
+   {:entity/id "region-tag"
+    :entity/plural "region-tags"
+    :entity/label-key :region-tag/name
+    :entity/id-key :region-tag/id
+    :entity/spec
+    (array-map
+      :region-tag/id id-opts
+      :region-tag/slug slug-opts
+      :region-tag/name {:default ""
+                        :spec types/NonBlankString
+                        :input {:type :string}})}
+
+   {:entity/id "user"
+    :entity/plural "users"
+    :entity/label-key :user/name
+    :entity/id-key :user/id
+    :entity/spec
     (array-map
       :user/id id-opts
       :user/name {:default ""
@@ -346,9 +321,13 @@
                     :default ""
                     :spec [:maybe types/Url]
                     :input {:type :url
-                            :disabled true}})
+                            :disabled true}})}
 
-    "photo"
+   {:entity/id "photo"
+    :entity/plural "photos"
+    :entity/label-key :photo/id
+    :entity/id-key :photo/id
+    :entity/spec
     (array-map
       :photo/id id-opts
       :photo/captured-at {:default nil
@@ -376,7 +355,28 @@
                            :spec [:maybe uuid?]
                            :input {:type :single-lookup
                                    :on-find (lookup-on-find "sculpture")
-                                   :on-search (lookup-on-search "sculpture")}})))
+                                   :on-search (lookup-on-search "sculpture")}})}])
+
+(def schema
+  (->> entities
+       (mapcat (fn [e]
+                 [(:entity/id e) (:entity/spec e)]))
+       (apply array-map)))
+
+(def entity-types
+  (set (map :entity/id entities)))
+
+(def pluralize
+  (zipmap (map :entity/id entities)
+          (map :entity/plural entities)))
+
+(def label-key
+  (zipmap (map :entity/id entities)
+          (map :entity/label-key entities)))
+
+(def id-key
+  (zipmap (map :entity/id entities)
+          (map :entity/id-key entities)))
 
 (defn ->blank-entity
   [entity-type]
@@ -395,6 +395,9 @@
         (->> (schema entity-type)
              (map (fn [[k v]]
                     [k {:optional (:optional v)} (:spec v)])))))
+
+(def EntityType
+  (into [:enum] entity-types))
 
 (def Entity
   (into [:multi {:dispatch (fn [e]
