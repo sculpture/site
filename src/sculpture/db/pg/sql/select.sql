@@ -264,6 +264,25 @@ WITH search_results AS (
       word_similarity("regions".name,:ilike-query) DESC
     LIMIT :limit
   )
+
+  UNION
+
+  (
+    SELECT
+      users.id AS id,
+      'user' AS type,
+      users.name AS title,
+      NULL as subtitle,
+      NULL as "photo-id"
+    FROM
+      users
+    WHERE
+      'user' IN (:v*:types) AND
+      (
+        "users".name ILIKE concat('%',:ilike-query,'%')
+      )
+    LIMIT :limit
+  )
 )
 SELECT *
 FROM search_results
