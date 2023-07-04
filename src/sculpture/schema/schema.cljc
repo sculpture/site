@@ -22,6 +22,7 @@
   {:default []
    :spec types/RelatedIds
    :optional true
+   :relation? true
    :input {:type :multi-lookup
            :optional true
            :on-find (lookup-on-find
@@ -118,6 +119,7 @@
                            :length :long}}
       ;; related:
       :artist/nationality-ids {:default []
+                               :relation? true
                                :optional true
                                :spec types/RelatedIds
                                :input {:type :multi-lookup
@@ -193,6 +195,7 @@
                            :input {:type :string}}
       ;; optional:
       :sculpture-tag/category-id {:default nil
+                                  :relation? true
                                   :optional true
                                   :spec [:maybe uuid?]
                                   ;; wrap in a function so sub can be called later
@@ -259,17 +262,20 @@
       ;; related:
       :sculpture/sculpture-tag-ids (tag-ids-opts-for "sculpture")
       :sculpture/city-id {:default nil
+                          :relation? true
                           :optional true
                           :spec [:maybe uuid?]
                           :input {:type :single-lookup
                                   :on-find (lookup-on-find "city")
                                   :on-search (lookup-on-search "city")}}
       :sculpture/artist-ids {:default []
+                             :relation? true
                              :spec types/RelatedIds
                              :input {:type :multi-lookup
                                      :on-find (lookup-on-find "artist")
                                      :on-search (lookup-on-search "artist")}}
       :sculpture/material-ids {:default []
+                               :relation? true
                                :spec types/RelatedIds
                                :input {:type :multi-lookup
                                        :on-find (lookup-on-find "material")
@@ -367,15 +373,18 @@
                              :disabled true}}
       ;; related
       :photo/user-id {:default nil
+                      :relation? true
                       :spec uuid?
                       :input {:type :single-lookup
                               :on-find (lookup-on-find "user")
                               :on-search (lookup-on-search "user")}}
       :photo/sculpture-id {:default nil
+                           :relation? true
                            :spec [:maybe uuid?]
                            :input {:type :single-lookup
                                    :on-find (lookup-on-find "sculpture")
-                                   :on-search (lookup-on-search "sculpture")}})}])
+                                   :on-search (lookup-on-search "sculpture")}}
+      )}])
 
 (def by-id
   (zipmap (map :entity/id entities)

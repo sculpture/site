@@ -8,6 +8,7 @@
     [com.wsscode.pathom3.connect.operation :as pco]
     [next.jdbc :as jdbc]
     [honey.sql :as sql]
+    [sculpture.schema.schema :as schema]
     [sculpture.db.pg.config :refer [db-spec]]))
 
 (defn execute! [query]
@@ -16,66 +17,14 @@
                  {:builder-fn next.jdbc.result-set/as-kebab-maps}))
 
 (def table-columns
-  {:artist [:artist/id
-            :artist/name
-            :artist/slug
-            :artist/gender
-            :artist/link-website
-            :artist/link-wikipedia
-            :artist/bio
-            :artist/birth-date
-            :artist/death-date]
-   :artist-tag [:artist-tag/id
-                :artist-tag/name
-                :artist-tag/slug]
-   :category [:category/id
-              :category/slug
-              :category/name]
-   :city [:city/id
-          :city/city
-          :city/region
-          :city/country
-          :city/slug]
-   :material [:material/id
-              :material/name
-              :material/slug]
-   :nationality [:nationality/id
-                 :nationality/nation
-                 :nationality/demonym
-                 :nationality/slug]
-   :photo [:photo/id
-           :photo/captured-at
-           :photo/user-id
-           :photo/colors
-           :photo/width
-           :photo/height
-           :photo/sculpture-id]
-   :region [:region/id
-            :region/name
-            :region/slug
-            :region/geojson ]
-   :region-tag [:region-tag/id
-                :region-tag/name
-                :region-tag/slug]
-   :sculpture [:sculpture/id
-               :sculpture/title
-               :sculpture/slug
-               :sculpture/size
-               :sculpture/note
-               :sculpture/date
-               :sculpture/commissioned-by
-               :sculpture/location
-               :sculpture/location-precision
-               :sculpture/link-wikipedia
-               :sculpture/city-id]
-   :sculpture-tag [:sculpture-tag/id
-                   :sculpture-tag/name
-                   :sculpture-tag/slug
-                   :sculpture-tag/category-id]
-   :user [:user/id
-          :user/email
-          :user/name
-          :user/avatar]})
+  (->> schema/entities
+       (map (fn [e]
+              [(keyword (:entity/id e))
+               (->> (:entity/spec e)
+                    #_(remove (fn [[_k v]]
+                              (:relation? v)))
+                    (mapv first))]))
+       (into {})))
 
 (defn fix-sculpture [sculpture]
   (-> sculpture
