@@ -59,7 +59,7 @@
   ;; top-level order determines 'order of insertion into db'
   ;; using array-maps, for order of keys displayed in editor
   [{:entity/id "artist-tag"
-    :entity/plural "artist-tags"
+    :entity/id-plural "artist-tags"
     :entity/label-key :artist-tag/name
     :entity/id-key :artist-tag/id
     :entity/spec
@@ -71,7 +71,7 @@
                         :input {:type :string}})}
 
    {:entity/id "nationality"
-    :entity/plural "nationalities"
+    :entity/id-plural "nationalities"
     :entity/label-key :nationality/demonym
     :entity/id-key :nationality/id
     :entity/spec
@@ -86,7 +86,7 @@
                             :input {:type :string}})}
 
    {:entity/id "artist"
-    :entity/plural "artists"
+    :entity/id-plural "artists"
     :entity/label-key :artist/name
     :entity/id-key :artist/id
     :entity/spec
@@ -134,7 +134,7 @@
       :artist/artist-tag-ids (tag-ids-opts-for "artist"))}
 
    {:entity/id "city"
-    :entity/plural "cities"
+    :entity/id-plural "cities"
     :entity/label-key :city/city
     :entity/id-key :city/id
     :entity/spec
@@ -152,7 +152,7 @@
                      :input {:type :string}})}
 
    {:entity/id "material"
-    :entity/plural "materials"
+    :entity/id-plural "materials"
     :entity/label-key :material/name
     :entity/id-key :material/id
     :entity/spec
@@ -164,7 +164,7 @@
                       :input {:type :string}})}
 
    {:entity/id "category"
-    :entity/plural "categories"
+    :entity/id-plural "categories"
     :entity/label-key :category/name
     :entity/id-key :category/id
     :entity/spec
@@ -176,7 +176,7 @@
                       :input {:type :string}})}
 
    {:entity/id "sculpture-tag"
-    :entity/plural "sculpture-tags"
+    :entity/id-plural "sculpture-tags"
     :entity/label-key :sculpture-tag/name
     :entity/id-key :sculpture-tag/id
     :entity/spec
@@ -210,7 +210,7 @@
                                              :clj nil)}})}
 
    {:entity/id "sculpture"
-    :entity/plural "sculptures"
+    :entity/id-plural "sculptures"
     :entity/label-key :sculpture/title
     :entity/id-key :sculpture/id
     :entity/spec
@@ -268,7 +268,7 @@
                                        :on-search (lookup-on-search "material")}})}
 
    {:entity/id "region"
-    :entity/plural "regions"
+    :entity/id-plural "regions"
     :entity/label-key :region/name
     :entity/id-key :region/id
     :entity/spec
@@ -291,7 +291,7 @@
       :region/region-tag-ids (tag-ids-opts-for "region"))}
 
    {:entity/id "region-tag"
-    :entity/plural "region-tags"
+    :entity/id-plural "region-tags"
     :entity/label-key :region-tag/name
     :entity/id-key :region-tag/id
     :entity/spec
@@ -303,7 +303,7 @@
                         :input {:type :string}})}
 
    {:entity/id "user"
-    :entity/plural "users"
+    :entity/id-plural "users"
     :entity/label-key :user/name
     :entity/id-key :user/id
     :entity/spec
@@ -324,7 +324,7 @@
                             :disabled true}})}
 
    {:entity/id "photo"
-    :entity/plural "photos"
+    :entity/id-plural "photos"
     :entity/label-key :photo/id
     :entity/id-key :photo/id
     :entity/spec
@@ -368,7 +368,7 @@
 
 (def pluralize
   (zipmap (map :entity/id entities)
-          (map :entity/plural entities)))
+          (map :entity/id-plural entities)))
 
 (def label-key
   (zipmap (map :entity/id entities)
