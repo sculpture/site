@@ -64,6 +64,7 @@
     :entity/label "Artist Tag"
     :entity/label-plural "Artist Tags"
     :entity/label-key :artist-tag/name
+    :entity/table "artist-tags"
     :entity/spec
     (array-map
       :artist-tag/id id-opts
@@ -78,6 +79,7 @@
     :entity/label "Nationality"
     :entity/label-plural "Nationalities"
     :entity/label-key :nationality/demonym
+    :entity/table "nationalities"
     :entity/spec
     (array-map
       :nationality/id id-opts
@@ -95,6 +97,7 @@
     :entity/label "Artist"
     :entity/label-plural "Artists"
     :entity/label-key :artist/name
+    :entity/table "artists_with_related_ids"
     :entity/spec
     (array-map
       :artist/id id-opts
@@ -145,6 +148,7 @@
     :entity/label "City"
     :entity/label-plural "Cities"
     :entity/label-key :city/city
+    :entity/table "cities"
     :entity/spec
     (array-map
       :city/id id-opts
@@ -165,6 +169,7 @@
     :entity/label "Material"
     :entity/label-plural "Materials"
     :entity/label-key :material/name
+    :entity/table "materials_with_related_ids"
     :entity/spec
     (array-map
       :material/id id-opts
@@ -179,6 +184,7 @@
     :entity/label "Category"
     :entity/label-plural "Categories"
     :entity/label-key :category/name
+    :entity/table "categories"
     :entity/spec
     (array-map
       :category/id id-opts
@@ -193,6 +199,7 @@
     :entity/label "Sculpture Tag"
     :entity/label-plural "Sculpture Tags"
     :entity/label-key :sculpture-tag/name
+    :entity/table "sculpture-tags_with_counts"
     :entity/spec
     (array-map
       :sculpture-tag/id id-opts
@@ -229,6 +236,7 @@
     :entity/label "Sculpture"
     :entity/label-plural "Sculptures"
     :entity/label-key :sculpture/title
+    :entity/table "sculptures_with_related_ids"
     :entity/spec
     (array-map
       :sculpture/id id-opts
@@ -289,6 +297,7 @@
     :entity/label "Region"
     :entity/label-plural "Regions"
     :entity/label-key :region/name
+    :entity/table "regions_with_related_ids"
     :entity/spec
     (array-map
       :region/id id-opts
@@ -314,6 +323,7 @@
     :entity/label "Region Tag"
     :entity/label-plural "Region Tags"
     :entity/label-key :region-tag/name
+    :entity/table "region-tags"
     :entity/spec
     (array-map
       :region-tag/id id-opts
@@ -328,6 +338,7 @@
     :entity/label "User"
     :entity/label-plural "Users"
     :entity/label-key :user/name
+    :entity/table "users"
     :entity/spec
     (array-map
       :user/id id-opts
@@ -351,6 +362,7 @@
     :entity/label "Photo"
     :entity/label-plural "Photos"
     :entity/label-key :photo/id
+    :entity/table "photos"
     :entity/spec
     (array-map
       :photo/id id-opts

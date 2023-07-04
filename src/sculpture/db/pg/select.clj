@@ -2,24 +2,15 @@
   (:require
    [clojure.string :as string]
    [hugsql.core :as hugsql]
+   [sculpture.schema.schema :as schema]
    [sculpture.db.pg.config :refer [db-spec]]
    [sculpture.db.pg.mapper :refer [db->]]))
 
 (hugsql/def-db-fns "sculpture/db/pg/sql/select.sql")
 
 (def entity-type->db-table
-  {"user" "users"
-   "material" "materials_with_related_ids"
-   "category" "categories"
-   "artist-tag" "artist-tags"
-   "city" "cities"
-   "nationality" "nationalities"
-   "sculpture-tag" "sculpture-tags_with_counts"
-   "region-tag" "region-tags"
-   "photo" "photos"
-   "region" "regions_with_related_ids"
-   "artist" "artists_with_related_ids"
-   "sculpture" "sculptures_with_related_ids"})
+  (zipmap (map :entity/id schema/entities)
+          (map :entity/table schema/entities)))
 
 (defn entity-counts []
   (-entity-counts @db-spec))
