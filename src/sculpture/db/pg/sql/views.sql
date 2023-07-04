@@ -187,6 +187,11 @@ CREATE VIEW photo AS (
   SELECT * FROM photos
 );
 
+DROP VIEW IF EXISTS segment;
+CREATE VIEW segment AS (
+  SELECT * FROM segments
+);
+
 DROP VIEW IF EXISTS region_tag;
 CREATE VIEW region_tag AS (
   SELECT * FROM "region-tags"

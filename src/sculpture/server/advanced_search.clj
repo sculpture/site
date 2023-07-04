@@ -71,15 +71,19 @@
   [entity-type conditions]
   (filter-entities
     conditions
-    (let [k (keyword (schema/pluralize entity-type))]
-      (k (db.graph/query
-           k
-           (vec (schema.util/entity-keys entity-type)))))))
+    (db.graph/query
+      (keyword (schema/pluralize entity-type))
+      (vec (schema.util/entity-keys entity-type)))))
+
+#_(search "segment"
+          [{:key :segment/sculpture-id
+            :option :equals?
+            :value #uuid "3b262b6d-3255-47b4-8fd0-e7444b49f2c5"}])
 
 #_(search "sculpture" [{:key :sculpture/title
                         :option :includes?
                         :value "oon"}])
 
-#_(search "user" [{:key :sculpture/title
+#_(search "user" [{:key :user/name
                    :option :includes?
-                   :value "oon"}])
+                   :value "Dit"}])

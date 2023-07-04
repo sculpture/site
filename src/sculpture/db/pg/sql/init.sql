@@ -37,6 +37,17 @@ CREATE INDEX sculptures_slug ON sculptures(lower(slug));
 CREATE INDEX sculptures_dates ON sculptures(date);
 CREATE INDEX sculptures_gix ON sculptures USING GIST ( location );
 
+CREATE TABLE IF NOT EXISTS "segments" (
+  -- required:
+  "id" uuid PRIMARY KEY,
+  "type" text NOT NULL,
+  "name" text NOT NULL,
+  "slug" text NOT NULL,
+  "sculpture-id" uuid REFERENCES sculptures(id)
+);
+
+CREATE INDEX segments_slug ON segments(lower(slug));
+
 CREATE TABLE IF NOT EXISTS "nationalities" (
   -- required:
   "id" uuid PRIMARY KEY,
@@ -113,7 +124,8 @@ CREATE TABLE IF NOT EXISTS photos (
   "width" integer NOT NULL,
   "height" integer NOT NULL,
   -- optional:
-  "sculpture-id" uuid REFERENCES sculptures(id)
+  "sculpture-id" uuid REFERENCES sculptures(id),
+  "segment-id" uuid REFERENCES segments(id)
 );
 
 CREATE TABLE IF NOT EXISTS "categories" (

@@ -48,8 +48,8 @@ RETURNING true;
 
 -- :name -upsert-photo!
 -- :command :returning-execute
-INSERT INTO photos ("id", "type", "captured-at", "user-id", "colors", "width", "height", "sculpture-id")
-VALUES (:id, :type, :captured-at, :user-id, :colors::json, :width, :height, :sculpture-id)
+INSERT INTO photos ("id", "type", "captured-at", "user-id", "colors", "width", "height", "sculpture-id", "segment-id")
+VALUES (:id, :type, :captured-at, :user-id, :colors::json, :width, :height, :sculpture-id, :segment-id)
 ON CONFLICT (id) DO
 UPDATE
 SET
@@ -58,8 +58,22 @@ SET
   "colors" = :colors::json,
   "width" = :width,
   "height" = :height,
-  "sculpture-id" = :sculpture-id
+  "sculpture-id" = :sculpture-id,
+  "segment-id" = :segment-id
 WHERE "photos".id = :id
+RETURNING true;
+
+-- :name -upsert-segment!
+-- :command :returning-execute
+INSERT INTO segments ("id", "type", "name", "slug", "sculpture-id")
+VALUES (:id, :type, :name, :slug, :sculpture-id)
+ON CONFLICT (id) DO
+UPDATE
+SET
+  "name" = :name,
+  "slug" = :slug,
+  "sculpture-id" = :sculpture-id
+WHERE "segments".id = :id
 RETURNING true;
 
 -- :name -upsert-user!

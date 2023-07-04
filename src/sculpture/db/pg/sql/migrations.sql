@@ -17,4 +17,8 @@ CREATE TABLE IF NOT EXISTS "artists_nationalities" (
   PRIMARY KEY ("nationality-id", "artist-id")
 );
 
--- remove artist.nationality
+-- add photos.segment-id 2023-07-04
+
+ALTER TABLE "photos"
+ADD COLUMN "segment-id" uuid REFERENCES segments(id);
+

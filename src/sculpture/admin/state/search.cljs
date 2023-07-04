@@ -33,6 +33,14 @@
               {:on-success callback}]})))
 
 (reg-event-fx
+  :state.search/remote-advanced-search!
+  (fn [{db :db} [_ entity-type conditions callback]]
+    {:tada [:advanced-search
+            {:entity-type entity-type
+             :conditions conditions}
+            {:on-success callback}]}))
+
+(reg-event-fx
   ::set-results!
   (fn [{db :db} [_ data]]
     {:db (assoc-in db [:db/search :results] data)}))

@@ -75,6 +75,7 @@
       [:&.note:before (fontawesome \uf249)]
       [:&.regions:before (fontawesome \uf279)]
       [:&.sculpture:before (fontawesome \uf27c)]
+      [:&.segments:before (fontawesome \uf27c)]
       [:&.tags:before (fontawesome \uf02c)]
       [:&.user:before (fontawesome \uf007)]
       [:&.website:before (fontawesome \uf0c1)]

@@ -11,6 +11,7 @@
     [sculpture.admin.fields.geojson]
     [sculpture.admin.fields.enumlookup]
     [sculpture.admin.fields.flexdate]
+    [sculpture.admin.fields.radio-related]
     [sculpture.admin.views.app :refer [app-view]]))
 
 (enable-console-print!)

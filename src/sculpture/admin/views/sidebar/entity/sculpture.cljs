@@ -90,7 +90,15 @@
 
     (when (seq (:sculpture/note sculpture))
       [:div.row.note {:title "Note"}
-       (:sculpture/note sculpture)])]])
+       (:sculpture/note sculpture)])
+
+    (when (seq (:sculpture/segments sculpture))
+      [:div.row.segments {:title "Segments"}
+       (interpose ", "
+                  (for [segment (:sculpture/segments sculpture)]
+                    ^{:key (:segment/id segment)}
+                    [:a {:href (pages/path-for [:page/segment {:id (:segment/id segment)}])}
+                     (:segment/name segment)]))])]])
 
 (defmethod entity-handler :sculpture
   [_ sculpture-id]
@@ -128,5 +136,8 @@
                :region/area]}
              {:sculpture/artists
               [:artist/id
-               :artist/name]}]
+               :artist/name]}
+             {:sculpture/segments
+              [:segment/id
+               :segment/name]}]
    :view sculpture-entity-view})

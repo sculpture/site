@@ -367,6 +367,12 @@
    ::pco/output [{:photo/sculpture [:sculpture/id]}]}
   {:photo/sculpture {:sculpture/id sculpture-id}})
 
+(pco/defresolver photo-segment [{:photo/keys [segment-id]}]
+  {::pco/input [:photo/segment-id]
+   ::pco/output [{:photo/segment [:segment/id]}]}
+  {:photo/segment {:segment/id segment-id}})
+
+
 ;; region
 
 
@@ -520,8 +526,6 @@
 
 ;; sculpture
 
-
-
 (pco/defresolver sculptures [env _]
   {::pco/input []
    ::pco/output [{:sculptures (table-columns :sculpture)}]}
@@ -672,6 +676,21 @@
 
 #_(sculpture-sculpture-tags {:sculpture/id #uuid "01b5a5b6-b797-42e6-adc5-f283686e6b44"})
 
+(pco/defresolver sculpture-segments [{:sculpture/keys [id]}]
+  {::pco/input [:sculpture/id]
+   ::pco/output [{:sculpture/segments (table-columns :segment)}
+                 :sculpture/segment-ids]}
+  (let [segments (execute! ["SELECT * FROM \"segment\"
+                            WHERE \"sculpture-id\" = ?" id])]
+    {:sculpture/segments segments
+     :sculpture/segment-ids (map :segment/id segments)}))
+
+#_(sculpture-segments {:sculpture/id #uuid "3b262b6d-3255-47b4-8fd0-e7444b49f2c5"})
+
+#_(query {:sculpture/id #uuid "3b262b6d-3255-47b4-8fd0-e7444b49f2c5"}
+         [:sculpture/id :sculpture/segment-ids {:sculpture/segments [:segment/name]}])
+
+
 ;; sculpture-tag
 
 (pco/defresolver sculpture-tags []
@@ -722,6 +741,26 @@
      :sculpture-tag/sculpture-count (count ids)}))
 
 #_(sculpture-tag-sculptures {:sculpture-tag/id #uuid "521f00f2-f976-4b69-89cf-6e8db0c94f29"})
+
+;; segments
+
+(pco/defresolver segments []
+  {::pco/input []
+   ::pco/output [{:segments (table-columns :segment)}]}
+  {:segments (execute! (sql/format {:select :*
+                                    :from :segment}))})
+
+#_(segments)
+
+(pco/defresolver segment-by-id [{:segment/keys [id]}]
+  {::pco/input [:segment/id]
+   ::pco/output (table-columns :segment)}
+  (first (execute! (sql/format {:select :*
+                         :from :segment
+                         :where [:= :segment/id id]}))))
+
+
+#_(segment-by-id {:segment/id #uuid "c68cf7ad-eca3-434a-ae8f-5bf77b0f0375"})
 
 ;; user
 
@@ -790,6 +829,7 @@
                  photo-by-id
                  photo-user
                  photo-sculpture
+                 photo-segment
 
                  regions
                  region-by-id
@@ -813,12 +853,16 @@
                  sculpture-photos
                  sculpture-regions
                  sculpture-sculpture-tags
+                 sculpture-segments
 
                  sculpture-tags
                  sculpture-tag-by-id
                  sculpture-tag-by-slug
                  sculpture-tag-category
                  sculpture-tag-sculptures
+
+                 segments
+                 segment-by-id
 
                  users
                  user-by-id
@@ -848,7 +892,7 @@
     (nil? pattern)
     (peql/process indexes query-id-or-identifier)))
 
-#_(query :regions [:region/name])
+#_(query :segments [:segment/name])
 
 #_(query {:sculpture/id #uuid "0ef9c6f1-a415-45b2-9afd-925c00ff7955"}
          [:sculpture/location])

@@ -269,6 +269,25 @@ WITH search_results AS (
 
   (
     SELECT
+      segments.id AS id,
+      'segment' AS type,
+      segments.name AS title,
+      NULL as subtitle,
+      NULL as "photo-id"
+    FROM
+      segments
+    WHERE
+      'segment' IN (:v*:types) AND
+      (
+        "segments".name ILIKE concat('%',:ilike-query,'%')
+      )
+    LIMIT :limit
+  )
+
+  UNION
+
+  (
+    SELECT
       users.id AS id,
       'user' AS type,
       users.name AS title,

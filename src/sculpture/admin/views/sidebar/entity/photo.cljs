@@ -21,7 +21,11 @@
     (when-let [sculpture (:photo/sculpture photo)]
       [:div.row.sculpture {:title "Sculpture"}
        [:a {:href (pages/path-for [:page/sculpture {:id (:sculpture/id sculpture)}])}
-        (:sculpture/title sculpture)]])
+        (:sculpture/title sculpture)]
+       (when-let [segment (:photo/segment photo)]
+         [:<>
+          " | "
+          [:a {:href (pages/path-for [:page/segment {:id (:segment/id segment)}])} (:segment/name segment)]])])
 
     [:div.row.captured-at {:title "Captured At"}
      (helpers/format-date (:photo/captured-at photo) "yyyy-MM-dd")]
@@ -50,6 +54,9 @@
              {:photo/sculpture
               [:sculpture/id
                :sculpture/title]}
+             {:photo/segment
+              [:segment/id
+               :segment/name]}
              {:photo/user
               [:user/id
                :user/name]}]

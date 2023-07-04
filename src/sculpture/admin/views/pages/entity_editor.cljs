@@ -59,6 +59,7 @@
                [field (merge
                         (field-opts k entity-type)
                         {:value v
+                         :entity entity
                          :on-change (fn [v]
                                       (dispatch! [:state.edit/update-draft! k v]))})]]
               [:td [:button.delete

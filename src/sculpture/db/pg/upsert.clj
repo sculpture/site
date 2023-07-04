@@ -62,6 +62,11 @@
     @db-spec
     (->db photo)))
 
+(defn upsert-segment! [segment]
+  (-upsert-segment!
+    @db-spec
+    (->db segment)))
+
 (defn upsert-user! [user]
   (-upsert-user!
     @db-spec
@@ -136,6 +141,7 @@
                      "material" upsert-material!
                      "sculpture-tag" upsert-sculpture-tag!
                      "nationality" upsert-nationality!
+                     "segment" upsert-segment!
                      "sculpture" upsert-sculpture!
                      "region-tag" upsert-region-tag!
                      "region" upsert-region!

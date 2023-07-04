@@ -297,6 +297,27 @@
                                        :on-find (lookup-on-find "material")
                                        :on-search (lookup-on-search "material")}})}
 
+   {:entity/id "segment"
+    :entity/id-plural "segments"
+    :entity/id-key :segment/id
+    :entity/label "Segment"
+    :entity/label-plural "Segments"
+    :entity/label-key :segment/name
+    :entity/table "segments"
+    :entity/spec
+    (array-map
+      :segment/id id-opts
+      :segment/slug slug-opts
+      :segment/name {:default ""
+                     :spec types/NonBlankString
+                     :input {:type :string}}
+      :segment/sculpture-id {:default nil
+                             :relation? true
+                             :spec [:maybe uuid?]
+                             :input {:type :single-lookup
+                                     :on-find (lookup-on-find "sculpture")
+                                     :on-search (lookup-on-search "sculpture")}})}
+
    {:entity/id "region"
     :entity/id-plural "regions"
     :entity/id-key :region/id
@@ -400,7 +421,26 @@
                            :input {:type :single-lookup
                                    :on-find (lookup-on-find "sculpture")
                                    :on-search (lookup-on-search "sculpture")}}
-      )}])
+      :photo/segment-id {:default nil
+                         :relation? true
+                         :spec [:maybe uuid?]
+                         :input {:type :radio-related
+                                 :options-fn
+                                 (fn [photo callback]
+                                   #?(:cljs
+                                      (dispatch! [:state.search/remote-advanced-search!
+                                                  "segment"
+                                                  [{:key :segment/sculpture-id
+                                                    :option :equals?
+                                                    :value (:photo/sculpture-id photo)}]
+                                                  (fn [segments]
+                                                    (callback
+                                                      (concat [{:label "None"
+                                                                :value nil}]
+                                                              (->> segments
+                                                                   (map (fn [segment]
+                                                                          {:label (:segment/name segment)
+                                                                           :value (:segment/id segment)}))))))])))}})}])
 
 (def by-id
   (zipmap (map :entity/id entities)
