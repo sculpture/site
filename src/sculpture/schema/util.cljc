@@ -2,17 +2,15 @@
   (:require
     [sculpture.schema.schema :as schema]))
 
-(defn label [entity]
-  (->> (vals schema/label-key)
-       (map (fn [k]
-              (entity k)))
-       (remove nil?)
-       first))
+
 
 (defn entity-type [entity]
   (namespace (key (first entity))))
 
 #_(entity-type {:sculpture/foo "asd"})
+
+(defn label [entity]
+  (get-in schema/by-id [(entity-type entity) :entity/label]))
 
 (defn entity-id [entity]
   (let [entity-type (entity-type entity)]
