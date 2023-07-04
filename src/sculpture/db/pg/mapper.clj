@@ -94,12 +94,6 @@
                         (when c
                           (json/encode c))))))
 
-(defmethod ->db "region"
-  [region]
-  (-> (schema/->blank-entity "region")
-      (merge region)
-      (add-type)
-      (remove-namespaces)))
 
 ; db->
 
