@@ -1,6 +1,7 @@
 (ns sculpture.admin.views.pages.actions
   (:require
     [bloom.commons.uuid :as uuid]
+    [sculpture.schema.schema :as schema]
     [sculpture.admin.state.api :refer [dispatch!]]))
 
 (defn actions-view []
@@ -41,8 +42,10 @@
 
     [:h2 "Create New"]
 
-    (for [entity-type ["sculpture" "artist" "city" "region" "material" "sculpture-tag"
-                       "nationality" "artist-tag" "region-tag" "category"]]
+    (for [entity-type (->> schema/entities
+                           (map :entity/id)
+                           (remove #{"user" "photo"})
+                           (sort))]
       ^{:key entity-type}
       [:button
        {:on-click (fn [_]
