@@ -44,7 +44,7 @@
        (for [[type results] grouped-results]
          ^{:key type}
          [:div.group {:class (str type)}
-          [:h2  (get-in schema/by-id [type :entity/label-plural])]
+          [:h2 (get-in schema/by-id [type :entity/label-plural])]
           [:div.entity-list
            (for [result results]
              ^{:key (:id result)}
