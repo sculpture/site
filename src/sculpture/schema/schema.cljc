@@ -4,61 +4,70 @@
     #?@(:cljs
          [[sculpture.admin.state.api :refer [dispatch!]]])))
 
-(def pluralize
-  {"artist" "artists"
-   "artist-tag" "artist-tags"
-   "category" "categories"
-   "city" "cities"
-   "material" "materials"
-   "nationality" "nationalities"
-   "photo" "photos"
-   "region" "regions"
-   "region-tag" "region-tags"
-   "sculpture" "sculptures"
-   "sculpture-tag" "sculpture-tags"
-   "user" "users"})
+(def entities
+  [{:entity/id "artist"
+    :entity/plural "artists"
+    :entity/label-key :artist/name
+    :entity/id-key :artist/id}
+   {:entity/id "artist-tag"
+    :entity/plural "artist-tags"
+    :entity/label-key :artist-tag/name
+    :entity/id-key :artist-tag/id}
+   {:entity/id "category"
+    :entity/plural "categories"
+    :entity/label-key :category/name
+    :entity/id-key :category/id}
+   {:entity/id "city"
+    :entity/plural "cities"
+    :entity/label-key :city/city
+    :entity/id-key :city/id}
+   {:entity/id "material"
+    :entity/plural "materials"
+    :entity/label-key :material/name
+    :entity/id-key :material/id}
+   {:entity/id "nationality"
+    :entity/plural "nationalities"
+    :entity/label-key :nationality/demonym
+    :entity/id-key :nationality/id}
+   {:entity/id "photo"
+    :entity/plural "photos"
+    :entity/label-key :photo/id
+    :entity/id-key :photo/id}
+   {:entity/id "region"
+    :entity/plural "regions"
+    :entity/label-key :region/name
+    :entity/id-key :region/id}
+   {:entity/id "region-tag"
+    :entity/plural "region-tags"
+    :entity/label-key :region-tag/name
+    :entity/id-key :region-tag/id}
+   {:entity/id "sculpture"
+    :entity/plural "sculptures"
+    :entity/label-key :sculpture/title
+    :entity/id-key :sculpture/id}
+   {:entity/id "sculpture-tag"
+    :entity/plural "sculpture-tags"
+    :entity/label-key :sculpture-tag/name
+    :entity/id-key :sculpture-tag/id}
+   {:entity/id "user"
+    :entity/plural "users"
+    :entity/label-key :user/name
+    :entity/id-key :user/id}])
 
 (def entity-types
-  #{"artist"
-    "artist-tag"
-    "category"
-    "city"
-    "material"
-    "nationality"
-    "photo"
-    "region"
-    "region-tag"
-    "sculpture"
-    "sculpture-tag"
-    "user"})
+  (set (map :entity/id entities)))
+
+(def pluralize
+  (zipmap (map :entity/id entities)
+          (map :entity/plural entities)))
 
 (def label-key
-  {"artist" :artist/name
-   "artist-tag" :artist-tag/name
-   "category" :category/name
-   "city" :city/city
-   "material" :material/name
-   "nationality" :nationality/demonym
-   "photo" :photo/id
-   "region" :region/name
-   "region-tag" :region-tag/name
-   "sculpture" :sculpture/title
-   "sculpture-tag" :sculpture-tag/name
-   "user" :user/name})
+  (zipmap (map :entity/id entities)
+          (map :entity/label-key entities)))
 
 (def id-key
-  {"artist" :artist/id
-   "artist-tag" :artist-tag/id
-   "category" :category/id
-   "city" :city/id
-   "material" :material/id
-   "nationality" :nationality/id
-   "photo" :photo/id
-   "region" :region/id
-   "region-tag" :region-tag/id
-   "sculpture" :sculpture/id
-   "sculpture-tag" :sculpture-tag/id
-   "user" :user/id})
+  (zipmap (map :entity/id entities)
+          (map :entity/id-key entities)))
 
 (defn lookup-on-find
   [entity-type]
