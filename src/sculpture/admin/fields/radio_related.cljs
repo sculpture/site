@@ -6,11 +6,18 @@
 
 (defmethod field :radio-related
   [{:keys [value on-change options-fn entity] :as all}]
-  (r/with-let [options (r/atom [])
-               _ (options-fn entity
-                             (fn [values]
-                               (reset! options values)))]
-    [:div
+  (r/with-let [ ;; entity changes, so we keep track of it
+               e (r/atom entity)
+               options (r/atom [])
+               search! (fn []
+                         (options-fn @e
+                                     (fn [values]
+                                       (reset! options values))))
+               _ (search!)]
+    [:div {:ref (fn []
+                  (when (not= entity @e)
+                    (reset! e entity)
+                    (search!)))}
      (for [option @options]
        ^{:key (hash (:value option))}
        [:div

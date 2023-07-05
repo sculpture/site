@@ -423,6 +423,7 @@
                                    :on-search (lookup-on-search "sculpture")}}
       :photo/segment-id {:default nil
                          :relation? true
+                         :optional true
                          :spec [:maybe uuid?]
                          :input {:type :radio-related
                                  :options-fn
