@@ -393,6 +393,10 @@
     :entity/spec
     (array-map
       :photo/id id-opts
+      :photo/featured? {:default nil
+                        :optional true
+                        :spec boolean?
+                        :input {:type :boolean}}
       :photo/captured-at {:default nil
                           :spec inst?
                           :input {:type :datetime}}

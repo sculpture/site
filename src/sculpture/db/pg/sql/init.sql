@@ -119,6 +119,7 @@ CREATE TABLE IF NOT EXISTS photos (
   "id" uuid PRIMARY KEY,
   "type" text NOT NULL,
   "captured-at" timestamp with time zone NOT NULL,
+  "featured?" boolean NOT NULL,
   "user-id" uuid REFERENCES users(id) NOT NULL,
   "colors" json NOT NULL,
   "width" integer NOT NULL,

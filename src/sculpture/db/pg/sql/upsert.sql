@@ -48,13 +48,14 @@ RETURNING true;
 
 -- :name -upsert-photo!
 -- :command :returning-execute
-INSERT INTO photos ("id", "type", "captured-at", "user-id", "colors", "width", "height", "sculpture-id", "segment-id")
-VALUES (:id, :type, :captured-at, :user-id, :colors::json, :width, :height, :sculpture-id, :segment-id)
+INSERT INTO photos ("id", "type", "captured-at", "user-id", "featured?", "colors", "width", "height", "sculpture-id", "segment-id")
+VALUES (:id, :type, :captured-at, :user-id, :featured?, :colors::json, :width, :height, :sculpture-id, :segment-id)
 ON CONFLICT (id) DO
 UPDATE
 SET
   "captured-at" = :captured-at,
   "user-id" = :user-id,
+  "featured?" = :featured?,
   "colors" = :colors::json,
   "width" = :width,
   "height" = :height,

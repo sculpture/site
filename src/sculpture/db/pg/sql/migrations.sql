@@ -22,3 +22,6 @@ CREATE TABLE IF NOT EXISTS "artists_nationalities" (
 ALTER TABLE "photos"
 ADD COLUMN "segment-id" uuid REFERENCES segments(id);
 
+-- add photos.featured? 2023-07-09
+ALTER TABLE "photos"
+ADD COLUMN "featured?" boolean NOT NULL;
