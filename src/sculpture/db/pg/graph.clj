@@ -762,6 +762,21 @@
 
 #_(segment-by-id {:segment/id #uuid "c68cf7ad-eca3-434a-ae8f-5bf77b0f0375"})
 
+(pco/defresolver segment-photo [{:segment/keys [id]}]
+  {::pco/input [:segment/id]
+   ::pco/output [{:segment/photo [:photo/id]}]}
+  {:segment/photo
+   (execute! (sql/format {:select :id
+                          :from :photo
+                          :where [:= [:raw "\"segment-id\""] id]}))})
+
+#_(segment-photo {:segment/id #uuid "c68cf7ad-eca3-434a-ae8f-5bf77b0f0375"})
+
+(pco/defresolver segment-sculpture [{:segment/keys [sculpture-id]}]
+  {::pco/input [:segment/sculpture-id]
+   ::pco/output [{:segment/sculpture [:sculpture/id]}]}
+  {:segment/sculpture {:sculpture/id sculpture-id}})
+
 ;; user
 
 (pco/defresolver users []
@@ -863,6 +878,8 @@
 
                  segments
                  segment-by-id
+                 segment-photo
+                 segment-sculpture
 
                  users
                  user-by-id
