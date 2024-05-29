@@ -530,14 +530,12 @@
   {::pco/input []
    ::pco/output [{:sculptures (table-columns :sculpture)}]}
   {:sculptures
-   (let [decade (:decade (pco/params env))]
+   (let [[date-start date-end] (:date-between (pco/params env))]
      (->> (execute! (sql/format (cond
-                                  decade
-                                  (let [date-start (str (/ decade 10) "*")
-                                        date-end (str (+ decade 9) "-12-31")]
-                                    {:select :*
-                                     :from :sculpture
-                                     :where [:between :sculpture/date date-start date-end]})
+                                  (and date-start date-end)
+                                  {:select :*
+                                   :from :sculpture
+                                   :where [:between :sculpture/date date-start date-end]}
                                   :else
                                   {:select :*
                                    :from :sculpture})))
@@ -545,8 +543,11 @@
 
 #_(sculptures)
 
-#_(peql/process (pci/register sculptures)
-                '[(:sculptures {:decade 1960})])
+#_(->> (peql/process (pci/register sculptures)
+                     '[(:sculptures {:date-between ["196*" "1970"]})])
+       :sculptures
+       (map :sculpture/date)
+       sort)
 
 (pco/defresolver sculpture-by-id [{:sculpture/keys [id]}]
   {::pco/input [:sculpture/id]
@@ -895,7 +896,7 @@
                 [{[:sculpture/id #uuid "f6687354-9e7c-4cb2-a644-14e1cf96fc34"]
                           [:sculpture/date]}])
 
-;; two part eql identifuer and equery
+;; two part eql identifier and query
 #_(peql/process indexes
                 {:sculpture/id #uuid "f6687354-9e7c-4cb2-a644-14e1cf96fc34"}
                 [:sculpture/date])
