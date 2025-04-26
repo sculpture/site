@@ -267,6 +267,10 @@
                        :default nil
                        :spec [:maybe types/FlexDate]
                        :input {:type :flexdate}}
+      :sculpture/display-date {:optional true
+                               :default nil
+                               :spec [:maybe :string]
+                               :input {:type :string}}
       :sculpture/size {:optional true
                        :default nil
                        :spec [:maybe integer?]

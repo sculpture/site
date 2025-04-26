@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS sculptures (
   "size" integer,
   "note" text,
   "date" text,
+  "display-date" text,
   "commissioned-by" text,
   "location" geography(point,4326),
   "location-precision" float,

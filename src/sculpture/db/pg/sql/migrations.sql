@@ -24,4 +24,9 @@ ADD COLUMN "segment-id" uuid REFERENCES segments(id);
 
 -- add photos.featured? 2023-07-09
 ALTER TABLE "photos"
-ADD COLUMN "featured?" boolean NOT NULL;
+ADD COLUMN "featured?" boolean;
+
+-- add sculpture.display-date 2025-04-02
+
+ALTER TABLE "sculptures"
+ADD COLUMN "display-date" text;

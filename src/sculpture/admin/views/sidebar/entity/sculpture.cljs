@@ -25,7 +25,9 @@
              (for [artist (:sculpture/artists sculpture)]
                [:a {:href (pages/path-for [:page/artist {:id (:artist/id artist)}])} (:artist/name artist)])))
 
-     [:div.year (:sculpture/date sculpture)]]]
+     [:div.year (:sculpture/date sculpture)
+      (when-let [date (:sculpture/display-date sculpture)]
+        (str " (" date ")"))]]]
 
    [:div.meta
     (when (seq (:sculpture/sculpture-tags sculpture))
@@ -111,6 +113,7 @@
                :photo/colors]}
              :sculpture/title
              :sculpture/date
+             :sculpture/display-date
              :sculpture/link-wikipedia
              :sculpture/location
              :sculpture/commissioned-by
