@@ -7,6 +7,7 @@
     [ring.util.codec :refer [url-decode]]
     [sculpture.config :refer [config]]
     [sculpture.darkroom.core :as darkroom]
+    [sculpture.db.api :as db]
     [sculpture.db.core :as db.core]
     [sculpture.db.pg.select :as db.select]
     [sculpture.db.pg.graph :as db.graph]
@@ -15,13 +16,6 @@
     [sculpture.server.geocode :as geocode]
     [sculpture.server.oauth :as oauth]
     [sculpture.server.pages.oauth :as pages.oauth]))
-
-(defn single-entity-response [entity-type id-or-slug]
-  (if-let [entity (db.select/select-entity-with-id-or-slug entity-type id-or-slug)]
-    {:status 200
-     :body entity}
-    {:status 404
-     :body {:error "Not Found"}}))
 
 (defn request->user-id [request]
   (or (get-in request [:session :user-id])
@@ -55,7 +49,11 @@
 
                       [[:get (str "/api/" plural "/:id-or-slug")]
                        (fn [{{:keys [id-or-slug]} :params}]
-                         (single-entity-response entity-type id-or-slug))]]))))
+                         (if-let [entity (db/entity-by-id-or-slug id-or-slug)]
+                           {:status 200
+                            :body entity}
+                           {:status 404
+                            :body {:error "Not Found"}}))]]))))
 
     [
      [[:get "/api/meta"]
@@ -150,11 +148,12 @@
       (fn [request]
         (case (:environment config)
           :dev
-          (let [user (db.plain/add-namespaces
-                       (db.select/select-entity-with-id
-                         "user"
-                         #uuid "013ec717-531b-4b30-bacf-8a07f33b0d43")
-                       "user")]
+          (let [user (db.graph/query
+                      {:user/id #uuid "013ec717-531b-4b30-bacf-8a07f33b0d43"}
+                      [:user/id
+                       :user/email
+                       :user/name
+                       :user/avatar])]
             {:status 200
              :session {:user-id (:user/id user)}
              :body user})
@@ -162,9 +161,12 @@
           :prod
           (if-let [user-id (get-in request [:session :user-id])]
             {:status 200
-             :body (db.plain/add-namespaces
-                     (db.select/select-entity-with-id "user" user-id)
-                     "user")}
+             :body (db.graph/query
+                      {:user/id user-id}
+                      [:user/id
+                       :user/email
+                       :user/name
+                       :user/avatar])}
             {:status 200
              :body nil})))]
 

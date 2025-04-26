@@ -491,25 +491,3 @@ WHERE
 LIMIT
   1;
 
--- :name -select-entity-with-id
--- :result :one
-SELECT
-  *
-FROM
-  :i:entity-type
-WHERE
-  id = :id
-LIMIT
-  1;
-
-
--- :name -select-entity-with-slug
--- :result :one
-SELECT
-  *
-FROM
-  :i:entity-type
-WHERE
-  slug = lower(:slug)
-LIMIT
-  1;

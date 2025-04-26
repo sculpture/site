@@ -143,31 +143,6 @@
          {:quoting :ansi})
        (map db->)))
 
-(defn select-entity-with-id [entity-type id]
-  (-> (-select-entity-with-id
-        @db-spec
-        {:entity-type (entity-type->db-table entity-type)
-         :id id}
-        {:quoting :ansi})
-      db->))
-
-#_(select-entity-with-id "sculpture" #uuid "b81e6250-e5b1-4777-8705-6427a39de80b")
-
-(defn select-entity-with-slug [entity-type slug]
-  (-> (-select-entity-with-slug
-        @db-spec
-        {:entity-type (entity-type->db-table entity-type)
-         :slug slug}
-        {:quoting :ansi})
-      db->))
-
-(def uuid-regex #"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
-
-(defn select-entity-with-id-or-slug [entity-type id-or-slug]
-  (if (re-matches uuid-regex id-or-slug)
-    (select-entity-with-id entity-type (java.util.UUID/fromString id-or-slug))
-    (select-entity-with-slug entity-type id-or-slug)))
-
 ; misc
 
 (defn select-random-sculpture-slug []
@@ -175,37 +150,12 @@
        :slug))
 
 ; sample
-#_(select-entity-with-slug "region" "bce")
 
 #_(select-random-sculpture-slug)
 
 #_(-select-sculpture-with-slug
     @db-spec
     {:slug "bird-wings"})
-
-#_(-select-entity-with-slug
-    @db-spec
-    {:entity-type "artists"
-     :slug "mark-gomes"}
-    {:quoting :ansi})
-
-#_(-select-entity-with-slug
-    @db-spec
-    {:entity-type "extended_sculptures"
-     :slug "bird-wings"}
-    {:quoting :ansi})
-
-#_(-select-entity-with-slug
-    @db-spec
-    {:entity-type "regions"
-     :slug "toronto"}
-    {:quoting :ansi})
-
-#_(-select-entity-with-slug
-    @db-spec
-    {:entity-type "category"
-     :slug "sculpture-subject-person"}
-    {:quoting :ansi})
 
 #_(time
     (select-sculptures-for-region "canada"))
