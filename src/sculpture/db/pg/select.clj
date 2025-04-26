@@ -128,14 +128,6 @@
 
 ; entity
 
-(defn exists? [entity-type id]
-  (->> (-exists?
-         @db-spec
-         {:type (entity-type->db-table entity-type)
-          :id id}
-         {:quoting :ansi})
-       :exists))
-
 (defn select-all-with-type [entity-type]
   (->> (-select-all-with-type
          @db-spec

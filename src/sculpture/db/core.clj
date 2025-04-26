@@ -1,6 +1,5 @@
 (ns sculpture.db.core
   (:require
-    [clojure.string :as string]
     [malli.core :as m]
     [sculpture.config :refer [config]]
     [sculpture.db.plain :as plain]
@@ -68,10 +67,10 @@
 (defn upsert! [entity user-id]
   {:pre [(m/validate schema/Entity entity)
          (uuid? user-id)
-         (db.select/exists? "user" user-id)]}
+         (db/exists? "user" user-id)]}
   (let [entity-type (schema.util/entity-type entity)
         entity-id (schema.util/entity-id entity)
-        action (if (db.select/exists? entity-type entity-id)
+        action (if (db/exists? entity-type entity-id)
                  "Update"
                  "Add")]
     (db.upsert/upsert-entity! entity)

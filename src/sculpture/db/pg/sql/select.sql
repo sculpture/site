@@ -310,19 +310,6 @@ ORDER BY
    word_similarity(title,:ilike-query) DESC
 LIMIT :limit;
 
--- :name -exists?
--- :result :one
-SELECT EXISTS (
-  SELECT
-    1
-  FROM
-    :i:type
-  WHERE
-    id = :id
-  LIMIT
-    1
-);
-
 -- :name -select-all-with-type
 -- :result :many
 SELECT
