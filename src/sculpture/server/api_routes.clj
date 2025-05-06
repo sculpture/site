@@ -76,44 +76,14 @@
           {:status 200
            :body (db.graph/query identifier pattern)}))]
 
-     [[:get "/api/regions/:slug/sculptures"]
-      (fn [{{:keys [slug]} :params}]
-        {:status 200
-         :body (db.select/select-sculptures-for-region slug)})]
 
-     [[:get "/api/materials/:slug/sculptures"]
-      (fn [{{:keys [slug]} :params}]
-        {:status 200
-         :body (db.select/select-sculptures-for-material-slug slug)})]
 
-     [[:get "/api/artists/:slug/sculptures"]
-      (fn [{{:keys [slug]} :params}]
-        {:status 200
-         :body (db.select/select-sculptures-for-artist slug)})]
 
      [[:get "/api/sculptures/random"]
       (fn [_]
         {:status 302
          :headers {"Location" (str "/api/sculptures/" (db.select/select-random-sculpture-slug))}})]
 
-     [[:get "/api/sculptures/"]
-      (fn [{{:keys [decade artist-gender artist-tag sculpture-tag]} :params}]
-        (cond
-          decade
-          {:status 200
-           :body (db.select/select-sculptures-for-decade (Integer. decade))}
-
-          artist-tag
-          {:status 200
-           :body (db.select/select-sculptures-for-artist-tag-slug artist-tag)}
-
-          sculpture-tag
-          {:status 200
-           :body (db.select/select-sculptures-for-sculpture-tag-slug sculpture-tag)}
-
-          artist-gender
-          {:status 200
-           :body (db.select/select-sculptures-for-artist-gender artist-gender)}))]
 
      ; UTIL
 

@@ -65,51 +65,6 @@
            :types ["sculpture"]
            :limit 5})
 
-; sculptures
-
-(defn select-sculptures-for-region [slug]
-  (->> (-select-sculptures-for-region
-         @db-spec
-         {:region-slug slug})
-       (map db->)))
-
-(defn select-sculptures-for-artist [artist-slug]
-  (->> (-select-sculptures-for-artist
-         @db-spec
-         {:artist-slug artist-slug})
-       (map db->)))
-
-(defn select-sculptures-for-decade [decade]
-  (->> (-select-sculptures-for-decade
-        @db-spec
-        {:date-start (str (/ decade 10) "*")
-         :date-end (str (+ decade 9) "-12-31")})
-       (map db->)))
-
-(defn select-sculptures-for-artist-tag-slug [artist-tag-slug]
-  (->> (-select-sculptures-for-artist-tag-slug
-         @db-spec
-         {:artist-tag-slug artist-tag-slug})
-       (map db->)))
-
-(defn select-sculptures-for-artist-gender [artist-gender]
-  (->> (-select-sculptures-for-artist-gender
-         @db-spec
-         {:artist-gender artist-gender})
-       (map db->)))
-
-(defn select-sculptures-for-sculpture-tag-slug [sculpture-tag-slug]
-  (->> (-select-sculptures-for-sculpture-tag-slug
-         @db-spec
-         {:sculpture-tag-slug sculpture-tag-slug})
-       (map db->)))
-
-(defn select-sculptures-for-material-slug [slug]
-  (->> (-select-sculptures-for-material-slug
-         @db-spec
-         {:material-slug slug})
-       (map db->)))
-
 ; entity
 
 (defn select-all-with-type [entity-type]
@@ -125,9 +80,4 @@
   (->> (-select-random-sculpture-slug @db-spec)
        :slug))
 
-; sample
-
 #_(select-random-sculpture-slug)
-
-#_(time
-    (select-sculptures-for-region "canada"))
