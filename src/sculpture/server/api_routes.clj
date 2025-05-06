@@ -197,9 +197,9 @@
       (fn [{{:keys [provider]} :params
             {:keys [token]} :body-params}]
         (if-let [oauth-user-info (oauth/get-user-info (keyword provider) token)]
-          (if-let [user (db.plain/add-namespaces
-                          (db.select/select-user-with-email (:email oauth-user-info))
-                          "user")]
+          (if-let [user (db/query
+                         {:user/email (:email oauth-user-info)}
+                         [:user/id :user/name :user/email :user/avatar])]
             (let [updated-user (merge user
                                       {:user/name (:name oauth-user-info)
                                        :user/avatar (:avatar oauth-user-info)})]

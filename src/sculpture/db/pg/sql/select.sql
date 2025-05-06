@@ -466,15 +466,3 @@ OFFSET
   floor(random() * (SELECT COUNT(*) FROM sculptures))
 LIMIT
   1;
-
--- :name -select-user-with-email
--- :result :one
-SELECT
-  *
-FROM
-  users
-WHERE
-  email = lower(:email)
-LIMIT
-  1;
-

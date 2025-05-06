@@ -28,3 +28,5 @@
                  [(keyword entity-type "slug")]))))
 
 #_(exists? "sculpture" #uuid "77ad0987-bf94-4619-85ed-047ef5677cd9")
+
+(def query db.graph/query)

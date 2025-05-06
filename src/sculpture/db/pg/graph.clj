@@ -798,6 +798,13 @@
 
 #_(user-by-id {:user/id #uuid "013ec717-531b-4b30-bacf-8a07f33b0d43"})
 
+(pco/defresolver user-by-email [{:user/keys [email]}]
+  {::pco/input [:user/email]
+   ::pco/output (table-columns :user)}
+  (fix-user (first (execute! (sql/format {:select :*
+                                          :from :users
+                                          :where [:= :users/email email]})))))
+
 (pco/defresolver user-photos [{:user/keys [id]}]
   {::pco/input [:user/id]
    ::pco/output [{:user/photos [:photo/id]}]}
@@ -884,6 +891,7 @@
 
                  users
                  user-by-id
+                 user-by-email
                  user-photos
                  ]))
 
@@ -920,6 +928,9 @@
 
 #_(query {:artist/id #uuid "f01c816e-53e3-4023-85a5-21c300a9b6b3"}
          [:artist/artist-tag-ids])
+
+#_(query {:user/email "rafal.dittwald@gmail.com"}
+         [:user/name])
 
 #_(query '[{(:sculptures {:decade 1960}) [:sculpture/id]}] nil)
 

@@ -118,14 +118,6 @@
          {:slug slug})
        db->))
 
-; user
-
-(defn select-user-with-email [email]
-  (->> (-select-user-with-email
-         @db-spec
-         {:email email})
-       db->))
-
 ; entity
 
 (defn select-all-with-type [entity-type]
