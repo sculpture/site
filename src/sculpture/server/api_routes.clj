@@ -46,7 +46,7 @@
         (let [identifier (edn/read-string (url-decode identifier))
               pattern (edn/read-string (url-decode pattern))]
           {:status 200
-           :body (db.graph/query identifier pattern)}))]
+           :body (db/query identifier pattern)}))]
 
 
 

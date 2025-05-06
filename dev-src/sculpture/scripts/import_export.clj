@@ -1,4 +1,4 @@
-(ns sculpture.db.util
+(ns sculpture.scripts.import-export
   (:require
    [sculpture.config :refer [config]]
    [sculpture.db.plain :as plain]
