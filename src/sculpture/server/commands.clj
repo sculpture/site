@@ -2,7 +2,6 @@
   (:require
     [clojure.string :as string]
     [tada.events.core :as tada]
-    [sculpture.db.pg.graph :as db.graph]
     [sculpture.db.pg.select :as db.select]
     [sculpture.server.advanced-search :as advanced-search]))
 

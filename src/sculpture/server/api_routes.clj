@@ -7,9 +7,7 @@
     [sculpture.config :refer [config]]
     [sculpture.darkroom.core :as darkroom]
     [sculpture.db.api :as db]
-    [sculpture.db.core :as db.core]
     [sculpture.db.pg.select :as db.select]
-    [sculpture.db.pg.graph :as db.graph]
     [sculpture.db.pg.util :as db.util]
     [sculpture.server.geocode :as geocode]
     [sculpture.server.oauth :as oauth]
@@ -41,7 +39,7 @@
                          form-params)
               {:keys [identifier pattern]} params]
           {:status 200
-           :body (db.graph/query identifier pattern)}))]
+           :body (db/query identifier pattern)}))]
 
      [[:get "/api/eql"]
       (fn [{{:keys [identifier pattern]} :params}]
@@ -87,7 +85,7 @@
       (fn [request]
         (case (:environment config)
           :dev
-          (let [user (db.graph/query
+          (let [user (db/query
                       {:user/id #uuid "013ec717-531b-4b30-bacf-8a07f33b0d43"}
                       [:user/id
                        :user/email
@@ -100,7 +98,7 @@
           :prod
           (if-let [user-id (get-in request [:session :user-id])]
             {:status 200
-             :body (db.graph/query
+             :body (db/query
                       {:user/id user-id}
                       [:user/id
                        :user/email
@@ -144,7 +142,7 @@
                                        :user/avatar (:avatar oauth-user-info)})]
               (when (or (not= (:name oauth-user-info) (:user/name user))
                         (not= (:avatar oauth-user-info) (:user/avatar user)))
-                (db.core/upsert! updated-user (:user/id user)))
+                (db/upsert! updated-user (:user/id user)))
               {:status 200
                :body updated-user
                :session {:user-id (:user/id user)}})
@@ -159,7 +157,7 @@
       (fn [request]
         (let [{{:keys [id title slug year artist-ids]} :body-params} request]
           (if-let [user-id (request->user-id request)]
-            (if (db.core/upsert!
+            (if (db/upsert!
                   {:id id
                    :type "sculpture"
                    :slug slug
@@ -178,7 +176,7 @@
       (fn [request]
         (let [{{:keys [id name slug :as req]} :body-params} request]
           (if-let [user-id (request->user-id req)]
-            (if (db.core/upsert!
+            (if (db/upsert!
                   {:id id
                    :name name
                    :type "artist"
@@ -195,7 +193,7 @@
       (fn [request]
         (let [{{:keys [entity]} :body-params} request]
           (if-let [user-id (request->user-id request)]
-            (if (db.core/upsert! entity user-id)
+            (if (db/upsert! entity user-id)
               {:status 200
                :body {:status "OK"}}
               {:status 500
@@ -211,16 +209,16 @@
                   sculpture-id (java.util.UUID/fromString sculpture-id)
                   {:keys [tempfile filename]} file
                   image-data (darkroom/process-image! id tempfile)]
-              (db.core/upsert! {:photo/id id
-                                :photo/type "photo"
-                                :photo/user-id user-id
-                                :photo/colors (vec (image-data :colors))
-                                :photo/captured-at (image-data :created-at)
-                                :photo/width (get-in image-data [:dimensions :width])
-                                :photo/height (get-in image-data [:dimensions :height])
-                                :photo/location (image-data :location)
-                                :photo/sculpture-id sculpture-id}
-                               user-id)
+              (db/upsert! {:photo/id id
+                           :photo/type "photo"
+                           :photo/user-id user-id
+                           :photo/colors (vec (image-data :colors))
+                           :photo/captured-at (image-data :created-at)
+                           :photo/width (get-in image-data [:dimensions :width])
+                           :photo/height (get-in image-data [:dimensions :height])
+                           :photo/location (image-data :location)
+                           :photo/sculpture-id sculpture-id}
+                          user-id)
               {:status 200
                :body {:photo-id id}})
             {:status 401
@@ -233,7 +231,7 @@
           (let [id (java.util.UUID/fromString (get-in request [:params "id"]))
                 {:keys [tempfile filename]} (get-in request [:params "file"])
                 image-data (darkroom/process-image! id tempfile)]
-            (db.core/upsert!
+            (db/upsert!
               {:photo/id id
                :photo/type "photo"
                :photo/user-id user-id

@@ -1,7 +1,7 @@
 (ns sculpture.server.advanced-search
   (:require
     [clojure.string :as string]
-    [sculpture.db.pg.graph :as db.graph]
+    [sculpture.db.api :as db]
     [sculpture.schema.util :as schema.util]
     [sculpture.schema.schema :as schema]))
 
@@ -71,7 +71,7 @@
   [entity-type conditions]
   (filter-entities
     conditions
-    (db.graph/query
+    (db/query
       (keyword (schema/pluralize entity-type))
       (vec (schema.util/entity-keys entity-type)))))
 

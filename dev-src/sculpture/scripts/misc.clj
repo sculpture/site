@@ -3,15 +3,15 @@
     [bloom.commons.uuid :as uuid]
     [clojure.string :as string]
     [clojure.java.io :as io]
-    [sculpture.db.core :as db]
-    [sculpture.db.api :as db.api]
+    [sculpture.db.api :as db]
+    [sculpture.db.plain :as db.plain]
     [sculpture.db.yaml :as yaml]
     [sculpture.db.pg.upsert :as db.upsert]))
 
 (def base-path "../sculpture-data/")
 
 (defn save-entity! [entity]
-  (spit (str base-path (db/entity->path entity)) (db/entity->yaml entity)))
+  (db.plain/save-to-file! base-path entity))
 
 (defn slugify [s]
      (-> s
@@ -90,7 +90,7 @@
                     (map yaml/from-string))]
            (doseq [city cities]
              (println (city :city))
-             (let [sculpture-ids (->> (db.api/query
+             (let [sculpture-ids (->> (db/query
                                        {:region/slug (slugify (city :city))}
                                        [:region/sculpture-ids])
                                       :region/sculpture-ids)]
@@ -190,7 +190,7 @@
           :slug (slugify demonym)
           :demonym demonym
           :nation nation})
-       (map (partial db/save-to-file! "../sculpture-data"))
+       (map (partial db.plain/save-to-file! "../sculpture-data"))
        dorun)
 
   ;; import from file
@@ -205,7 +205,7 @@
 
   #_(db.upsert/upsert-entity! (yaml/from-string (slurp "../sculpture-data/data/nationality/47f58352-ea8b-4f2a-a6da-ceca7d19da75.yml")))
   ;; modify artists
-  (let [nationalities (db.api/all-with-type "nationality")
+  (let [nationalities (db/all-with-type "nationality")
         nationality->id (zipmap
                           (map :demonym nationalities)
                           (map :id nationalities))]
@@ -223,7 +223,7 @@
                       (or (nationality->id n)
                           (throw (ex-info (str "Can't find" (pr-str n) " for " (:name artist)) {}))))
                     []))))
-         (map (partial db/save-to-file! "../sculpture-data"))
+         (map (partial db.plain/save-to-file! "../sculpture-data"))
          dorun))
 
   ;; remove original nationality
@@ -235,7 +235,7 @@
        (map yaml/from-string)
        (map (fn [artist]
               (dissoc artist :nationality)))
-       (map (partial db/save-to-file! "../sculpture-data"))
+       (map (partial db.plain/save-to-file! "../sculpture-data"))
        dorun)
 
   ;; re-import artists
@@ -249,3 +249,18 @@
        (map db.upsert/upsert-entity!)
        dorun)
   )
+
+;; create new users
+
+#_(->> [[#uuid "915ba0d5-6f96-4d8a-8fe5-3e592a9d2bb0" "Zbigniew Szmigielski" "zs@example.com"]
+        [#uuid "35134be3-14fb-4c3e-b015-bb3072e2f646" "Tadeusz Szmigielski" "ts@example.com"]]
+       (map (fn [[id name email]]
+              {:user/id id
+               :user/type "user"
+               :user/email email
+               :user/name name}))
+       (map (fn [u]
+              (sculpture.db.upsert/upsert! u #uuid "013ec717-531b-4b30-bacf-8a07f33b0d43")))
+       doall)
+
+
