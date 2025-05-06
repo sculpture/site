@@ -6,7 +6,6 @@
     [sculpture.db.github :as github]
     [sculpture.db.pg.core :as db]
     [sculpture.db.api :as db.api]
-    [sculpture.db.pg.select :as db.select]
     [sculpture.db.pg.graph :as db.graph]
     [sculpture.db.pg.upsert :as db.upsert]
     [sculpture.schema.schema :as schema]

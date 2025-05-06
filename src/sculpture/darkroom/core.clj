@@ -1,10 +1,7 @@
 (ns sculpture.darkroom.core
   (:require
-    [clojure.string :as string]
     [sculpture.darkroom.convert :as convert]
-    [sculpture.darkroom.s3 :as s3]
-    [sculpture.db.core :as db]
-    [sculpture.db.pg.select :as db.select]))
+    [sculpture.darkroom.s3 :as s3]))
 
 (defn convert-and-upload-image! [id file]
   (let [file-name (str id ".jpg")]

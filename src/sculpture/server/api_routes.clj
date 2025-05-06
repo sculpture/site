@@ -1,7 +1,6 @@
 (ns sculpture.server.api-routes
   (:require
     [clojure.edn :as edn]
-    [bloom.commons.uuid :as uuid]
     [bloom.commons.tada.rpc.server :as tada.rpc]
     [ring.middleware.multipart-params :refer [wrap-multipart-params]]
     [ring.util.codec :refer [url-decode]]
@@ -11,7 +10,6 @@
     [sculpture.db.core :as db.core]
     [sculpture.db.pg.select :as db.select]
     [sculpture.db.pg.graph :as db.graph]
-    [sculpture.db.plain :as db.plain]
     [sculpture.db.pg.util :as db.util]
     [sculpture.server.geocode :as geocode]
     [sculpture.server.oauth :as oauth]

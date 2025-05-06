@@ -6,7 +6,6 @@
     [sculpture.db.core :as db]
     [sculpture.db.api :as db.api]
     [sculpture.db.yaml :as yaml]
-    [sculpture.db.pg.select :as db.select]
     [sculpture.db.pg.upsert :as db.upsert]))
 
 (def base-path "../sculpture-data/")
@@ -91,8 +90,10 @@
                     (map yaml/from-string))]
            (doseq [city cities]
              (println (city :city))
-             (let [sculpture-ids (->> (db.select/select-sculptures-for-region (slugify (city :city)))
-                                      (map :id))]
+             (let [sculpture-ids (->> (db.api/query
+                                       {:region/slug (slugify (city :city))}
+                                       [:region/sculpture-ids])
+                                      :region/sculpture-ids)]
                (doseq [sculpture-id sculpture-ids]
                  (println "updating" sculpture-id)
                  (-> (yaml/from-string (slurp (str base-path "data/sculpture/" sculpture-id ".yml")))
