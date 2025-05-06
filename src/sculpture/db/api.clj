@@ -1,7 +1,8 @@
 (ns sculpture.db.api
   (:require
    [bloom.commons.uuid :as uuid]
-   [sculpture.db.pg.graph :as db.graph]))
+   [sculpture.db.pg.graph :as db.graph]
+   [sculpture.schema.schema :as schema]))
 
 (defn ->id-key
   [entity-type]
@@ -29,4 +30,15 @@
 
 #_(exists? "sculpture" #uuid "77ad0987-bf94-4619-85ed-047ef5677cd9")
 
+(defn all-with-type
+  [entity-type]
+  (db.graph/query
+   (keyword (schema/pluralize entity-type))
+   (db.graph/table-columns (keyword entity-type))))
+
+#_(all-with-type "material")
+#_(all-with-type "nationality")
+
 (def query db.graph/query)
+
+

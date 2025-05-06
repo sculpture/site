@@ -65,15 +65,6 @@
            :types ["sculpture"]
            :limit 5})
 
-; entity
-
-(defn select-all-with-type [entity-type]
-  (->> (-select-all-with-type
-         @db-spec
-         {:type (entity-type->db-table entity-type)}
-         {:quoting :ansi})
-       (map db->)))
-
 ; misc
 
 (defn select-random-sculpture-slug []

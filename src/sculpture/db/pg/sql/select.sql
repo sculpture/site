@@ -310,13 +310,6 @@ ORDER BY
    word_similarity(title,:ilike-query) DESC
 LIMIT :limit;
 
--- :name -select-all-with-type
--- :result :many
-SELECT
-  *
-FROM
-  :i:type;
-
 -- :name -entity-counts
 -- :result :one
 SELECT

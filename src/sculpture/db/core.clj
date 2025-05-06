@@ -5,6 +5,7 @@
     [sculpture.db.plain :as plain]
     [sculpture.db.github :as github]
     [sculpture.db.pg.core :as db]
+    [sculpture.db.api :as db.api]
     [sculpture.db.pg.select :as db.select]
     [sculpture.db.pg.graph :as db.graph]
     [sculpture.db.pg.upsert :as db.upsert]
@@ -45,11 +46,10 @@
 #_(import-from-dir! "export-data")
 
 (defn export-to-dir! [dir]
-  (->> schema/types
-       (map db.select/select-all-with-type)
+  (->> (schema/types)
+       (map db.api/all-with-type)
        (apply concat)
-       (take 2)
-       (map plain/add-namespaces)
+       #_(take 2)
        (plain/save-many! dir)))
 
 #_(export-to-dir! "export-data")

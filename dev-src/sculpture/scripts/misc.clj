@@ -4,6 +4,7 @@
     [clojure.string :as string]
     [clojure.java.io :as io]
     [sculpture.db.core :as db]
+    [sculpture.db.api :as db.api]
     [sculpture.db.yaml :as yaml]
     [sculpture.db.pg.select :as db.select]
     [sculpture.db.pg.upsert :as db.upsert]))
@@ -203,7 +204,7 @@
 
   #_(db.upsert/upsert-entity! (yaml/from-string (slurp "../sculpture-data/data/nationality/47f58352-ea8b-4f2a-a6da-ceca7d19da75.yml")))
   ;; modify artists
-  (let [nationalities (db.select/select-all-with-type "nationality")
+  (let [nationalities (db.api/all-with-type "nationality")
         nationality->id (zipmap
                           (map :demonym nationalities)
                           (map :id nationalities))]

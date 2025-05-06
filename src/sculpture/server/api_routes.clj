@@ -30,30 +30,6 @@
         {:extra-params (fn [request]
                          {:user-id (get-in request [:session :user-id])})})]]
 
-    (->> [["category" "categories"]
-          ["material"]
-          ["artist-tag"]
-          ["sculpture-tag"]
-          ["region-tag"]
-          ["user"]
-          ["photo"]
-          ["artist"]
-          ["region"]]
-         (mapcat (fn [[entity-type plural]]
-                   (let [plural (or plural (str entity-type "s"))]
-
-                     [[[:get (str "/api/" plural "/")]
-                       (fn [_]
-                         {:status 200
-                          :body (db.select/select-all-with-type entity-type)})]
-
-                      [[:get (str "/api/" plural "/:id-or-slug")]
-                       (fn [{{:keys [id-or-slug]} :params}]
-                         (if-let [entity (db/entity-by-id-or-slug id-or-slug)]
-                           {:status 200
-                            :body entity}
-                           {:status 404
-                            :body {:error "Not Found"}}))]]))))
 
     [
      [[:get "/api/meta"]
