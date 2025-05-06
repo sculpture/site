@@ -110,14 +110,6 @@
          {:material-slug slug})
        (map db->)))
 
-; sculpture
-
-(defn select-sculpture-with-slug [slug]
-  (->> (-select-sculpture-with-slug
-         @db-spec
-         {:slug slug})
-       db->))
-
 ; entity
 
 (defn select-all-with-type [entity-type]
@@ -136,10 +128,6 @@
 ; sample
 
 #_(select-random-sculpture-slug)
-
-#_(-select-sculpture-with-slug
-    @db-spec
-    {:slug "bird-wings"})
 
 #_(time
     (select-sculptures-for-region "canada"))

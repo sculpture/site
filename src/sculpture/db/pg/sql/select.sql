@@ -445,17 +445,6 @@ JOIN materials ON materials_sculptures."material-id" = materials.id
 WHERE
   materials.slug = :material-slug;
 
--- :name -select-sculpture-with-slug
--- :result :one
-SELECT
-  *
-FROM
-  extended_sculptures
-WHERE
-  extended_sculptures.slug = lower(:slug)
-LIMIT
-  1;
-
 -- :name -select-random-sculpture-slug
 -- :result :one
 SELECT

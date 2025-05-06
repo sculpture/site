@@ -115,11 +115,6 @@
           {:status 200
            :body (db.select/select-sculptures-for-artist-gender artist-gender)}))]
 
-     [[:get "/api/sculptures/:slug"]
-      (fn [{{:keys [slug]} :params}]
-        {:status 200
-         :body (db.select/select-sculpture-with-slug slug)})]
-
      ; UTIL
 
      [[:get "/api/util/geocode"]
