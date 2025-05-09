@@ -4,7 +4,7 @@
     [org.httpkit.client :as http]
     [sculpture.config :refer [config]]
     [sculpture.json :as json]
-    [sculpture.db.pg.util :as util]))
+    [sculpture.db.postgres :as db.pg]))
 
 (defn mapquest-osm-search [query]
   (-> @(http/request
@@ -71,4 +71,4 @@
 
 (defn shape [query]
   (when-let [result (:geojson (mapquest-osm-search query))]
-    (util/simplify-geojson (json/encode result))))
+    (db.pg/simplify-geojson (json/encode result))))

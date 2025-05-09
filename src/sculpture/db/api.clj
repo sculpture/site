@@ -5,7 +5,7 @@
    [sculpture.db.api :as db]
    [sculpture.db.plain :as plain]
    [sculpture.db.github :as github]
-   [sculpture.db.pg.graph :as db.graph]
+   [sculpture.db.graph :as db.graph]
    [sculpture.db.pg.upsert :as db.upsert]
    [sculpture.schema.schema :as schema]
    [sculpture.schema.util :as schema.util]))
@@ -18,7 +18,7 @@
 
 (defn exists?
   [entity-type id]
-  (boolean (seq (db.graph/query
+  (boolean (seq (query
                  {(->id-key entity-type) id}
                  [(keyword entity-type "slug")]))))
 
@@ -26,9 +26,9 @@
 
 (defn all-with-type
   [entity-type]
-  (db.graph/query
+  (query
    (keyword (schema/pluralize entity-type))
-   (db.graph/table-columns (keyword entity-type))))
+   (schema/entity->attributes entity-type)))
 
 #_(all-with-type "material")
 #_(all-with-type "nationality")

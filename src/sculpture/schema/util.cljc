@@ -2,8 +2,6 @@
   (:require
     [sculpture.schema.schema :as schema]))
 
-
-
 (defn entity-type [entity]
   (namespace (key (first entity))))
 

@@ -8,7 +8,7 @@
     [sculpture.darkroom.core :as darkroom]
     [sculpture.db.api :as db]
     [sculpture.db.pg.select :as db.select]
-    [sculpture.db.pg.util :as db.util]
+    [sculpture.db.postgres :as db.pg]
     [sculpture.server.geocode :as geocode]
     [sculpture.server.oauth :as oauth]
     [sculpture.server.pages.oauth :as pages.oauth]))
@@ -31,7 +31,7 @@
      [[:get "/api/meta"]
       (fn [_]
         {:status 200
-         :body (db.select/entity-counts)})]
+         :body (db.pg/entity-counts)})]
 
      [[:post "/api/eql"]
       (fn [{:keys [body-params form-params]} ]
@@ -78,7 +78,7 @@
      [[:put "/api/util/simplify"]
       (fn [{{:keys [geojson]} :body-params}]
         {:status 200
-         :body {:geojson (db.util/simplify-geojson geojson)}})]
+         :body {:geojson (db.pg/simplify-geojson geojson)}})]
 
      ; SESSION
      [[:get "/api/session"]

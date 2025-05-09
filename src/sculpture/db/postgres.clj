@@ -1,10 +1,53 @@
-(ns sculpture.db.pg.select
+(ns sculpture.db.postgres
   (:require
    [clojure.string :as string]
    [hugsql.core :as hugsql]
+   [hugsql.adapter.next-jdbc :as next-adapter]
+   [hikari-cp.core :as hikari]
+   [sculpture.config :refer [config]]
    [sculpture.schema.schema :as schema]
-   [sculpture.db.pg.config :refer [db-spec]]
-   [sculpture.db.pg.mapper :refer [db->]]))
+   [sculpture.db.pg.mapper :refer [->db]]))
+
+(defonce datasource
+  (delay
+    (hugsql/set-adapter! (next-adapter/hugsql-adapter-next-jdbc))
+    (hikari/make-datasource {:jdbc-url (str "jdbc:" (config :db-url))})))
+
+(def ^:dynamic db-spec datasource)
+
+(hugsql/def-db-fns "sculpture/db/pg/sql/init.sql")
+(hugsql/def-db-fns "sculpture/db/pg/sql/views.sql")
+(hugsql/def-db-fns "sculpture/db/pg/sql/drop.sql")
+
+(defn reset-views! []
+  (-views! @db-spec))
+
+(defn init! []
+  (-init! @db-spec)
+  (reset-views!))
+
+(defn drop! []
+  (-drop! @db-spec))
+
+(hugsql/def-db-fns "sculpture/db/pg/sql/upsert.sql")
+
+(defn upsert-sculpture! [sculpture]
+  (-upsert-sculpture!
+    @db-spec
+    (->db sculpture)))
+
+(defn upsert-region! [region]
+  (-upsert-region!
+    @db-spec
+    (->db region)))
+
+(hugsql/def-db-fns "sculpture/db/pg/sql/util.sql")
+
+(defn simplify-geojson [geojson]
+  (->> (-simplify-geojson
+         @db-spec
+         {:geojson geojson})
+       :geojson))
 
 (hugsql/def-db-fns "sculpture/db/pg/sql/select.sql")
 

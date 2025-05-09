@@ -28,9 +28,18 @@
                  [ring-cors "0.1.8"]
 
                  ; DB
+                 ;; combined
+                 ; [com.wsscode/pathom3 "2021.07.10-1-alpha"]
+                 [com.wsscode/pathom3 "2025.01.16-alpha"]
+                 ;; datalog
+                 [datascript "1.7.5"]
+                 [datalevin "0.9.20"]
+                 [com.taoensso/nippy "3.4.2"] ;; otherwise datalevin sad
+                 ;; plain
                  [base64-clj "0.1.1"]
                  [io.forward/yaml "1.0.10"]
                  [metosin/jsonista "0.2.7"]
+                 ;; postgres
                  [hikari-cp "2.13.0"]
                  [camel-snake-kebab "0.4.3"]
                  [com.github.seancorfield/next.jdbc "1.2.761"]
@@ -40,8 +49,6 @@
                  ;; https://mvnrepository.com/artifact/net.postgis/postgis-jdbc
                  [net.postgis/postgis-jdbc "2.5.0" :exclusions [org.postgresql/postgresql]]
                  [com.github.seancorfield/honeysql "2.3.911"]
-                 [com.wsscode/pathom3 "2021.07.10-1-alpha"]
-
 
                  ; DARKROOM
                  [clj-commons/conch "0.9.2"]
@@ -55,7 +62,8 @@
 
   :plugins [[io.bloomventures/omni "0.29.1"]]
 
-  :profiles {:dev {:dependencies [[com.wsscode/pathom-viz-connector "2022.02.14"]]}
+  :profiles {:dev {:dependencies [[com.wsscode/pathom-viz-connector "2022.02.14"]]
+                   :source-paths ["src" "dev-src"]}
              :test {:dependencies [[com.codeborne/phantomjsdriver "1.3.0"
                                     :exclusions [org.seleniumhq.selenium/selenium-java
                                                  org.seleniumhq.selenium/selenium-server

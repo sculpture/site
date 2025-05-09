@@ -25,36 +25,61 @@
 
 (def id-opts
   {:default nil
+   :schema.attr/type :db.type/uuid
+   :schema.attr/unique? true
    :spec uuid?
    :input {:type :string
            :disabled true}})
 
 (def slug-opts
   {:default ""
+   :schema.attr/type :db.type/string
+   :schema.attr/unique? true
    :spec types/Slug
    :input {:type :string}})
 
+(def optional-flexdate-opts
+  {:default nil
+   :optional true
+   :schema.attr/type :db.type/string
+   :spec [:maybe types/FlexDate]
+   :input {:type :flexdate}})
+
+(def optional-link-opts
+  {:default nil
+   :optional true
+   :schema.attr/type :db.type/string
+   :spec [:maybe types/Url]
+   :input {:type :url}})
+
+(def required-string-opts
+  {:default ""
+   :schema.attr/type :db.type/string
+   :spec types/NonBlankString
+   :input {:type :string}})
+
+(def optional-string-opts
+  {:optional true
+   :default nil
+   :schema.attr/type :db.type/string
+   :spec [:maybe types/NonBlankString]
+   :input {:type :string}})
+
 (defn tag-ids-opts-for [entity-type]
+  (let [tag-entity-type (case entity-type
+                          "photo" "photo-tag"
+                          "sculpture" "sculpture-tag"
+                          "region" "region-tag"
+                          "artist" "artist-tag"
+                          nil)]
   {:default []
    :spec types/RelatedIds
    :optional true
-   :relation? true
+   :schema.attr/relation [:many tag-entity-type]
    :input {:type :multi-lookup
            :optional true
-           :on-find (lookup-on-find
-                      (case entity-type
-                          "photo" "photo-tag"
-                          "sculpture" "sculpture-tag"
-                          "region" "region-tag"
-                          "artist" "artist-tag"
-                          nil))
-           :on-search (lookup-on-search
-                        (case entity-type
-                          "photo" "photo-tag"
-                          "sculpture" "sculpture-tag"
-                          "region" "region-tag"
-                          "artist" "artist-tag"
-                          nil))}})
+           :on-find (lookup-on-find tag-entity-type)
+           :on-search (lookup-on-search tag-entity-type)}}))
 
 (def entities
   ;; top-level order determines 'order of insertion into db'
@@ -70,9 +95,7 @@
     (array-map
       :artist-tag/id id-opts
       :artist-tag/slug slug-opts
-      :artist-tag/name {:default ""
-                        :spec types/NonBlankString
-                        :input {:type :string}})}
+      :artist-tag/name required-string-opts)}
 
    {:entity/id "nationality"
     :entity/id-plural "nationalities"
@@ -85,12 +108,8 @@
     (array-map
       :nationality/id id-opts
       :nationality/slug slug-opts
-      :nationality/nation {:default ""
-                           :spec types/NonBlankString
-                           :input {:type :string}}
-      :nationality/demonym {:default ""
-                            :spec types/NonBlankString
-                            :input {:type :string}})}
+      :nationality/nation required-string-opts
+      :nationality/demonym required-string-opts)}
 
    {:entity/id "artist"
     :entity/id-plural "artists"
@@ -103,39 +122,27 @@
     (array-map
       :artist/id id-opts
       :artist/slug slug-opts
-      :artist/name {:default ""
-                    :spec types/NonBlankString
-                    :input {:type :string}}
+      :artist/name required-string-opts
       ;; optional:
       :artist/gender {:default nil
                       :optional true
+                      :schema.attr/type :db.type/string
                       :spec [:maybe [:enum "male" "female" "other"]]
                       :input {:type :enum
                               :options #{"" "male" "female" "other"}}}
-      :artist/link-website {:default nil
-                            :optional true
-                            :spec [:maybe types/Url]
-                            :input {:type :url}}
-      :artist/link-wikipedia {:default nil
-                              :optional true
-                              :spec [:maybe types/Url]
-                              :input {:type :url}}
-      :artist/birth-date {:default nil
-                          :optional true
-                          :spec [:maybe types/FlexDate]
-                          :input {:type :flexdate}}
-      :artist/death-date {:default nil
-                          :optional true
-                          :spec [:maybe types/FlexDate]
-                          :input {:type :flexdate}}
+      :artist/link-website optional-link-opts
+      :artist/link-wikipedia optional-link-opts
+      :artist/birth-date optional-flexdate-opts
+      :artist/death-date optional-flexdate-opts
       :artist/bio {:default nil
                    :optional true
+                   :schema.attr/type :db.type/string
                    :spec [:maybe types/NonBlankString]
                    :input {:type :string
                            :length :long}}
       ;; related:
       :artist/nationality-ids {:default []
-                               :relation? true
+                               :schema.attr/relation [:many "nationality"]
                                :optional true
                                :spec types/RelatedIds
                                :input {:type :multi-lookup
@@ -155,15 +162,9 @@
     (array-map
       :city/id id-opts
       :city/slug slug-opts
-      :city/city {:default ""
-                  :spec types/NonBlankString
-                  :input {:type :string}}
-      :city/region {:default ""
-                    :spec types/NonBlankString
-                    :input {:type :string}}
-      :city/country {:default ""
-                     :spec types/NonBlankString
-                     :input {:type :string}})}
+      :city/city required-string-opts
+      :city/region required-string-opts
+      :city/country required-string-opts)}
 
    {:entity/id "material"
     :entity/id-plural "materials"
@@ -176,9 +177,7 @@
     (array-map
       :material/id id-opts
       :material/slug slug-opts
-      :material/name {:default ""
-                      :spec types/NonBlankString
-                      :input {:type :string}})}
+      :material/name required-string-opts)}
 
    {:entity/id "category"
     :entity/id-plural "categories"
@@ -191,9 +190,7 @@
     (array-map
       :category/id id-opts
       :category/slug slug-opts
-      :category/name {:default ""
-                      :spec types/NonBlankString
-                      :input {:type :string}})}
+      :category/name required-string-opts)}
 
    {:entity/id "sculpture-tag"
     :entity/id-plural "sculpture-tags"
@@ -206,12 +203,10 @@
     (array-map
       :sculpture-tag/id id-opts
       :sculpture-tag/slug slug-opts
-      :sculpture-tag/name {:default ""
-                           :spec types/NonBlankString
-                           :input {:type :string}}
+      :sculpture-tag/name required-string-opts
       ;; optional:
       :sculpture-tag/category-id {:default nil
-                                  :relation? true
+                                  :schema.attr/relation [:one "category"]
                                   :optional true
                                   :spec [:maybe uuid?]
                                   ;; wrap in a function so sub can be called later
@@ -244,11 +239,10 @@
     (array-map
       :sculpture/id id-opts
       :sculpture/slug slug-opts
-      :sculpture/title {:default ""
-                        :spec types/NonBlankString
-                        :input {:type :string}}
+      :sculpture/title required-string-opts
       ;; optional:
       :sculpture/location {:default nil
+                           :schema.attr/type nil ;; not storing in ds
                            :spec types/Location
                            :input {:type :location
                                    :geocode (fn [query callback]
@@ -256,46 +250,36 @@
                                                  (dispatch! [:state.edit/geocode! query callback])))}}
       :sculpture/note {:default nil
                        :optional true
+                       :schema.attr/type :db.type/string
                        :spec [:maybe types/NonBlankString]
                        :input {:type :string
                                :length :long}}
-      :sculpture/commissioned-by {:optional true
-                                  :default ""
-                                  :spec [:maybe types/NonBlankString]
-                                  :input {:type :string}}
-      :sculpture/date {:optional true
-                       :default nil
-                       :spec [:maybe types/FlexDate]
-                       :input {:type :flexdate}}
-      :sculpture/display-date {:optional true
-                               :default nil
-                               :spec [:maybe :string]
-                               :input {:type :string}}
+      :sculpture/commissioned-by optional-string-opts
+      :sculpture/date optional-flexdate-opts
+      :sculpture/display-date optional-string-opts
       :sculpture/size {:optional true
                        :default nil
+                       :schema.attr/type :db.type/long
                        :spec [:maybe integer?]
                        :input {:type :integer}}
-      :sculpture/link-wikipedia {:optional true
-                                 :default nil
-                                 :spec [:maybe types/Url]
-                                 :input {:type :url}}
+      :sculpture/link-wikipedia optional-link-opts
       ;; related:
       :sculpture/sculpture-tag-ids (tag-ids-opts-for "sculpture")
       :sculpture/city-id {:default nil
-                          :relation? true
+                          :schema.attr/relation [:one "city"]
                           :optional true
                           :spec [:maybe uuid?]
                           :input {:type :single-lookup
                                   :on-find (lookup-on-find "city")
                                   :on-search (lookup-on-search "city")}}
       :sculpture/artist-ids {:default []
-                             :relation? true
+                             :schema.attr/relation [:many "artist"]
                              :spec types/RelatedIds
                              :input {:type :multi-lookup
                                      :on-find (lookup-on-find "artist")
                                      :on-search (lookup-on-search "artist")}}
       :sculpture/material-ids {:default []
-                               :relation? true
+                               :schema.attr/relation [:many "material"]
                                :spec types/RelatedIds
                                :input {:type :multi-lookup
                                        :on-find (lookup-on-find "material")
@@ -312,41 +296,13 @@
     (array-map
       :segment/id id-opts
       :segment/slug slug-opts
-      :segment/name {:default ""
-                     :spec types/NonBlankString
-                     :input {:type :string}}
+      :segment/name required-string-opts
       :segment/sculpture-id {:default nil
-                             :relation? true
+                             :schema.attr/relation [:one "sculpture"]
                              :spec [:maybe uuid?]
                              :input {:type :single-lookup
                                      :on-find (lookup-on-find "sculpture")
                                      :on-search (lookup-on-search "sculpture")}})}
-
-   {:entity/id "region"
-    :entity/id-plural "regions"
-    :entity/id-key :region/id
-    :entity/label "Region"
-    :entity/label-plural "Regions"
-    :entity/label-key :region/name
-    :entity/table "regions_with_related_ids"
-    :entity/spec
-    (array-map
-      :region/id id-opts
-      :region/slug slug-opts
-      :region/name {:default ""
-                    :spec types/NonBlankString
-                    :input {:type :string}}
-      ;; optional:
-      :region/geojson {:default nil
-                       :spec types/GeoJson
-                       :input {:type :geojson
-                               :simplify (fn [geojson callback]
-                                           #?(:cljs (dispatch! [:state.edit/simplify! geojson callback])))
-                               :get-shape (fn [query callback]
-                                            #?(:cljs
-                                               (dispatch! [:state.edit/get-shape! query callback])))}}
-      ;; related:
-      :region/region-tag-ids (tag-ids-opts-for "region"))}
 
    {:entity/id "region-tag"
     :entity/id-plural "region-tags"
@@ -359,9 +315,34 @@
     (array-map
       :region-tag/id id-opts
       :region-tag/slug slug-opts
-      :region-tag/name {:default ""
-                        :spec types/NonBlankString
-                        :input {:type :string}})}
+      :region-tag/name required-string-opts)}
+
+   {:entity/id "region"
+    :entity/id-plural "regions"
+    :entity/id-key :region/id
+    :entity/label "Region"
+    :entity/label-plural "Regions"
+    :entity/label-key :region/name
+    :entity/table "regions_with_related_ids"
+    :entity/spec
+    (array-map
+      :region/id id-opts
+      :region/slug slug-opts
+      :region/name required-string-opts
+      ;; optional:
+      :region/geojson {:default nil
+                       :schema.attr/type nil ;; not storing in ds
+                       :spec types/GeoJson
+                       :input {:type :geojson
+                               :simplify (fn [geojson callback]
+                                           #?(:cljs (dispatch! [:state.edit/simplify! geojson callback])))
+                               :get-shape (fn [query callback]
+                                            #?(:cljs
+                                               (dispatch! [:state.edit/get-shape! query callback])))}}
+      ;; related:
+      :region/region-tag-ids (tag-ids-opts-for "region"))}
+
+
 
    {:entity/id "user"
     :entity/id-plural "users"
@@ -373,16 +354,17 @@
     :entity/spec
     (array-map
       :user/id id-opts
-      :user/name {:default ""
-                  :spec types/NonBlankString
-                  :input {:type :string}}
+      :user/name required-string-opts
       :user/email {:default ""
+                   :schema.attr/unique? true
+                   :schema.attr/type :db.type/string
                    :spec types/Email
                    :input {:type :email
                            :disabled true}}
       ;; optional:
       :user/avatar {:optional true
                     :default ""
+                    :schema.attr/type :db.type/string
                     :spec [:maybe types/Url]
                     :input {:type :url
                             :disabled true}})}
@@ -399,38 +381,43 @@
       :photo/id id-opts
       :photo/featured? {:default nil
                         :optional true
+                        :schema.attr/type :db.type/boolean
                         :spec boolean?
                         :input {:type :boolean}}
       :photo/captured-at {:default nil
+                          :schema.attr/type :db.type/instant
                           :spec inst?
                           :input {:type :datetime}}
       :photo/colors {:default []
+                     :schema.attr/type :db.type/string
                      :spec [:sequential types/Color]
                      :input {:type :string
                              :disabled true}}
       :photo/width {:default nil
+                    :schema.attr/type :db.type/long
                     :spec integer?
                     :input {:type :integer
                             :disabled true}}
       :photo/height {:default nil
+                     :schema.attr/type :db.type/long
                      :spec integer?
                      :input {:type :integer
                              :disabled true}}
       ;; related
       :photo/user-id {:default nil
-                      :relation? true
+                      :schema.attr/relation [:one "user"]
                       :spec uuid?
                       :input {:type :single-lookup
                               :on-find (lookup-on-find "user")
                               :on-search (lookup-on-search "user")}}
       :photo/sculpture-id {:default nil
-                           :relation? true
+                           :schema.attr/relation [:one "sculpture"]
                            :spec [:maybe uuid?]
                            :input {:type :single-lookup
                                    :on-find (lookup-on-find "sculpture")
                                    :on-search (lookup-on-search "sculpture")}}
       :photo/segment-id {:default nil
-                         :relation? true
+                         :schema.attr/relation [:one "segment"]
                          :optional true
                          :spec [:maybe uuid?]
                          :input {:type :radio-related
@@ -463,6 +450,16 @@
 
 (def entity-types
   (set (map :entity/id entities)))
+
+(def entity->attributes
+  (->> entities
+       (map (fn [e]
+              [(:entity/id e)
+               (->> (:entity/spec e)
+                    (remove (fn [[_k v]]
+                                (:schema.attr/relation? v)))
+                    (mapv first))]))
+       (into {})))
 
 (def pluralize
   (zipmap (map :entity/id entities)
