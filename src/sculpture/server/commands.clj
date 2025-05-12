@@ -2,7 +2,7 @@
   (:require
     [clojure.string :as string]
     [tada.events.core :as tada]
-    [sculpture.db.postgres :as db.pg]
+    [sculpture.db.api :as db]
     [sculpture.server.advanced-search :as advanced-search]))
 
 ;; for now, we have to use data-specs
@@ -20,9 +20,9 @@
     :rest [:get "/api/graph/search"]
     :return
     (fn [{:keys [query limit types]}]
-      (db.pg/search {:query query
-                     :types types
-                     :limit (Integer. limit)}))}
+      (db/search {:query query
+                  :types types
+                  :limit (Integer. limit)}))}
 
    {:id :advanced-search
     :params {;; TODO one of the allowed types

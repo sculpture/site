@@ -1,6 +1,5 @@
-(ns sculpture.db.datalog
+(ns sculpture.db.datascript
   (:require
-   [datalevin.core :as d]
    [datascript.core :as ds]
    [sculpture.schema.schema :as schema]))
 
@@ -22,8 +21,8 @@
                                                         :many
                                                         :db.cardinality/many
                                                         nil)
-                                      :db/unique (when (:schema.attr/unique? v)
-                                                   :db.unique/identity)}
+                                      :db/unique (:schema.attr/unique v)
+                                      :db/index (:schema.attr/unique v)}
                                      (filter val)
                                      (into {}))])))))
        (into {})))
@@ -31,11 +30,11 @@
 #_(schema)
 #_(:sculpture/artist-ids (schema))
 
-#_(defonce conn
-  (d/get-conn "./datalevin" (schema)))
-
 (defonce conn
   (ds/create-conn (schema)))
+
+(defn reinit! []
+  (alter-var-root #'conn (constantly (ds/create-conn (schema)))))
 
 (defn upsert-entity!
   [entity]
@@ -58,3 +57,11 @@
        [?a :artist/id ?n]
        #_[_ :artist/artist-tags ?t]
        #_[?s :sculpture/title ?t]])
+
+#_(q '[:find (pull ?m [*])
+       :where
+       [?m :material/name "painted bronze"]])
+
+#_(q '[:find ?m
+       :where
+       [?m :material/id #uuid "20ec9050-85db-4ec6-8fef-806598bcee75"]])

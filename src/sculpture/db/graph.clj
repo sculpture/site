@@ -3,9 +3,12 @@
    [com.wsscode.pathom3.connect.operation :as pco]
    [com.wsscode.pathom3.connect.indexes :as pci]
    [com.wsscode.pathom3.interface.eql :as p.eql]
-   [sculpture.db.datalog :as d]
    [sculpture.schema.schema :as schema]
+   [sculpture.db.datascript :as db.ds]
    [sculpture.db.graph-pg-region :as pg-region]))
+
+(defn blanks-for [ks]
+  (zipmap ks (repeat nil)))
 
 (defn make-datascript-resolvers
   []
@@ -16,35 +19,42 @@
                  (concat
                   [
                    ;; widgets - _ => [{widget/*}, ...]
-                   (pco/resolver
-                    (symbol (:entity/id-plural e))
-                    {::pco/input []
-                     ::pco/output [{(keyword (:entity/id-plural e))
-                                    (schema/entity->attributes (:entity/id e))}]}
-                    (fn [env _in]
-                      (let [additional-where (:where (pco/params env))]
-                        {(keyword (:entity/id-plural e))
-                         ;; TODO could just pull the attributes that are asked for
-                         (d/q (concat [:find [(list 'pull '?e (schema/entity->attributes (:entity/id e))) '...]
-                                       :where
-                                       ['?e (:entity/id-key e) '_]]
-                                      additional-where))}))) ]
+                   (let [attrs (schema/direct-attributes (:entity/id e))]
+                     (pco/resolver
+                      (symbol (:entity/id-plural e))
+                      {::pco/input []
+                       ::pco/output [{(keyword (:entity/id-plural e))
+                                      attrs}]}
+                      (fn [env _in]
+                        (let [additional-where (:where (pco/params env))]
+                          {(keyword (:entity/id-plural e))
+                           ;; TODO could just pull the attributes that are asked for
+                           (let [blank (blanks-for attrs)]
+                             (->> (db.ds/q (concat [:find [(list 'pull '?e attrs) '...]
+                                                    :where
+                                                    ['?e (:entity/id-key e) '_]]
+                                                   additional-where))
+                                  (map (fn [e]
+                                         (merge blank e)))))}))))]
 
-                  ;; entity-by-(unique-key)
+                  ;; widget-by-(unique-key) => {widget/*}
                   (->> (:entity/spec e)
                        (keep (fn [[attr-key opts]]
-                               (when (:schema.attr/unique? opts)
-                                 (pco/resolver
-                                  (symbol (str (:entity/id e) "-by-" attr-key))
-                                  {::pco/input [attr-key]
-                                   ::pco/output (schema/entity->attributes (:entity/id e))}
-                                  (fn [_ in]
-                                    ;; TODO could just pull the attributes that are asked for
-                                    (d/q [:find (list 'pull '?e (schema/entity->attributes (:entity/id e))) '.
-                                          :in '$ '?value
-                                          :where
-                                          ['?e attr-key '?value]]
-                                         (attr-key in))))))))
+                               (when (:schema.attr/unique opts)
+                                 (let [attrs (schema/direct-attributes (:entity/id e))]
+                                   (pco/resolver
+                                    (symbol (str (:entity/id e) "-by-" attr-key))
+                                    {::pco/input [attr-key]
+                                     ::pco/output attrs}
+                                    (fn [_ in]
+                                      ;; TODO could just pull the attributes that are asked for
+                                      (merge
+                                       (blanks-for attrs)
+                                       (db.ds/q [:find (list 'pull '?e attrs) '.
+                                                 :in '$ '?value
+                                                 :where
+                                                 ['?e attr-key '?value]]
+                                                (attr-key in))))))))))
                   ;; widget-sprocket - widget-id => [sprocket/id, ...]
                   ;; sprocket-widgets - sprocket-id => [widget/id, ...]
                   (->> (:entity/spec e)
@@ -62,30 +72,50 @@
                                           count-key (keyword
                                                      (:entity/id e)
                                                      (str (:entity/id other-e) "-count"))]
-                                      (pco/resolver
-                                       (symbol (str (:entity/id e)
-                                                    "-"
-                                                    (case cardinality
-                                                      :one (:entity/id other-e)
-                                                      :many (:entity/id-plural other-e))))
-                                       {::pco/input [in-key]
-                                        ::pco/output [{out-key
-                                                       [(:entity/id-key other-e)]}
-                                                      out-ids-key
-                                                      count-key]}
-                                       (fn [_ in]
-                                         (let [ids (d/q [:find ['?other-id '...]
-                                                         :in '$ '?id
-                                                         :where
-                                                         ['?e (:entity/id-key e) '?id]
-                                                         ['?e attr-key '?other-e]
-                                                         ['?other-e (:entity/id-key other-e) '?other-id]]
-                                                        (in-key in))]
-                                           {out-ids-key ids
-                                            out-key (mapv (fn [x]
-                                                            {(:entity/id-key other-e) x})
-                                                          ids)
-                                            count-key (count ids)}))))
+                                      (case cardinality
+                                        :one
+                                        (pco/resolver
+                                         (symbol (str (:entity/id e)
+                                                      "-"
+                                                      (:entity/id other-e)))
+                                         {::pco/input [in-key]
+                                          ::pco/output [{out-key
+                                                         [(:entity/id-key other-e)]}
+                                                        out-ids-key]}
+                                         (fn [_ in]
+                                           (let [id (db.ds/q [:find '?other-id '.
+                                                              :in '$ '?id
+                                                              :where
+                                                              ['?e (:entity/id-key e) '?id]
+                                                              ['?e attr-key '?other-e]
+                                                              ['?other-e (:entity/id-key other-e) '?other-id]]
+                                                              (in-key in))]
+                                             {out-ids-key id
+                                              out-key {(:entity/id-key other-e) id}})))
+
+                                        :many
+                                        (pco/resolver
+                                         (symbol (str (:entity/id e)
+                                                      "-"
+                                                      (:entity/id-plural other-e)))
+                                         {::pco/input [in-key]
+                                          ::pco/output [{out-key
+                                                         [(:entity/id-key other-e)]}
+                                                        out-ids-key
+                                                        count-key]}
+                                         (fn [_ in]
+                                           (let [ids (db.ds/q [:find ['?other-id '...]
+                                                               :in '$ '?id
+                                                               :where
+                                                               ['?e (:entity/id-key e) '?id]
+                                                               ['?e attr-key '?other-e]
+                                                               ['?other-e (:entity/id-key other-e) '?other-id]]
+                                                              (in-key in))]
+                                             {out-ids-key ids
+                                              out-key (mapv (fn [x]
+                                                              {(:entity/id-key other-e) x})
+                                                            ids)
+                                              count-key (count ids)})))))
 
                                     ;; reverse direction
                                     (let [in-key (:entity/id-key other-e)
@@ -105,13 +135,13 @@
                                                        [(:entity/id-key e)]}
                                                       count-key]}
                                        (fn [_ in]
-                                         (let [ids (d/q [:find ['?id '...]
-                                                         :in '$ '?other-id
-                                                         :where
-                                                         ['?other-e (:entity/id-key other-e) '?other-id]
-                                                         ['?e attr-key '?other-e]
-                                                         ['?e (:entity/id-key e) '?id]]
-                                                        (in-key in))]
+                                         (let [ids (db.ds/q [:find ['?id '...]
+                                                             :in '$ '?other-id
+                                                             :where
+                                                             ['?other-e (:entity/id-key other-e) '?other-id]
+                                                             ['?e attr-key '?other-e]
+                                                             ['?e (:entity/id-key e) '?id]]
+                                                            (in-key in))]
                                            {out-key (mapv (fn [x]
                                                             {(:entity/id-key e) x})
                                                           ids)
@@ -125,22 +155,23 @@
                           pg-region/resolvers)
         indexes (pci/register resolvers)]
     (fn [i o]
-      (p.eql/process indexes i o))
-    #_(fn [query-id-or-identifier pattern]
-      (cond
-        (map? query-id-or-identifier)
-        (p.eql/process indexes query-id-or-identifier pattern)
-
-        (keyword? query-id-or-identifier)
-        (query-id-or-identifier (p.eql/process indexes [{query-id-or-identifier pattern}]))
-
-        (nil? pattern)
-        (p.eql/process indexes query-id-or-identifier)))))
+      (p.eql/process indexes i o))))
 
 #_((pathom) {} [{:sculptures [:sculpture/title]}])
 #_((pathom) {} [{:materials [:material/name]}])
 
-(def query (pathom))
+(def query
+  (let [p (pathom)]
+    (fn [query-id-or-identifier pattern]
+      (cond
+        (map? query-id-or-identifier)
+        (p query-id-or-identifier pattern)
+
+        (keyword? query-id-or-identifier)
+        (query-id-or-identifier (p {} [{query-id-or-identifier pattern}]))
+
+        (nil? pattern)
+        (p {} query-id-or-identifier)))))
 
 (comment
 
@@ -153,12 +184,16 @@
   ;; artists - with addition :where conditions
 
   ((pathom) {} [{'(:sculptures {:where [[?e :sculpture/date ?d]
-                                            [(< "1910" ?d "1920")]]}) [:sculpture/date]}])
+                                        [(< "1910" ?d "1920")]]}) [:sculpture/date]}])
 
   ;; artist-by-id
   (= {:artist/name "Kosso Eloul"}
      ((pathom) {:artist/id #uuid "f01c816e-53e3-4023-85a5-21c300a9b6b3"}
                [:artist/name]))
+
+
+  #_((pathom) {:artist/id #uuid "f01c816e-53e3-4023-85a5-21c300a9b6b3"}
+              (schema/direct-attributes "artist"))
 
   ;; artist-by-slug
   (= {:artist/name "Kosso Eloul"}
@@ -168,7 +203,7 @@
   ;; user-by-email
 
   #_((pathom) {:user/email "rafal.dittwald@gmail.com"}
-               [:user/avatar])
+              [:user/avatar])
 
   ;; artist-nationalities  - one-to-many
 
@@ -197,7 +232,7 @@
   ;; photo - user
   (= {:photo/user [{:user/email "wdittwald@gmail.com"}]}
      ((pathom) {:photo/id #uuid "39675b19-f252-4154-9033-82612883c0d2"}
-            [{:photo/user [:user/email]}]))
+               [{:photo/user [:user/email]}]))
 
   ;; user - photos
   ((pathom) {:user/id #uuid "1b5391b8-c7e7-493d-809c-cc8d8491d4f6"}
@@ -206,11 +241,16 @@
 
   ;; sculpture - regions
   #_((pathom) {:artist/id #uuid "f01c816e-53e3-4023-85a5-21c300a9b6b3"}
-            [{:artist/sculptures [:sculpture/title
-                                  {:sculpture/regions [:region/name]}]}])
+              [{:artist/sculptures [:sculpture/title
+                                    {:sculpture/regions [:region/name]}]}])
+
+
+  (= {:artist/name "Kosso Eloul"}
+     ((pathom) {:user/id #uuid "013ec717-531b-4b30-bacf-8a07f33b0d43"}
+               [:user/email]))
   )
 
-
+;;; OLD ----
 
 ;; smart-map-interface
 #_(:sculpture/date (com.wsscode.pathom3.interface.smart-map/smart-map
@@ -220,7 +260,7 @@
 ;; single eql query with identifier
 #_(peql/process indexes
                 [{[:sculpture/id #uuid "f6687354-9e7c-4cb2-a644-14e1cf96fc34"]
-                          [:sculpture/date]}])
+                  [:sculpture/date]}])
 
 ;; two part eql identifier and query
 #_(peql/process indexes
@@ -245,8 +285,8 @@
     (require [com.wsscode.pathom.viz.ws-connector.pathom3 :as p.connector])
 
     (let [env (p.connector/connect-env
-                (pci/register indexes)
-                {:com.wsscode.pathom.viz.ws-connector.core/parser-id :sculpture})]
+               (pci/register indexes)
+               {:com.wsscode.pathom.viz.ws-connector.core/parser-id :sculpture})]
       (peql/process env
                     {:photo/id #uuid "153b622b-3c43-4474-987b-6997913684df"}
                     [{:photo/user [{:user/photos [:photo/colors]}]}])))

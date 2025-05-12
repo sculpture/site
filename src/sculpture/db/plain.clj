@@ -8,7 +8,7 @@
     [sculpture.schema.util :as schema.util]))
 
 (defn entity->path [entity]
-  (str "data/" (schema.util/entity-type entity)  "/" (schema.util/entity-id entity) ".yml"))
+  (str "data/" (schema.util/entity-type entity) "/" (schema.util/entity-id entity) ".yml"))
 
 (defn strip-namespaces [entity]
   (->> entity
@@ -36,7 +36,8 @@
                           :tag-ids})
         yaml/to-string)))
 
-#_(entity->yaml {:sculpture/id 123})
+#_(entity->yaml {:sculpture/id 123
+                 :sculpture/sculpture-tag-ids [456]})
 
 (defn yaml->entity [s]
   (let [object (yaml/from-string s)
@@ -47,6 +48,7 @@
         (add-namespaces entity-type))))
 
 #_(yaml->entity (entity->yaml {:sculpture/id 123
+                               :sculpture/sculpture-tag-ids [456]
                                :sculpture/location {:longitude 1
                                                     :latitude 1
                                                     :precision 50}}))

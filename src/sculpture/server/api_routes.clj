@@ -7,7 +7,6 @@
     [sculpture.config :refer [config]]
     [sculpture.darkroom.core :as darkroom]
     [sculpture.db.api :as db]
-    [sculpture.db.pg.select :as db.select]
     [sculpture.db.postgres :as db.pg]
     [sculpture.server.geocode :as geocode]
     [sculpture.server.oauth :as oauth]
@@ -31,7 +30,7 @@
      [[:get "/api/meta"]
       (fn [_]
         {:status 200
-         :body (db.pg/entity-counts)})]
+         :body (db/entity-counts)})]
 
      [[:post "/api/eql"]
       (fn [{:keys [body-params form-params]} ]
@@ -54,7 +53,7 @@
      [[:get "/api/sculptures/random"]
       (fn [_]
         {:status 302
-         :headers {"Location" (str "/api/sculptures/" (db.select/select-random-sculpture-slug))}})]
+         :headers {"Location" (str "/api/sculptures/" (db/select-random-sculpture-slug))}})]
 
 
      ; UTIL

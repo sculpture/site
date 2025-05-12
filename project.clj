@@ -33,8 +33,6 @@
                  [com.wsscode/pathom3 "2025.01.16-alpha"]
                  ;; datalog
                  [datascript "1.7.5"]
-                 [datalevin "0.9.20"]
-                 [com.taoensso/nippy "3.4.2"] ;; otherwise datalevin sad
                  ;; plain
                  [base64-clj "0.1.1"]
                  [io.forward/yaml "1.0.10"]

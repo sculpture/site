@@ -1,8 +1,9 @@
 (ns sculpture.schema.schema
   (:require
-    [sculpture.schema.types :as types]
-    #?@(:cljs
-         [[sculpture.admin.state.api :refer [dispatch!]]])))
+   [malli.core :as m]
+   [sculpture.schema.types :as types]
+   #?@(:cljs
+       [[sculpture.admin.state.api :refer [dispatch!]]])))
 
 (declare by-id)
 
@@ -26,7 +27,7 @@
 (def id-opts
   {:default nil
    :schema.attr/type :db.type/uuid
-   :schema.attr/unique? true
+   :schema.attr/unique :db.unique/identity
    :spec uuid?
    :input {:type :string
            :disabled true}})
@@ -34,7 +35,7 @@
 (def slug-opts
   {:default ""
    :schema.attr/type :db.type/string
-   :schema.attr/unique? true
+   :schema.attr/unique :db.unique/value
    :spec types/Slug
    :input {:type :string}})
 
@@ -55,6 +56,7 @@
 (def required-string-opts
   {:default ""
    :schema.attr/type :db.type/string
+   :schema.attr/index-text? true
    :spec types/NonBlankString
    :input {:type :string}})
 
@@ -73,8 +75,8 @@
                           "artist" "artist-tag"
                           nil)]
   {:default []
-   :spec types/RelatedIds
    :optional true
+   :spec types/RelatedIds
    :schema.attr/relation [:many tag-entity-type]
    :input {:type :multi-lookup
            :optional true
@@ -274,12 +276,14 @@
                                   :on-search (lookup-on-search "city")}}
       :sculpture/artist-ids {:default []
                              :schema.attr/relation [:many "artist"]
+                             :optional true
                              :spec types/RelatedIds
                              :input {:type :multi-lookup
                                      :on-find (lookup-on-find "artist")
                                      :on-search (lookup-on-search "artist")}}
       :sculpture/material-ids {:default []
                                :schema.attr/relation [:many "material"]
+                               :optional true
                                :spec types/RelatedIds
                                :input {:type :multi-lookup
                                        :on-find (lookup-on-find "material")
@@ -356,7 +360,7 @@
       :user/id id-opts
       :user/name required-string-opts
       :user/email {:default ""
-                   :schema.attr/unique? true
+                   :schema.attr/unique :db.unique/value
                    :schema.attr/type :db.type/string
                    :spec types/Email
                    :input {:type :email
@@ -382,7 +386,7 @@
       :photo/featured? {:default nil
                         :optional true
                         :schema.attr/type :db.type/boolean
-                        :spec boolean?
+                        :spec [:maybe boolean?]
                         :input {:type :boolean}}
       :photo/captured-at {:default nil
                           :schema.attr/type :db.type/instant
@@ -412,6 +416,7 @@
                               :on-search (lookup-on-search "user")}}
       :photo/sculpture-id {:default nil
                            :schema.attr/relation [:one "sculpture"]
+                           :optional true
                            :spec [:maybe uuid?]
                            :input {:type :single-lookup
                                    :on-find (lookup-on-find "sculpture")
@@ -442,6 +447,7 @@
   (zipmap (map :entity/id entities)
           entities))
 
+;; TODO rename this
 (def schema
   (->> entities
        (mapcat (fn [e]
@@ -451,14 +457,21 @@
 (def entity-types
   (set (map :entity/id entities)))
 
-(def entity->attributes
+(def direct-attributes
   (->> entities
        (map (fn [e]
               [(:entity/id e)
                (->> (:entity/spec e)
                     (remove (fn [[_k v]]
-                                (:schema.attr/relation? v)))
-                    (mapv first))]))
+                                (:schema.attr/relation v)))
+                    (mapv key))]))
+       (into {})))
+
+(def all-attributes
+  (->> entities
+       (map (fn [e]
+              [(:entity/id e)
+               (vec (keys (:entity/spec e)))]))
        (into {})))
 
 (def pluralize
@@ -492,7 +505,7 @@
 
 (def Entity
   (into [:multi {:dispatch (fn [e]
-                             (namespace (first (keys e))))}]
+                             (namespace (key (first e))))}]
         (->> schema
              keys
              (map (fn [k]
@@ -501,3 +514,9 @@
 (def SpecFor
   (memoize ->malli-spec))
 
+;; malli
+
+(def valid-entity? (m/validator Entity))
+(def explain m/explain)
+
+#_(:errors (explain Entity {:sculpture/id 1}))

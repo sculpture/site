@@ -12,4 +12,4 @@
       :medium (str photo-host "medium/" id ".jpg")
       :large (str photo-host "large/" id ".jpg")
       :original (str photo-host "original/" id ".jpg"))
-    "http://via.placeholder.com/50x50"))
+    "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"))

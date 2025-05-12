@@ -1,7 +1,6 @@
 (ns sculpture.admin.state.edit
   (:require
     [cljs-uuid-utils.core :as uuid]
-    [malli.core :as m]
     [re-frame.core :refer [dispatch reg-sub]]
     [sculpture.admin.state.util :refer [reg-event-fx]]
     [sculpture.schema.schema :as schema]
@@ -32,7 +31,7 @@
   :state.edit/save!
   (fn [{db :db} _]
     (let [entity (db :db/entity-draft)]
-      (if (m/validate schema/Entity entity)
+      (if (schema/valid-entity? entity)
         {:dispatch-n [;; TODO retrigger currently showing data in sidebar
                       [::remote-persist-entity! entity]]}
         {}))))
@@ -133,7 +132,7 @@
 (reg-sub
   :state.edit/invalid-fields
   (fn [db _]
-    (->> (m/explain schema/Entity (db :db/entity-draft))
+    (->> (schema/explain schema/Entity (db :db/entity-draft))
          :errors
          (mapcat :in)
          set)))
