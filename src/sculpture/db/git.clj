@@ -7,7 +7,7 @@
 
 (def repo (delay (git/load-repo (:data-dir config))))
 
-(defn git-stuff!
+(defn upsert-entity!
   [entity author]
   (git/git-add @repo ".")
   (git/git-commit @repo
@@ -28,8 +28,4 @@
                         :trust-all? true}
       (git/git-push @repo)))
 
-(defn upsert-entity!
-  [entity user]
-  (db.plain/save-to-file! (:data-dir config) entity)
-  (git-stuff! entity user))
 

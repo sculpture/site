@@ -1,9 +1,11 @@
 (ns sculpture.db.api
   (:require
+   [sculpture.config :refer [config]]
    [sculpture.db.graph :as db.graph]
    [sculpture.db.search :as db.search]
    [sculpture.db.postgres :as db.pg]
    [sculpture.db.datascript :as db.ds]
+   [sculpture.db.plain :as db.plain]
    [sculpture.db.git :as db.git]
    [sculpture.schema.schema :as schema]
    [sculpture.schema.util :as schema.util]))
@@ -54,6 +56,7 @@
          (uuid? user-id)
          (exists? "user" user-id)]}
   (upsert! entity)
+  (db.plain/save-to-file! (:data-dir config) entity)
   (db.git/upsert-entity! entity
                          (query {:user/id user-id}
                                 [:user/name :user/email])))
