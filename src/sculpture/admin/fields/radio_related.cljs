@@ -1,7 +1,6 @@
 (ns sculpture.admin.fields.radio-related
   (:require
     [reagent.core :as r]
-    [sculpture.flexdate :as flexdate]
     [humandb.ui.fields.core :refer [field]]))
 
 (defmethod field :radio-related

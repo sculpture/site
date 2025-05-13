@@ -7,6 +7,18 @@
    [sculpture.db.datascript :as db.ds]
    [sculpture.db.graph-pg-region :as pg-region]))
 
+(def datascript-direct-attributes
+  (->> schema/entities
+       (map (fn [e]
+              [(:entity/id e)
+               (->> (:entity/spec e)
+                    (filter (fn [[_k v]]
+                              (= :db/datascript (:schema.attr/db v))))
+                    (remove (fn [[_k v]]
+                              (:schema.attr/relation v)))
+                    (mapv key))]))
+       (into {})))
+
 (defn blanks-for [ks]
   (zipmap ks (repeat nil)))
 
@@ -19,7 +31,7 @@
                  (concat
                   [
                    ;; widgets - _ => [{widget/*}, ...]
-                   (let [attrs (schema/direct-attributes (:entity/id e))]
+                   (let [attrs (datascript-direct-attributes (:entity/id e))]
                      (pco/resolver
                       (symbol (:entity/id-plural e))
                       {::pco/input []
@@ -35,13 +47,26 @@
                                                     ['?e (:entity/id-key e) '_]]
                                                    additional-where))
                                   (map (fn [e]
-                                         (merge blank e)))))}))))]
+                                         (merge blank e)))))}))))
+
+
+                   ;; random-widget
+                   (let [out-key (keyword (str "random-" (:entity/id e)) )]
+                     (pco/resolver
+                      (symbol (:entity/id e) "-random")
+                      {::pco/input []
+                       ::pco/output [{out-key [(:entity/id-key e)]}]}
+                      (fn [env _in]
+                        {out-key
+                         {(:entity/id-key e)
+                          (db.ds/q [:find '(rand ?id) '.
+                                    :where ['_ (:entity/id-key e) '?id]])}})))]
 
                   ;; widget-by-(unique-key) => {widget/*}
                   (->> (:entity/spec e)
                        (keep (fn [[attr-key opts]]
                                (when (:schema.attr/unique opts)
-                                 (let [attrs (schema/direct-attributes (:entity/id e))]
+                                 (let [attrs (datascript-direct-attributes (:entity/id e))]
                                    (pco/resolver
                                     (symbol (str (:entity/id e) "-by-" attr-key))
                                     {::pco/input [attr-key]
@@ -91,7 +116,8 @@
                                                               ['?other-e (:entity/id-key other-e) '?other-id]]
                                                               (in-key in))]
                                              {out-ids-key id
-                                              out-key {(:entity/id-key other-e) id}})))
+                                              out-key (when id
+                                                        {(:entity/id-key other-e) id})})))
 
                                         :many
                                         (pco/resolver
@@ -157,6 +183,9 @@
     (fn [i o]
       (p.eql/process indexes i o))))
 
+#_((pathom) {:sculpture/id #uuid "f945e700-bb56-4923-abc2-13aa6b2ab891"}
+            [:sculpture/city])
+
 #_((pathom) {} [{:sculptures [:sculpture/title]}])
 #_((pathom) {} [{:materials [:material/name]}])
 
@@ -181,6 +210,10 @@
                  set)
              {:artist/name "Kosso Eloul"})
 
+  ;; artist-random
+
+  (query :random-artist [:artist/name])
+
   ;; artists - with addition :where conditions
 
   ((pathom) {} [{'(:sculptures {:where [[?e :sculpture/date ?d]
@@ -193,7 +226,7 @@
 
 
   #_((pathom) {:artist/id #uuid "f01c816e-53e3-4023-85a5-21c300a9b6b3"}
-              (schema/direct-attributes "artist"))
+              (datascript-direct-attributes "artist"))
 
   ;; artist-by-slug
   (= {:artist/name "Kosso Eloul"}

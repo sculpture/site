@@ -14,9 +14,10 @@
 
 (defn request->user-id [request]
   (or (get-in request [:session :user-id])
-      ; TODO this header should be encrypted or signed
-      (some-> (get-in request [:headers "user-id"])
-              (java.util.UUID/fromString))))
+      ;; TODO this header should be encrypted or signed
+      ;; formerly, for mobile app api
+      #_(some-> (get-in request [:headers "user-id"])
+                (java.util.UUID/fromString))))
 
 (def routes
   (concat
@@ -47,15 +48,6 @@
           {:status 200
            :body (db/query identifier pattern)}))]
 
-
-
-
-     [[:get "/api/sculptures/random"]
-      (fn [_]
-        {:status 302
-         :headers {"Location" (str "/api/sculptures/" (db/select-random-sculpture-slug))}})]
-
-
      ; UTIL
 
      [[:get "/api/util/geocode"]
@@ -82,8 +74,9 @@
      ; SESSION
      [[:get "/api/session"]
       (fn [request]
-        (case (:environment config)
-          :dev
+        (if (and
+              (= :dev (:environment config))
+              (nil? (get-in request [:session :user-id])))
           (let [user (db/query
                       {:user/id #uuid "013ec717-531b-4b30-bacf-8a07f33b0d43"}
                       [:user/id
@@ -93,16 +86,14 @@
             {:status 200
              :session {:user-id (:user/id user)}
              :body user})
-
-          :prod
           (if-let [user-id (get-in request [:session :user-id])]
             {:status 200
              :body (db/query
-                      {:user/id user-id}
-                      [:user/id
-                       :user/email
-                       :user/name
-                       :user/avatar])}
+                    {:user/id user-id}
+                    [:user/id
+                     :user/email
+                     :user/name
+                     :user/avatar])}
             {:status 200
              :body nil})))]
 
@@ -112,7 +103,7 @@
          :session nil
          :body {:ok true}})]
 
-     ; OAUTH
+     ;; OAUTH
 
      [[:get "/api/oauth/:provider/request-token"]
       (fn [{{:keys [provider]} :params}]
@@ -141,7 +132,7 @@
                                        :user/avatar (:avatar oauth-user-info)})]
               (when (or (not= (:name oauth-user-info) (:user/name user))
                         (not= (:avatar oauth-user-info) (:user/avatar user)))
-                (db/upsert! updated-user (:user/id user)))
+                (db/upsert-from-web! updated-user (:user/id user)))
               {:status 200
                :body updated-user
                :session {:user-id (:user/id user)}})
@@ -152,47 +143,11 @@
 
      ; REQUIRE AUTH
 
-     [[:post "/api/sculptures" ]
-      (fn [request]
-        (let [{{:keys [id title slug year artist-ids]} :body-params} request]
-          (if-let [user-id (request->user-id request)]
-            (if (db/upsert!
-                  {:id id
-                   :type "sculpture"
-                   :slug slug
-                   :title title
-                   :year year
-                   :artist-ids artist-ids}
-                  user-id)
-              {:status 200
-               :body {:status "OK"}}
-              {:status 500
-               :body {:error "Error creating sculpture"}})
-            {:status 401
-             :body {:error "You must be logged in to perform this action."}})))]
-
-     [[:post "/api/artists"]
-      (fn [request]
-        (let [{{:keys [id name slug :as req]} :body-params} request]
-          (if-let [user-id (request->user-id req)]
-            (if (db/upsert!
-                  {:id id
-                   :name name
-                   :type "artist"
-                   :slug slug}
-                  user-id)
-              {:status 200
-               :body {:status "OK"}}
-              {:status 500
-               :body {:error "Error creating artist"}})
-            {:status 401
-             :body {:error "You must be logged in to perform this action."}})))]
-
      [[:put "/api/entities"]
       (fn [request]
         (let [{{:keys [entity]} :body-params} request]
           (if-let [user-id (request->user-id request)]
-            (if (db/upsert! entity user-id)
+            (if (db/upsert-from-web! entity user-id)
               {:status 200
                :body {:status "OK"}}
               {:status 500
@@ -200,37 +155,13 @@
             {:status 401
              :body {:error "You must be logged in to perform this action."}})))]
 
-     [[:post "/api/photos"]
-      (fn [request]
-        (let [{{:keys [id file sculpture-id]} :body-params} request]
-          (if-let [user-id (request->user-id request)]
-            (let [id (java.util.UUID/fromString id)
-                  sculpture-id (java.util.UUID/fromString sculpture-id)
-                  {:keys [tempfile filename]} file
-                  image-data (darkroom/process-image! id tempfile)]
-              (db/upsert! {:photo/id id
-                           :photo/type "photo"
-                           :photo/user-id user-id
-                           :photo/colors (vec (image-data :colors))
-                           :photo/captured-at (image-data :created-at)
-                           :photo/width (get-in image-data [:dimensions :width])
-                           :photo/height (get-in image-data [:dimensions :height])
-                           :photo/location (image-data :location)
-                           :photo/sculpture-id sculpture-id}
-                          user-id)
-              {:status 200
-               :body {:photo-id id}})
-            {:status 401
-             :body {:error "You must be logged in to perform this action."}})))
-      [wrap-multipart-params]]
-
      [[:put "/api/upload"]
       (fn [request]
         (if-let [user-id (request->user-id request)]
           (let [id (java.util.UUID/fromString (get-in request [:params "id"]))
                 {:keys [tempfile filename]} (get-in request [:params "file"])
                 image-data (darkroom/process-image! id tempfile)]
-            (db/upsert!
+            (db/upsert-from-web!
               {:photo/id id
                :photo/type "photo"
                :photo/user-id user-id

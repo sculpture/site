@@ -4,6 +4,7 @@
     [bloom.commons.pages :as pages]
     [sculpture.admin.pages :refer [entity-type->page-id]]
     [sculpture.admin.helpers :as helpers]
+    [sculpture.schema.util :as schema.util]
     [sculpture.admin.views.sidebar.entity.partials.photos :refer [photo-view]]))
 
 (defmulti entity-row-data (fn [entity]
@@ -82,7 +83,5 @@
   [:div.entity-list
    (for [entity entities]
      ^{:key (or (:id entity)
-                (:artist/id entity)
-                (:sculpture/id entity)
-                (:region-tag/id entity))}
+                (schema.util/entity-id entity))}
      [entity-row-view entity])])

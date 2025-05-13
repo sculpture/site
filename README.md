@@ -9,14 +9,17 @@
     - provides a REST API
 
     - data
-      - [the data repo](https://github.com/sculpture/data) is "source of truth"
-      - postgres is effectively used as a "cache" for the API (plus, makes it easy to do complicated queries and geospatial queries)
-      - data is persisted both to postgres and to [the data repo](https://github.com/sculpture/data) (on [the web branch](https://github.com/sculpture/data/tree/web))
+      - at run time, data is stored in:
+         - postgres (for geospatial queries)
+         - datascript (for all other data)
+      - ...bridged by pathom3
+      - data is persisted to:
+         - yaml files in a git repo (https://github.com/sculpture/data) (on [the web branch](https://github.com/sculpture/data/tree/web))
+         - which is considered the "source of truth"
 
      - images
        - persisted to S3
        - transformed w/ imagemagick + mozjpeg
-
 
   - frontend:
     - [clojurescript](https://clojurescript.org/)

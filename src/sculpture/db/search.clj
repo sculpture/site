@@ -9,12 +9,12 @@
   (let [query (string/lower-case query)]
     (->> types
          (mapcat (fn [entity-type]
-                   (let [search-attr (->> (schema/schema entity-type)
-                                          (keep (fn [[k opts]]
-                                                  (when (:schema.attr/index-text? opts)
-                                                    k)))
-                                          first ;; for now
-                                          )]
+                   (when-let [search-attr (->> (schema/schema entity-type)
+                                               (keep (fn [[k opts]]
+                                                       (when (:schema.attr/index-text? opts)
+                                                         k)))
+                                               ;; just first for now
+                                               first)]
                      (->> (db.ds/q [:find '?id '?title
                                     :in '$ '?query
                                     :where

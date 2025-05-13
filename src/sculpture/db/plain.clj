@@ -1,5 +1,6 @@
 (ns sculpture.db.plain
   (:require
+    [bloom.commons.thread-safe-io :as tsio]
     [clojure.set :as set]
     [clojure.java.io :as io]
     [clojure.string :as string]
@@ -7,8 +8,8 @@
     [sculpture.schema.schema :as schema]
     [sculpture.schema.util :as schema.util]))
 
-(defn entity->path [entity]
-  (str "data/" (schema.util/entity-type entity) "/" (schema.util/entity-id entity) ".yml"))
+(defn entity->path [root-folder entity]
+  (str root-folder "/data/" (schema.util/entity-type entity) "/" (schema.util/entity-id entity) ".yml"))
 
 (defn strip-namespaces [entity]
   (->> entity
@@ -53,9 +54,12 @@
                                                     :latitude 1
                                                     :precision 50}}))
 
+(defn exists? [root-folder entity]
+  (.exists (io/file (entity->path root-folder entity))))
+
 (defn save-to-file! [root-folder entity]
-  (spit (str root-folder "/" (entity->path entity))
-        (entity->yaml entity)))
+  (tsio/spit (entity->path root-folder entity)
+             (entity->yaml entity)))
 
 (defn save-many! [root-folder entities]
   (.mkdir (io/file root-folder))

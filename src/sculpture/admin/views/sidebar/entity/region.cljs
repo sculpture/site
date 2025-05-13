@@ -29,7 +29,10 @@
                    (for [region-tag (:region/region-tags region)]
                      ^{:key (:region-tag/id region-tag)}
                      [:a.tag {:href (pages/path-for [:page/region-tag {:id (:region-tag/id region-tag)}])}
-                      (:region-tag/name region-tag)]))]])]
+                      (:region-tag/name region-tag)]))]])
+    [:div.row.dimensions
+     [:div (/ (:region/area region)
+              1000) " km" [:sup "2"]]]]
    [:div.related
     [:h2 "Sculptures"]
     [related-sculptures-view (:region/sculptures region)]]])
@@ -39,6 +42,7 @@
   {:identifier {:region/id region-id}
    :pattern [:region/id
              :region/name
+             :region/area
              :region/geojson
              {:region/region-tags
               [:region-tag/id

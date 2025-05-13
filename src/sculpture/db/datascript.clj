@@ -1,15 +1,51 @@
 (ns sculpture.db.datascript
   (:require
    [datascript.core :as ds]
-   [sculpture.schema.schema :as schema]))
+   [sculpture.schema.schema :as schema]
+   [sculpture.schema.util :as schema.util]))
+
+(defn prep-for-datascript
+  [entity]
+  (->>
+   ;; only keep attributes that will be stored in datascript
+   (select-keys entity (->> (schema/schema (schema.util/entity-type entity))
+                            (filter (fn [[_k v]]
+                                      (= :db/datascript (:schema.attr/db v))))
+                            (map key)))
+   ;; remove nils
+   (filter (fn [[_k v]] v))
+   ;; wrap all ref uuids in [:entity/id uuid]
+   ;;    {:sculpture/material-ids [1 2]}
+   ;;  becomes:
+   ;;    {:sculpture/material-ids [[:material/id 1] [:material/id 2]]}
+   (map (fn [[k v]]
+          [k
+           (if-let [id-key (some-> (get-in
+                                     schema/by-id
+                                     [(namespace k)
+                                      :entity/spec
+                                      k
+                                      :schema.attr/relation
+                                      1])
+                                   schema/id-key)]
+             (cond
+               (uuid? v)
+               [id-key v]
+               (and (vector? v) (uuid? (first v)))
+               (mapv (fn [x] [id-key x]) v)
+               :else
+               (throw (ex-info "Whut?" {})))
+             v)]))
+   (into {})))
 
 (defn schema []
   (->> schema/entities
        (mapcat (fn [entity]
                  (->> (:entity/spec entity)
+                      (filter (fn [[_k v]]
+                                (= :db/datascript (:schema.attr/db v))))
                       (map (fn [[k v]]
-                             [k (->> {
-                                      :db/valueType (if (:schema.attr/relation v)
+                             [k (->> {:db/valueType (if (:schema.attr/relation v)
                                                       :db.type/ref
                                                       (if (contains? v :schema.attr/type)
                                                         ;; datascript doesn't want types except refs and tuples
@@ -38,7 +74,7 @@
 
 (defn upsert-entity!
   [entity]
-  (ds/transact! conn [entity]))
+  (ds/transact! conn [(prep-for-datascript entity)]))
 
 (defn q
   [query & args]

@@ -12,6 +12,8 @@
                  query
                  {:builder-fn next.jdbc.result-set/as-kebab-maps}))
 
+;; region ---
+
 (defn fix-region [region]
   (-> region
       (set/rename-keys {:geojson :region/geojson
@@ -19,14 +21,16 @@
                         :points-count :region/points-count})))
 
 (def base-region-query
-  {:select [[[:ST_AsGeoJSON :region/shape]
+  {:select [:region/id
+            [[:ST_AsGeoJSON :region/shape]
              :geojson]
             [[:Round [:/ [:ST_Area :region/shape] 1000]] :area]
             [[:ST_NPoints [:cast :region/shape :geometry]] :points-count]]
    :from :region})
 
 (def base-region-attrs
-  [:region/area
+  [:region/id
+   :region/area
    :region/points-count
    :region/geojson])
 
@@ -54,18 +58,6 @@
 #_(pg-region-by-id {:region/id #uuid "bf27a5bb-93fe-4f6c-8fe7-db7b23ec8e39"})
 
 (pco/defresolver
- pg-region-by-slug
- [{:region/keys [slug]}]
- {::pco/input [:region/slug]
-  ::pco/output base-region-attrs}
- (-> (first (execute! (sql/format (assoc base-region-query
-                                    :where [:= :slug slug]
-                                    :limit 1))))
-     fix-region))
-
-#_(pg-region-by-slug {:region/slug "toronto"})
-
-(pco/defresolver
  pg-region-parent-region
  [{:region/keys [id]}]
  {::pco/input [:region/id]
@@ -87,6 +79,8 @@
                                                       :where [:= :region/id id]})))})
 
 #_(pg-region-parent-region {:region/id #uuid "bf27a5bb-93fe-4f6c-8fe7-db7b23ec8e39"})
+
+;; sculpture ---
 
 (defn fix-sculpture [sculpture]
   (-> sculpture
@@ -171,11 +165,24 @@
 #_(sculpture-regions {:sculpture/location {:latitude 43.6442
                                            :longitude -79.38771}})
 
+(pco/defresolver
+ sculpture-location
+ [{:sculpture/keys [id]}]
+ {::pco/input [:sculpture/id]
+  ::pco/output [:sculpture/location]}
+ (fix-sculpture (first (execute! (sql/format {:select [:sculpture/location
+                                                       :sculpture/location-precision]
+                                              :from :sculpture
+                                              :where [:= :sculpture/id id]
+                                              :limit 1})))))
+
+#_(sculpture-location {:sculpture/id #uuid "0ef9c6f1-a415-45b2-9afd-925c00ff7955"})
+
 (def resolvers
   [pg-regions
    pg-region-by-id
-   pg-region-by-slug
    pg-region-parent-region
    pg-region-sculptures
+   sculpture-location
    sculpture-nearby-regions
    sculpture-regions])

@@ -1,8 +1,8 @@
-(ns sculpture.scripts.import-export
+(ns sculpture.db.import-export
   (:require
+   [clojure.pprint :as pprint]
    [sculpture.config :refer [config]]
    [sculpture.db.plain :as plain]
-   [sculpture.db.github :as github]
    [sculpture.db.api :as db]
    [sculpture.db.datascript :as db.ds]
    [sculpture.db.postgres :as db.pg]
@@ -10,7 +10,7 @@
    [sculpture.schema.util :as schema.util]))
 
 (defn all-from-files []
-  (plain/read-many "./compare/git_latest/"))
+  (plain/read-many (:data-dir config)))
 
 (defn all-from-memory []
   (->> (sculpture.schema.schema/types)
@@ -27,12 +27,13 @@
                  (schema/explain schema/Entity entity))))
        (remove nil?)
        (take 1)
-       clojure.pprint/pprint))
+       pprint/pprint))
 
 #_(next-error (all-from-files))
 #_(next-error (all-from-memory))
 
 (defn import! [entities]
+  (println "Importing...")
   (let [grouped-entities (group-by schema.util/entity-type entities)]
     ;; have to insert entity-types in the correct order
     (doseq [entity-type (schema/types)]
@@ -47,6 +48,7 @@
   (->> (sculpture.schema.schema/types)
        (map (fn [entity-type]
               (println "Saving" entity-type "...")
+              ;; this ends up pulling from both datascript and postgres
               (->> (db/query
                     (keyword (sculpture.schema.schema/pluralize entity-type))
                     (schema/all-attributes entity-type))
@@ -62,12 +64,6 @@
   (println "Initializing...")
   (db.pg/init!)
   (db.ds/reinit!)
-  (import! (all-from-files)
-           #_(github/fetch-archive!
-               (:github-repo config)
-               (:github-repo-branch config)))
+  (import! (all-from-files))
   true)
-
-#_(import-from-dir! (github/fetch-archive! "sculpture/data" "test"))
-
 

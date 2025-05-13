@@ -13,7 +13,10 @@
 
 (def ^:dynamic db-spec datasource)
 
+(declare -init!)
 (hugsql/def-db-fns "sculpture/db/pg/sql/init.sql")
+
+(declare -drop!)
 (hugsql/def-db-fns "sculpture/db/pg/sql/drop.sql")
 
 (defn init! []
@@ -22,32 +25,27 @@
 (defn drop! []
   (-drop! @db-spec))
 
+(declare -upsert-sculpture!
+         -upsert-region!)
 (hugsql/def-db-fns "sculpture/db/pg/sql/upsert.sql")
 
-(defn remove-namespaces [entity]
-  (->> entity
-       (map (fn [[k v]]
-              [(keyword (name k)) v]))
-       (into {})))
-
-#_(remove-namespaces {:foo/bar 123})
-
-(defn upsert-sculpture! [sculpture]
+(defn upsert-sculpture!
+  [{:sculpture/keys [id location]}]
   (-upsert-sculpture!
     @db-spec
-   (-> sculpture
-       remove-namespaces
-       (assoc :location-lng (:longitude (:sculpture/location sculpture)))
-       (assoc :location-lat (:latitude (:sculpture/location sculpture)))
-       (assoc :location-precision (:precision (:sculpture/location sculpture)))
-       (dissoc :location))))
+   {:id id
+    :location-lng (:longitude location)
+    :location-lat (:latitude location)
+    :location-precision (:precision location)}))
 
-(defn upsert-region! [region]
+(defn upsert-region!
+  [{:region/keys [id geojson]}]
   (-upsert-region!
    @db-spec
-   (-> region
-       remove-namespaces)))
+   {:id id
+    :geojson geojson}))
 
+(declare -simplify-geojson)
 (hugsql/def-db-fns "sculpture/db/pg/sql/util.sql")
 
 (defn simplify-geojson [geojson]

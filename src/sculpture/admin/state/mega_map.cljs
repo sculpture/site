@@ -27,7 +27,8 @@
     {:db (-> db
              (assoc-in [:db/mega-map :dirty?] false)
              (assoc-in [:db/mega-map :center] location)
-             (assoc-in [:db/mega-map :zoom-level] 18))}))
+             (assoc-in [:db/mega-map :zoom-level] 18)
+             (dissoc [:db/mega-map] :markers))}))
 
 (reg-event-fx
   :state.mega-map/show!

@@ -37,6 +37,9 @@
                  [base64-clj "0.1.1"]
                  [io.forward/yaml "1.0.10"]
                  [metosin/jsonista "0.2.7"]
+                 ;; git
+                 [clj-jgit "1.1.0" :exclusions [org.eclipse.jgit/org.eclipse.jgit.gpg.bc]]
+
                  ;; postgres
                  [hikari-cp "2.13.0"]
                  [camel-snake-kebab "0.4.3"]

@@ -15,6 +15,7 @@
     [:google-client-id :string]
     [:google-maps-api-key :string]
     [:oauth-redirect-uri :string]
+    [:data-dir :string]
     [:github-api-user :string]
     [:github-api-token :string]
     [:github-repo :string]
