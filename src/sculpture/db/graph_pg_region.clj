@@ -165,24 +165,10 @@
 #_(sculpture-regions {:sculpture/location {:latitude 43.6442
                                            :longitude -79.38771}})
 
-(pco/defresolver
- sculpture-location
- [{:sculpture/keys [id]}]
- {::pco/input [:sculpture/id]
-  ::pco/output [:sculpture/location]}
- (fix-sculpture (first (execute! (sql/format {:select [:sculpture/location
-                                                       :sculpture/location-precision]
-                                              :from :sculpture
-                                              :where [:= :sculpture/id id]
-                                              :limit 1})))))
-
-#_(sculpture-location {:sculpture/id #uuid "0ef9c6f1-a415-45b2-9afd-925c00ff7955"})
-
 (def resolvers
   [pg-regions
    pg-region-by-id
    pg-region-parent-region
    pg-region-sculptures
-   sculpture-location
    sculpture-nearby-regions
    sculpture-regions])
