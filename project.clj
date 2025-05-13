@@ -3,7 +3,7 @@
   :source-paths ["src"]
 
   :dependencies [; COMMON
-                 [org.clojure/clojure "1.11.1"]
+                 [org.clojure/clojure "1.12.0"]
                  [io.bloomventures/commons "0.12.1"]
                  [io.bloomventures/omni "0.29.2"]
                  ;; [metosin/malli "0.1.0"] ;; from commons
