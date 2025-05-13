@@ -59,7 +59,8 @@
   (db.plain/save-to-file! (:data-dir config) entity)
   (db.git/upsert-entity! entity
                          (query {:user/id user-id}
-                                [:user/name :user/email])))
+                                [:user/name :user/email]))
+  true)
 
 (defn search [& args]
   (apply db.search/search args))
