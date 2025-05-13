@@ -26,7 +26,6 @@
 
 (def id-opts
   {:default nil
-   :schema.attr/db :db/datascript
    :schema.attr/type :db.type/uuid
    :schema.attr/unique :db.unique/identity
    :spec uuid?
@@ -35,7 +34,6 @@
 
 (def slug-opts
   {:default ""
-   :schema.attr/db :db/datascript
    :schema.attr/type :db.type/string
    :schema.attr/unique :db.unique/value
    :spec types/Slug
@@ -44,7 +42,6 @@
 (def optional-flexdate-opts
   {:default nil
    :optional true
-   :schema.attr/db :db/datascript
    :schema.attr/type :db.type/string
    :spec [:maybe types/FlexDate]
    :input {:type :flexdate}})
@@ -52,14 +49,12 @@
 (def optional-link-opts
   {:default nil
    :optional true
-   :schema.attr/db :db/datascript
    :schema.attr/type :db.type/string
    :spec [:maybe types/Url]
    :input {:type :url}})
 
 (def required-string-opts
   {:default ""
-   :schema.attr/db :db/datascript
    :schema.attr/type :db.type/string
    :schema.attr/index-text? true
    :spec types/NonBlankString
@@ -68,7 +63,6 @@
 (def optional-string-opts
   {:optional true
    :default nil
-   :schema.attr/db :db/datascript
    :schema.attr/type :db.type/string
    :spec [:maybe types/NonBlankString]
    :input {:type :string}})
@@ -83,7 +77,6 @@
   {:default []
    :optional true
    :spec types/RelatedIds
-   :schema.attr/db :db/datascript
    :schema.attr/relation [:many tag-entity-type]
    :input {:type :multi-lookup
            :optional true
@@ -91,7 +84,7 @@
            :on-search (lookup-on-search tag-entity-type)}}))
 
 ;; everything goes into datascript
-;; except:
+;; plus, the following into postgres:
 ;;   sculpture.location
 ;;   region.shape
 
@@ -140,7 +133,6 @@
       ;; optional:
       :artist/gender {:default nil
                       :optional true
-                      :schema.attr/db :db/datascript
                       :schema.attr/type :db.type/string
                       :spec [:maybe [:enum "male" "female" "other"]]
                       :input {:type :enum
@@ -151,14 +143,12 @@
       :artist/death-date optional-flexdate-opts
       :artist/bio {:default nil
                    :optional true
-                   :schema.attr/db :db/datascript
                    :schema.attr/type :db.type/string
                    :spec [:maybe types/NonBlankString]
                    :input {:type :string
                            :length :long}}
       ;; related:
       :artist/nationality-ids {:default []
-                               :schema.attr/db :db/datascript
                                :schema.attr/relation [:many "nationality"]
                                :optional true
                                :spec types/RelatedIds
@@ -223,7 +213,6 @@
       :sculpture-tag/name required-string-opts
       ;; optional:
       :sculpture-tag/category-id {:default nil
-                                  :schema.attr/db :db/datascript
                                   :schema.attr/relation [:one "category"]
                                   :optional true
                                   :spec [:maybe uuid?]
@@ -260,7 +249,6 @@
       :sculpture/title required-string-opts
       ;; optional:
       :sculpture/location {:default nil
-                           :schema.attr/db :db/postgres
                            :schema.attr/type nil ;; not storing in ds
                            :spec types/Location
                            :input {:type :location
@@ -269,7 +257,6 @@
                                                  (dispatch! [:state.edit/geocode! query callback])))}}
       :sculpture/note {:default nil
                        :optional true
-                       :schema.attr/db :db/datascript
                        :schema.attr/type :db.type/string
                        :spec [:maybe types/NonBlankString]
                        :input {:type :string
@@ -279,7 +266,6 @@
       :sculpture/display-date optional-string-opts
       :sculpture/size {:optional true
                        :default nil
-                       :schema.attr/db :db/datascript
                        :schema.attr/type :db.type/long
                        :spec [:maybe integer?]
                        :input {:type :integer}}
@@ -287,7 +273,6 @@
       ;; related:
       :sculpture/sculpture-tag-ids (tag-ids-opts-for "sculpture")
       :sculpture/city-id {:default nil
-                          :schema.attr/db :db/datascript
                           :schema.attr/relation [:one "city"]
                           :optional true
                           :spec [:maybe uuid?]
@@ -295,7 +280,6 @@
                                   :on-find (lookup-on-find "city")
                                   :on-search (lookup-on-search "city")}}
       :sculpture/artist-ids {:default []
-                             :schema.attr/db :db/datascript
                              :schema.attr/relation [:many "artist"]
                              :optional true
                              :spec types/RelatedIds
@@ -303,7 +287,6 @@
                                      :on-find (lookup-on-find "artist")
                                      :on-search (lookup-on-search "artist")}}
       :sculpture/material-ids {:default []
-                               :schema.attr/db :db/datascript
                                :schema.attr/relation [:many "material"]
                                :optional true
                                :spec types/RelatedIds
@@ -331,7 +314,6 @@
       :segment/slug slug-opts
       :segment/name required-string-opts
       :segment/sculpture-id {:default nil
-                             :schema.attr/db :db/datascript
                              :schema.attr/relation [:one "sculpture"]
                              :spec [:maybe uuid?]
                              :input {:type :single-lookup
@@ -398,7 +380,6 @@
       :user/id id-opts
       :user/name required-string-opts
       :user/email {:default ""
-                   :schema.attr/db :db/datascript
                    :schema.attr/unique :db.unique/value
                    :schema.attr/type :db.type/string
                    :spec types/Email
@@ -407,7 +388,6 @@
       ;; optional:
       :user/avatar {:optional true
                     :default ""
-                    :schema.attr/db :db/datascript
                     :schema.attr/type :db.type/string
                     :spec [:maybe types/Url]
                     :input {:type :url
@@ -425,43 +405,36 @@
       :photo/id id-opts
       :photo/featured? {:default nil
                         :optional true
-                        :schema.attr/db :db/datascript
                         :schema.attr/type :db.type/boolean
                         :spec [:maybe boolean?]
                         :input {:type :boolean}}
       :photo/captured-at {:default nil
-                          :schema.attr/db :db/datascript
                           :schema.attr/type :db.type/instant
                           :spec inst?
                           :input {:type :datetime}}
       :photo/colors {:default []
-                     :schema.attr/db :db/datascript
                      :schema.attr/type :db.type/string
                      :spec [:sequential types/Color]
                      :input {:type :string
                              :disabled true}}
       :photo/width {:default nil
-                    :schema.attr/db :db/datascript
                     :schema.attr/type :db.type/long
                     :spec integer?
                     :input {:type :integer
                             :disabled true}}
       :photo/height {:default nil
-                     :schema.attr/db :db/datascript
                      :schema.attr/type :db.type/long
                      :spec integer?
                      :input {:type :integer
                              :disabled true}}
       ;; related
       :photo/user-id {:default nil
-                      :schema.attr/db :db/datascript
                       :schema.attr/relation [:one "user"]
                       :spec uuid?
                       :input {:type :single-lookup
                               :on-find (lookup-on-find "user")
                               :on-search (lookup-on-search "user")}}
       :photo/sculpture-id {:default nil
-                           :schema.attr/db :db/datascript
                            :schema.attr/relation [:one "sculpture"]
                            :optional true
                            :spec [:maybe uuid?]
@@ -469,7 +442,6 @@
                                    :on-find (lookup-on-find "sculpture")
                                    :on-search (lookup-on-search "sculpture")}}
       :photo/segment-id {:default nil
-                         :schema.attr/db :db/datascript
                          :schema.attr/relation [:one "segment"]
                          :optional true
                          :spec [:maybe uuid?]

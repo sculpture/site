@@ -12,8 +12,6 @@
        (map (fn [e]
               [(:entity/id e)
                (->> (:entity/spec e)
-                    (filter (fn [[_k v]]
-                              (= :db/datascript (:schema.attr/db v))))
                     (remove (fn [[_k v]]
                               (:schema.attr/relation v)))
                     (mapv key))]))

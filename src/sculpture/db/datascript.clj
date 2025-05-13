@@ -9,8 +9,6 @@
   (->>
    ;; only keep attributes that will be stored in datascript
    (select-keys entity (->> (schema/schema (schema.util/entity-type entity))
-                            (filter (fn [[_k v]]
-                                      (= :db/datascript (:schema.attr/db v))))
                             (map key)))
    ;; remove nils
    (filter (fn [[_k v]] v))
@@ -42,8 +40,6 @@
   (->> schema/entities
        (mapcat (fn [entity]
                  (->> (:entity/spec entity)
-                      (filter (fn [[_k v]]
-                                (= :db/datascript (:schema.attr/db v))))
                       (map (fn [[k v]]
                              [k (->> {:db/valueType (if (:schema.attr/relation v)
                                                       :db.type/ref
