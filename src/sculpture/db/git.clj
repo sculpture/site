@@ -11,9 +11,9 @@
   [entity author]
   (git/git-add @repo ".")
   (git/git-commit @repo
-    (str (if (db.plain/exists? (:data-dir config) entity)
-           "Update"
-           "Add") " "
+    (str (if (seq (:added (git/git-status @repo)))
+           "Add"
+           "Update") " "
          (schema.util/entity-type entity) " "
          (or (schema.util/entity-slug entity)
              (schema.util/entity-id entity)))
