@@ -94,6 +94,7 @@
                                      v)]))
                            (into {}))
         after-entity (->> entity
+                          (filter (fn [[k v]] v))
                           ;; wrap all ref uuids in [:entity/id uuid]
                           ;;    {:sculpture/material-ids [1 2]}
                           ;;  becomes:
