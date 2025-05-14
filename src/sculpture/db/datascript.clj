@@ -114,7 +114,9 @@
         attrs (->> (schema/by-id entity-type)
                    :entity/spec
                    keys)
-        lookup-ref [id-key (id-key entity)]]
+        lookup-ref (if (id-key before-entity)
+                     [id-key (id-key entity)]
+                     -1)]
     (->> attrs
          (mapcat (fn [attr]
                  (let [before-value (attr before-entity)
