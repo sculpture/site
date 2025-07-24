@@ -17,7 +17,9 @@
                                    :photo photo})))]
 
    [:div.info
-    [:h1 (:sculpture/title sculpture)]
+    [:h1 (:sculpture/title sculpture)
+     (when (:sculpture/title-en sculpture)
+       (str " (" (:sculpture/title-en sculpture) ")"))]
     [:h2
      (into [:div.artists]
            (interpose
@@ -112,6 +114,7 @@
                :photo/height
                :photo/colors]}
              :sculpture/title
+             :sculpture/title-en
              :sculpture/date
              :sculpture/display-date
              :sculpture/link-wikipedia

@@ -247,6 +247,7 @@
       :sculpture/id id-opts
       :sculpture/slug slug-opts
       :sculpture/title required-string-opts
+      :sculpture/title-en optional-string-opts
       ;; optional:
       :sculpture/location {:default nil
                            :schema.attr/type nil ;; not storing in ds
