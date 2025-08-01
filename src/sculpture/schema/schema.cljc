@@ -314,6 +314,7 @@
       :segment/id id-opts
       :segment/slug slug-opts
       :segment/name required-string-opts
+      :segment/link-wikipedia optional-link-opts
       :segment/sculpture-id {:default nil
                              :schema.attr/relation [:one "sculpture"]
                              :spec [:maybe uuid?]
