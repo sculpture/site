@@ -29,7 +29,7 @@
       {:tada [:search
               {:query query
                :types types
-               :limit 10}
+               :limit 20}
               {:on-success callback}]})))
 
 (reg-event-fx
